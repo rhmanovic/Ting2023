@@ -1,0 +1,172 @@
+extends layout
+
+block content
+  form#addorder(method='POST' action='/AddOrder')
+
+    - var totalPrice = 0
+    - var shippingPrice = 1002
+    // Page Container
+    if cartData.length > 0
+        .container.text-right.my-3
+            .row.row-cols-1.row-cols-md-2.m-2.m-md-0
+                // List Col
+                .col.col-md-8.p-0
+                    h3.mb-4 عربة التسوق
+                    // Product Container
+                    .card.cardShadow
+                        each product,index in cartData
+                            div(id=`div${product._id}`)
+                                .container-fluid.p-0.border
+                                    .row.row-cols-2.m-0
+                                        // Product image
+                                        .col-3.pt-3.pt-md-0
+                                            span.image-wrap
+                                                img.p-md-3.card-img-top.lazyload(data-src=product.img || "images/fff.png" onerror="this.onerror=null; this.src='images/fff.png'")
+                                        // Product name & Price
+                                        .col-9.p-0
+                                            .container-fluid.p-0.pt-2
+                                                .row.row-cols-1.m-0
+                                                    .col-md-8.d-flex.flex-column
+                                                        .bd-highlight.my-2
+                                                            a(href=`/product/${product._id}`)
+                                                                h6= product.name
+                                                        .bd-highlight.mt-auto
+                                                            p.hideMIN.small2-font.text-muted
+                                                                button.btn.btn-light.btn-sm.small2-font.text-black-50(value=`${product._id}`, class="remove")
+                                                                    i.ml-1.fa.fa-trash(aria-hidden='true')
+                                                                    | إزاله
+                                                    .col-md-4.d-flex.flex-column.p-0
+                                                        //- .bd-highlight
+                                                        //-     h6.ltr= `${product.price} K.D`
+                                                        //- .bd-highlight.mt-auto.m-0
+                                                        //-     span= `الكمية ${cartData2[index].Quantity}`
+                                                        //- .bd-highlight
+                                                        //-     span
+                                                        //-         small= `الاجمالي ${product.price* cartData2[index].Quantity} K.D`
+                                                        //- .bd-highlight.mt-auto.m-0.hideMAX
+                                                        //-     span.text-right
+                                                        //-         i.ml-1.fa.fa-trash(aria-hidden='true')
+                                                        //-         | إزاله
+                                                        .container
+                                                            .d-flex.flex-column.bd-highlight.mb-3
+                                                                .p-2.bd-highlight
+                                                                    span.small-font= `الكمية:`
+                                                                    div
+                                                                        label.sr-only(for='inlineFormInputGroup')
+                                                                        .input-group.my-2
+                                                                            .input-group-prepend
+                                                                              button.btn.btn-light.btn-number.border(type='button', data-type='minus', data-field=`quantity${index}`)
+                                                                                span#basic-addon1.h3 -
+                                                                                  
+                                                                            
+                                                                            input.form-control.col.text-center.btn-number.input-number(type='text', id=`${product._id}-q=${index}`, name=`quantity${index}`, value=`${cartData2[index].Quantity}`, min='0', max='1000' onchange=`Pricechange("${product._id}",${index})`)
+
+                                                                            .input-group-prepend
+                                                                                button.btn.btn-danger.btn-number.tomato(type='button', data-type='plus', data-field=`quantity${index}`)
+                                                                                  span#basic-addon1.h3 +
+                                                                                  //i.fa.fa-plus(aria-hidden='true')
+                                                                    
+                                                                .p-2.bd-highlight
+                                                                    h6.small-font= `سعر الحبة: ${product.price} K.D`
+                                                                    input.p-1(placeholder="" type='number' id=`${product._id}-i=${index}` name='shopPrice' step="0.001" value=`${product.price}` onchange=`Pricechange("${product._id}",${index})`)
+                                                                .p-2.bd-highlight
+                                                                    span.small-font= `الاجمالي:`
+                                                                    span.small-font= ` K.D `
+                                                                    span.small-font(id =`R${product._id}`)= ((product.price*1000) * cartData2[index].Quantity)/1000
+                                                                    - totalPrice += ((product.price*1000) * cartData2[index].Quantity)/1000
+                                                                .p-2.bd-highlight.hideMAX.text-muted.small2-font
+                                                                    button.btn.btn-light.btn-sm(value=`${product._id}`, class="remove")
+                                                                        i.ml-1.fa.fa-trash(aria-hidden='true')
+                                                                        | إزاله
+
+                                            
+                .col.col-md-4.p-0
+                    .card.cardShadow.mr-md-2.mt-2.mt-md-0
+                        h4.mr-3.mt-2 ملخص الطلبية
+                        hr.mx-3
+                        .container
+                            .row
+                                .col الاجمالي
+                                .col.text-left.ltr
+                                    span(id="subTotalPrice")= totalPrice
+                                    span= " K.D"
+                            .row
+                                .col الشحن
+                                .col.text-left.ltr
+                                    span#shipping اختر توصيل/استلام
+                                    span#shipping1
+                            .row
+                              .d-flex.flex-column.bd-highlight.mb-3
+                                .pt-2.bd-highlight الخصم:
+                                input.bd-highlight( type='number' id='discount' name='discount' value=0 step="0.001")
+
+                                    
+                                
+                            hr.mx-3
+                            .row
+                              .col الاجمالي الكلي
+                              .col.text-left.ltr
+                                  span#finalPrice= totalPrice
+                                  span= " K.D"
+
+                            form#addorder(method='POST' action='/AddOrder')
+                                .d-flex.flex-column.bd-highlight.mb-3
+
+                                    .pt-2.bd-highlight اختر توصيل/استلام:
+                                    select.form-select#city(name='city' type='text')
+                                      option(value="1001") المناطق
+                                      each cityEnglish,index in citytData.cityEnglish
+                                        option(value=`${citytData.ID_CITY[index]}#${citytData.cost[index]}#${citytData.cityEnglish[index]}`)= `${citytData.cityArabic[index]}`
+
+                                   
+
+                                                              
+
+
+
+                                    // User ID
+                                    input.p-1.bd-highlight(value= currentUser hidden  name='userID')
+                                        
+                                  
+
+                                    .pt-2.bd-highlight الفاتورة:
+                                    input.p-1.bd-highlight( type='number' id='invoice' name='invoice' required="required" oninvalid="this.setCustomValidity('ضع الفاتورة')" oninput="setCustomValidity('')" )
+                                    .pt-2.bd-highlight الاسم:
+                                    input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
+                                    .pt-2.bd-highlight رقم الهاتف:
+
+                                    input.p-1.bd-highlight.input-number(placeholder="رقم الهاتف" type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
+                                    //.pt-2.bd-highlight الايميل (اختياري):
+                                    //input.p-1.bd-highlight(placeholder="example@example.com" type='text' id='email' name='email')
+                                    .pt-2.bd-highlight العنوان:
+                                    textarea.p-1.bd-highlight(placeholder="العنوان الكامل" type='text' id='address' name='address' oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
+
+                                    .row.mt-3
+                                      .col            
+                                        input(type='radio' checked="checked")      
+                                        label.mx-2 دفع عند الاستلام
+                                    .row
+                                      .col            
+                                        input(type='radio' disabled )      
+                                        s.text-secondary.mx-2 كي-نت
+
+                                    .row            
+                                        span#errorCart.text-danger.mt-2 
+                                           
+                                    
+                
+
+                                    button.btn.btn-primary.mt-4.mb-2.bg-success(type='submit')
+                                      h4.mt-2.font-weight-bold اكمل الطلب
+
+
+    else
+        .container.text-right.my-3
+            .col.p-0
+                .card.cardShadow
+                    h3.text-center.my-auto عربة التسوق فارغة
+    
+   
+        
+           
+

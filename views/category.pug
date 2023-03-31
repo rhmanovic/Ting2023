@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  .main.container
+    .row#cards
+
+      //- this should be repeated for each course
+      each product,index in productData
+        if (product.variant == false)
+          .col-6.col-lg-4.px-2
+            .card.cardShadow.mb-3
+              img(src=product.img style="aspect-ratio: 1 / 1;")
+              .card-body
+                h5.card-title.text-center#card-title1= `${product.name}`
+                ///i.fas.fa-chalkboard-teacher.text-secondary
+
+                
+                span.card-text.m-2#card-text1= `${product.price} د.ك`
+                br
+                //span.card-text.m-2#card-text1= `${product.brandName}`
+
+                if product.warranty > 0
+                  .container.p-0
+                    .row
+                      .col.text-start.p-0
+                        if product.warranty == 1
+                          span.card-text.m-2#card-text1.badge.bg-warning= ` كفالة ${product.warranty} سنة`
+                        if product.warranty == 2
+                          span.card-text.m-2#card-text1.badge.bg-success= ` كفالة ${product.warranty} سنة`
+  
+                span= salesmanNow
+                if theSalesemanNow
+                  br
+                  span.card-text.m-2#card-text1= `Qurain: ${product.qurain} | Naseem: ${product.naseem}`
+                a.stretched-link(href=`/product/${product.productNo}`)
+  
+
+    

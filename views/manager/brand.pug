@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  .main.container
+    h1 Brand Page
+
+
+    .row
+        h3 Create Brand
+
+        form(method='POST' action='/manager/AddBrand')
+          .row
+            .col-sm
+              label(for='name') Name :
+              input.form-control(type='text' placeholder='Name' name='name')
+            .col-sm
+              label.text-white .
+              br
+              button.btn.btn-primary(type='submit') Submit
+
+        table.table
+          thead
+            tr
+              th(scope='col') Brand No
+              th(scope='col') Name
+              //- th(scope='col') ID
+              th(scope='col') 
+          tbody
+            each brand,index in brandData
+              tr
+                th(scope='row')= brand.brandNo
+                td= `${brand.name}`
+                //- td= `${category._id}`
+                td
+                    a(href=`/manager/deletBrand/${brand._id}`)
+                        .badge.text-bg-danger.ms-1
+                            i.bi.bi-trash.m-2
+
+                
+

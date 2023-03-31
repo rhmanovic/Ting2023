@@ -1,0 +1,155 @@
+extends layout
+
+block content
+
+  
+  .main.container
+    h1 Products Page
+
+
+    .row
+        h3 Create Product
+
+        form(method='POST' action='AddProduct')
+          .row
+            //- .col-sm
+              label(for='SKU') SKU :
+              input.form-control(type='text' name='SKU')
+            .col-sm
+              label(for='name') Name :
+              input.form-control(type='text' placeholder='Name' name='name')
+            .col-sm
+              label(for='variantName')  Variant Name :
+              input.form-control(type='text' placeholder='Name' name='variantName')
+            .col-sm
+              label(for='cost') cost :
+              input.form-control(Value="0" type='number' step=".001" placeholder='0.000 KD' name='cost')
+            .col-sm
+              label(for='price') Price :
+              input.form-control(Value="0" type='number' step=".001" placeholder='0.000 KD' name='price')
+            .col-sm
+              label(for='discountPrice') Dis Price :
+              input.form-control(Value="0" type='number' step=".001" placeholder='0.000 KD' name='discountPrice')
+            
+          .row
+            .col-sm
+              label(for='quantity') quantity :
+              input.form-control(Value="0" type='number' placeholder='1' name='quantity')
+            each warehouse ,index in warehouseData
+              .col-sm
+                label(for=`${warehouse.name}`)= `${warehouse.name}`
+                input.form-control(Value="0" type='number' placeholder='1' name=`${warehouse.name}`)
+
+            
+            .col-sm
+              label(for='category') category :
+              select.form-select(name='category' type='text')
+                each category ,index in categoryData
+                  option(value=`${category._id}#${category.name}#${category.categoryNo}`)= `${category.name}`
+
+            .col-sm
+              label(for='brand') Brand :
+              select.form-select(name='brand' type='text')
+                each brand ,index in brandData
+                  option(value=`${brand._id+brand.name}`)= `${brand.name}`
+
+            .col-sm
+              label(for='vendor') Vendor :
+              select.form-select(name='vendor' type='text')
+                each vendor ,index in vendorData
+                  option(value=`${vendor._id+vendor.name}`)= `${vendor.name}`
+
+          .row
+            .col-sm
+              label(for='status') Status :
+              select.form-select(name='status' type='text')
+                option(value='A') A
+                option(value='NA') NA
+          
+            .col-sm
+              label(for='SuperProductID') Super Product ID:
+              input.form-control(type='trxt'  name='SuperProductID')
+
+            .col-sm
+              label(for='group') Group
+              select.form-select(name='group' type='text')
+                option(value="false") false
+                option(value="true") true
+
+            .col-sm
+              label(for='variant') variant
+              select.form-select(name='variant' type='text')
+                option(value="false") false
+                option(value="true") true
+             
+            .col-sm
+              label(for='warranty') warranty
+              select.form-select(name='warranty' type='number')
+                option(value="0") No Warranty
+                option(value="1") 1 year
+                option(value="2") 2 year
+                option(value="3") 3 year
+             
+          .row
+            .col-sm
+              label.text-white .
+              br
+              button.btn.btn-primary(type='submit') Submit
+
+        table.table
+          thead
+            tr
+              //- th(scope='col') #
+              th(scope='col') No
+              th(scope='col') Name
+              th(scope='col') Cost
+              th(scope='col') Price
+              th(scope='col') Discount Price
+              th(scope='col') Quantity
+              th(scope='col') Naseem
+              th(scope='col') Qurain
+              th(scope='col') Category
+              th(scope='col') sellCount
+              th(scope='col') Brand
+              th(scope='col') Vendor
+              th(scope='col') Status
+              th(scope='col') warranty
+          tbody
+            each product,index in productData
+               
+              tr
+                //- th(scope='row')= index+1
+                
+                td
+                  a(href=`productPage/${product._id}`)
+                    div= `${product.productNo}`
+                td= product.name
+                if product.cost
+                  td= `${product.cost.toFixed(3)}`
+                else
+                  td -
+                if product.cost
+                  td= `${product.price.toFixed(3)}`
+                else 
+                  td -
+                if product.discountPrice == 0
+                  td  -
+                else
+                  td= `${product.discountPrice} K.D`
+                    a(href=`deletProductDiscount/${product._id}`)
+                      i.bi.bi-trash.m-2
+
+                td= `${product.quantity}`
+                td= `${product.naseem}`
+                td= `${product.qurain}`
+                td= `${product.categoryName}`
+                td= `${product.sellCount}`
+                td= product.brandName
+                td= product.vendorName
+                td= `${product.status}`
+                td= product.warranty
+                td
+                  a(href=`deletProduct/${product._id}`)
+                    .badge.text-bg-danger.ms-1
+                      i.bi.bi-trash.m-2
+

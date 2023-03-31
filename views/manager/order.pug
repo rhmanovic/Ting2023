@@ -1,0 +1,90 @@
+extends layout
+
+block content
+
+  - var profit = 0
+
+  .main.container
+    h1 صفحة الطلبات
+
+
+    .row
+        h3 انشئ طلب
+        
+  
+        form(method='POST' action='/manager/AddOrder')
+          .row
+            .col-sm
+              label(for='warehouse') المتجر :
+              select.form-select(name='warehouse' type='text')
+                option(value="qurain") القرين
+                option(value="naseem") الجهراء
+
+                
+            .col-sm
+              label.text-white .
+              br
+              button.btn.btn-primary(type='submit') طلب جديد
+        .col.col-lg-6
+            table.table
+                thead
+                        tr.table-secondary
+                            th(scope='col') رقم الطلب
+                            th(scope='col') رقم الفاتورة
+                            //- th(scope='col') Order No
+                                //-   th(scope='col') ID
+                            th(scope='col') المتجر
+                            th(scope='col') الحالة
+                            th(scope='col') التاريخ
+                            th(scope='col') الاجمالي
+                            if managerNow
+                              th(scope='col') التكلفة
+                              th(scope='col') الهامش
+                tbody
+                        each order,index in orderData
+                            
+                            tr
+                                th(scope='row')
+                                    a(href=`orderPage/${order._id}`)
+                                        div= `${order.orderNo}`
+                                        //- div= index+1
+                                //- td= `${order.orderNo}`
+                                //- td= `${order._id}`
+
+                                td= order.invoice
+
+                                if (order.warehouse == "qurain")
+                                    td
+                                        span.badge.text-bg-success= `${order.warehouse}`
+                                else if (order.warehouse == "naseem")
+                                    td
+                                        span.badge.text-bg-primary= `${order.warehouse}`
+                                else
+                                    td
+                                        span.badge.text-bg-warning= `${order.warehouse}`
+
+                                if (order.status == "completed")
+                                    td.text-primary= `${order.status}`
+                                else
+                                    td= `${order.status}`
+
+
+                                td= `${order.time.toLocaleDateString("en-GB")}`
+                                td= order.totalPrice
+
+                                if managerNow
+                                  td= order.totalCost
+                                  if (!isNaN(order.totalPrice - order.totalCost))
+                                    td= (order.totalPrice - order.totalCost).toFixed(3)
+                                    -  profit += (order.totalPrice - order.totalCost)
+
+                        p= profit
+
+
+
+                                //- td= order.status
+
+
+
+                
+

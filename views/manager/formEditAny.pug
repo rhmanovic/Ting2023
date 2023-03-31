@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  .main.container
+    
+    
+
+
+    .row
+        h3= `Edit ${data.collection} ${data.field}`
+
+        form(method='POST' action='/manager/editAny')
+          .row
+            if ( data.field == "warehouse" ) 
+              .col-sm
+                select.form-select(name='value' type='string')
+                  option(value="qurain") القرين
+                  option(value="naseem") النسيم
+            else
+              .col-sm
+                label(for=`${data.field}`)= `${data.field}`
+                input.form-control(type=`${data.type}` step=".001" placeholder=`${data.value}` name="value")
+
+
+            .col-sm
+            .col-sm
+              
+              input.form-control(type="hidden" value=`${data.field}` name="field")
+              input.form-control(type="hidden" value=`${data.returnTo}` name="returnTo")
+              input.form-control(type="hidden" value=`${data.collection}` name="collection")
+              input.form-control(type="hidden" value=`${data.id}` name="id")
+              input.form-control(type="hidden" value=`${data.referer}` name="referer")
+            .col-sm
+              label.text-white .
+              br
+              button.btn.btn-primary(type='submit') Submit
+

@@ -1,0 +1,53 @@
+extends layout
+
+block content
+  .main.container
+    h1 Categories Page
+
+
+    .row
+        h3 Create Category
+
+        form(method='POST' action='/manager/AddCategory')
+          .row
+            .col-sm
+              label(for='name') Name :
+              input.form-control(type='text' placeholder='Name' name='name')
+            .col-sm
+              label.text-white .
+              br
+              button.btn.btn-primary(type='submit') Submit
+
+        table.table
+          thead
+            tr
+              th(scope='col') Category No
+              th(scope='col') Name
+              th(scope='col') Image
+              //- th(scope='col') ID
+              th(scope='col') 
+          tbody
+            each category,index in categoryData
+              tr
+                th(scope='row')= category.categoryNo
+                td= `${category.name}`
+                if category.img
+                  td 
+                    a(href=`${category.img}`) Image Link
+                else
+                  td -
+
+                td
+                  a(href=`/manager/uploadImage/Category/${category._id}/category`)
+                    .badge.text-bg-danger.ms-1
+                        | Upload Image
+
+
+                //- td= `${category._id}`
+                //td
+                    a(href=`/manager/deletCategory/${category._id}`)
+                        .badge.text-bg-danger.ms-1
+                            i.bi.bi-trash.m-2
+
+                
+

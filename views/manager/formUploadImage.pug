@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .main.container
+    - var action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}`
+    
+    .row
+        h3= `Upload ${data.collection} Image`
+
+        form.input-group(method='POST' action=action enctype='multipart/form-data')
+          .row
+            
+            .col-sm
+              .input-group.mb-3
+                input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
+                //label.input-group-text(for='inputGroupFile02') Upload
+                button#myFile.input-group-text(for='inputGroupFile01') Upload
+
+              
+
+
+
+
