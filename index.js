@@ -135,13 +135,12 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// listen on port 5000
-app.listen(3000, function() {
-  console.log('Express app listening on port 3000');
-});
+
 
 
 app.use(function(err, req, res, next) {
   res.status(err.status || 500)
   // .json(response.error(err.status || 500));
 });
+
+module.exports = app;
