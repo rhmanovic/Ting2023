@@ -90,6 +90,7 @@ app.use(function(req, res, next) {
   res.locals.cartCountNow = req.session.cartCount;
   res.locals.managerNow = req.session.manager;
   res.locals.theSalesemanNow = req.session.theSaleseman;
+  res.locals.currentUserName = req.session.userName;
 
   next();
 });
@@ -135,7 +136,10 @@ app.use(function(err, req, res, next) {
   });
 });
 
-
+// listen on port 5000
+app.listen(3000, function() {
+  console.log('Express app listening on port 3000');
+});
 
 
 app.use(function(err, req, res, next) {
