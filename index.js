@@ -147,4 +147,3 @@ app.use(function(err, req, res, next) {
   // .json(response.error(err.status || 500));
 });
 
-module.exports = app;
