@@ -11,7 +11,7 @@ block content
         .col-6.col-lg-4
           //- a#card-link1(href="https://coursepage.playcode.io/?course=Mechanical Design")
           .card.cardShadow.mb-3
-            img(src= `${category.img}` style="aspect-ratio: 1 / 1;")
+            //img(src= `${category.img}` style="aspect-ratio: 1 / 1;"
             .card-body
               h5.card-title.text-center#card-title1= `${category.name}`
               ///i.fas.fa-chalkboard-teacher.text-secondary
@@ -19,3 +19,4 @@ block content
               a.stretched-link(href=`/category/${category.categoryNo}`)
 
   
+)
