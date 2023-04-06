@@ -136,9 +136,10 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// listen on port 5000
-app.listen(8080, function() {
-  console.log('Express app listening on port 8080');
+var port = process.env.PORT || 3000;
+
+var server=app.listen(port,function(req,res){
+    console.log("Catch the action at http://localhost:"+port);
 });
 
 
