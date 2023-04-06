@@ -8,7 +8,7 @@
   "author": "Abdulrahman Al-Dhufiri",
   "private": true,
   "scripts": {
-    "start": "node ./index"
+    "start": "node app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
