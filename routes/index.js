@@ -551,8 +551,10 @@ router.post('/cart', function(req, res, next) {
   const host = req.headers.host;
   var hostNew = "";
 
-  if (host = "localhost:3000"){
+  if (host == "localhost:3000"){
     hostNew = "itcstore.net";
+  } else {
+    hostNew = host;
   }
   var newProduct = {
     ID: req.body.productId,
