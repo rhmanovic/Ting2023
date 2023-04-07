@@ -23,7 +23,7 @@ var nodemailer = require('nodemailer');
 router.get('/', function(req, res, next) {
   // res.send('Hello World!')
 
-  Category.find({}).exec(function(error, categoryData) {
+  Category.find({}).sort({ categoryNo: 1 }).exec(function(error, categoryData) {
     if (error) {
       return next(error);
     } else {
@@ -550,6 +550,9 @@ router.post('/cart', function(req, res, next) {
   var productExistInCart = false;
   const host = req.headers.host;
 
+  if (host = "localhost:3000"){
+    host = "itcstore.net";
+  }
   var newProduct = {
     ID: req.body.productId,
     Name: req.body.name,
@@ -1133,6 +1136,7 @@ router.post('/login', function(req, res, next) {
         req.session.email = user.email;
         req.session.manager = user.admin;
         req.session.theSaleseman = user.saleseman;
+        req.session.userName = user.name;
         console.log("admin: " + user.admin)
         console.log("saleseman: " + user.saleseman)
 
