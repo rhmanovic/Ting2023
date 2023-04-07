@@ -491,6 +491,7 @@ function addLinkImgLingToAny(collection, id, returnTo, filename, res) {
   //this shoudl be dynamic us refere
   var z = 0;
   if (collection == "Product") { var x = Product; var returnLink = '/manager/productPage/' + id; z = 1 }
+  else if (collection == "Product" && returnTo == "productshop") { var x = Product; var returnLink = '../product/' + id; z = 1 }
   else if (collection == "Category") { var x = Category;; var returnLink = '/manager/category/'; z = 1 }
 
   if (z == 1) {
@@ -653,6 +654,7 @@ router.get('/test', mid.requiresAdmin, function(req, res, next) {
   });
 })
 
+
 router.get('/completeOrder/:orderId/', mid.requiresSaleseman, function(req, res, next) {
   const { orderId } = req.params;
 
@@ -662,7 +664,7 @@ router.get('/completeOrder/:orderId/', mid.requiresSaleseman, function(req, res,
     } else {
       arr_update_dict = { "$set": {} };
       arr_update_dict["$set"]["status"] = "completed";
-      arr_update_dict["$set"]["totalPrice"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * orderData.price[i] }, 0) - orderData.discount + orderData.shippingCost).toFixed(3);
+      arr_update_dict["$set"]["totalPrice"] = (orderData.quantity.reduce(function(r,a,i) { return r + a * orderData.price[i] }, 0) - orderData.discount + orderData.shippingCost).toFixed(3) ;
       arr_update_dict["$set"]["totalCost"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * orderData.cost[i] }, 0)).toFixed(3)
 
 
@@ -688,12 +690,7 @@ router.get('/completeOrder/:orderId/', mid.requiresSaleseman, function(req, res,
 
         try {
           Product.bulkWrite(writeOperations).then(function() {
-
-
             res.redirect('back')
-
-
-
           })
         } catch (error) {
           print(error)
@@ -703,12 +700,54 @@ router.get('/completeOrder/:orderId/', mid.requiresSaleseman, function(req, res,
 
     }
   });
+});
 
 
+router.get('/returnOrder/:orderId/', mid.requiresSaleseman, function(req, res, next) {
+  const { orderId } = req.params;
+
+  Order.findOne({ _id: orderId }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      arr_update_dict = { "$set": {} };
+      arr_update_dict["$set"]["status"] = "returned";
+      arr_update_dict["$set"]["totalCost"] = (orderData.quantity.reduce(function(r,a,i) { return r + a * orderData.price[i] }, 0) - orderData.discount + orderData.shippingCost).toFixed(3) ;
+      arr_update_dict["$set"]["totalPrice"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * orderData.cost[i] }, 0)).toFixed(3)
 
 
+      Order.findOneAndUpdate({ _id: orderId }, arr_update_dict).then(function() {
 
+        function buildUpdateOneWriteOperations(productIDs, warehouse, quantity) {
+          console.log("warehouse: " + warehouse)
 
+          const writeOperations = productIDs.map((productID, index) => (
+            {
+              updateOne: {
+                filter: { _id: productID },
+                update: { $inc: { [warehouse]: +quantity[index], quantity: +quantity[index], sellCount: -quantity[index]} }
+              }
+            }));
+
+          return writeOperations;
+        }
+
+        var writeOperations = buildUpdateOneWriteOperations(orderData.productIDs, orderData.warehouse, orderData.quantity)
+
+        console.log(writeOperations)
+
+        try {
+          Product.bulkWrite(writeOperations).then(function() {
+            res.redirect('back')
+          })
+        } catch (error) {
+          print(error)
+        }
+        // res.redirect('back');
+      })
+
+    }
+  });
 });
 
 
