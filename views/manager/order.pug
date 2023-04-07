@@ -41,7 +41,9 @@ block content
                               th(scope='col') التكلفة
                               th(scope='col') الهامش
                 tbody
+                        - var previousIndexOrder = 0
                         each order,index in orderData
+                          if (order.status != "deleted")
                             
                             tr
                                 th(scope='row')
@@ -50,8 +52,12 @@ block content
                                         //- div= index+1
                                 //- td= `${order.orderNo}`
                                 //- td= `${order._id}`
+                                if ((previousIndexOrder-1) == order.invoice ||  previousIndexOrder == 0)
+                                  td= order.invoice  
+                                else
+                                  td.bg-danger= order.invoice  
 
-                                td= order.invoice
+                                - previousIndexOrder = order.invoice
 
                                 if (order.warehouse == "qurain")
                                     td
@@ -64,16 +70,28 @@ block content
                                         span.badge.text-bg-warning= `${order.warehouse}`
 
                                 if (order.status == "completed")
-                                    td.text-primary= `${order.status}`
+                                    td.text-white.bg-primary مكتمل
+                                else if (order.status == "processing")
+                                    td.text-secondary جديد
+                                else if (order.status == "returned")
+                                    td.text-white.bg-danger مرتجع
+                                else if (order.status == "canceled")
+                                    td.bg-warning ملغي
                                 else
                                     td= `${order.status}`
 
 
                                 td= `${order.time.toLocaleDateString("en-GB")}`
-                                td= order.totalPrice
+                                if (order.status == "returned")
+                                  td= order.totalCost
+                                else
+                                  td= order.totalPrice
 
                                 if managerNow
-                                  td= order.totalCost
+                                  if (order.status == "returned")
+                                    td= order.totalPrice
+                                  else
+                                    td= order.totalCost
                                   if (!isNaN(order.totalPrice - order.totalCost))
                                     td= (order.totalPrice - order.totalCost).toFixed(3)
                                     -  profit += (order.totalPrice - order.totalCost)
