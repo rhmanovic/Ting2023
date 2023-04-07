@@ -549,9 +549,10 @@ router.get('/emptyCart', function(req, res, next) {
 router.post('/cart', function(req, res, next) {
   var productExistInCart = false;
   const host = req.headers.host;
+  var hostNew = "";
 
   if (host = "localhost:3000"){
-    host = "itcstore.net";
+    hostNew = "itcstore.net";
   }
   var newProduct = {
     ID: req.body.productId,
@@ -585,7 +586,7 @@ router.post('/cart', function(req, res, next) {
     req.session.cartData0 = old;
     req.session.save(function(err) {
       // session saved
-      return res.redirect(`https://${host}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
+      return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   } else {
     old.push(newProduct);
@@ -595,7 +596,7 @@ router.post('/cart', function(req, res, next) {
     // console.log(req.session.cartData0.length);
     req.session.save(function(err) {
       // session saved
-      return res.redirect(`https://${host}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
+      return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   }
 
