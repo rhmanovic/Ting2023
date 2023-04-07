@@ -17,7 +17,8 @@ block content
                 
                 span.card-text.m-2#card-text1= `${product.price} د.ك`
                 br
-                //span.card-text.m-2#card-text1= `${product.brandName}`
+                if theSalesemanNow || managerNow
+                  span.card-text.m-2#card-text1.badge.bg-dark= `${product.brandName}`
 
                 if product.warranty > 0
                   .container.p-0
@@ -28,8 +29,11 @@ block content
                         if product.warranty == 2
                           span.card-text.m-2#card-text1.badge.bg-success= ` كفالة ${product.warranty} سنة`
   
-                span= salesmanNow
-                if theSalesemanNow
+                
+                if theSalesemanNow || managerNow
+                  
+
+                //if theSalesemanNow || managerNow
                   br
                   span.card-text.m-2#card-text1= `Qurain: ${product.qurain} | Naseem: ${product.naseem}`
                 a.stretched-link(href=`/product/${product.productNo}`)
