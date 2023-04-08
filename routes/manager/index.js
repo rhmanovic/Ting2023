@@ -11,6 +11,8 @@ var TransferRequest = require('../../models/transferRequest');
 var User = require('../../models/user');
 var City = require('../../models/city');
 var mid = require('../../middleware');
+var nodemailer = require('nodemailer');
+
 
 
 var fs = require('fs');
@@ -214,8 +216,17 @@ router.get('/purchase', mid.requiresSaleseman, function(req, res, next) {
 });
 
 
-router.get('/order', mid.requiresSaleseman, function(req, res, next) {
-  Order.find({}).sort({ invoice: -1 }).exec(function(error, orderData) {
+router.get('/order/:sortTo', mid.requiresSaleseman, function(req, res, next) {
+  var { sortTo } = req.params;
+
+  if (sortTo == 1) {
+    sortTo = "invoice"
+  } else if (sortTo == 2) {
+    sortTo = "orderNo"
+  }
+  
+  
+  Order.find({}).sort({ [sortTo]: -1 }).exec(function(error, orderData) {
     if (error) {
       return next(error);
     } else {
@@ -1139,12 +1150,51 @@ router.get('/deletBrand/:brandId/', mid.requiresAdmin, function(req, res) {
     res.redirect('back')
   })
 })
+
 router.get('/deletWarehouse/:warehouseId/', mid.requiresAdmin, function(req, res) {
 
   const { warehouseId } = req.params;
   Warehouse.deleteOne({ _id: warehouseId }).then(function() {
     res.redirect('back')
   })
+})
+
+router.get('/send', function(req, res) {
+
+  const { user } = req.query;
+  const { orderID } = req.query;
+  const { mobile } = req.query;
+  const { massege } = req.query;
+
+ 
+
+   const output = 'Email Body';
+  // get it from here https://myaccount.google.com/apppasswords
+  var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eng.dugaim@gmail.com',
+    pass: 'kioxedtstdtierbv'
+  }
+    
+});
+
+var mailOptions = {
+  from: 'eng.dugaim@gmail.com',
+  to: 'i.dugaim@gmail.com',
+  subject: `${massege} رقم الطلب: ${orderID}`,
+  text: `mobile: ${mobile},  orderID: ${orderID}. https://itcstore.net/manager/orderPage/${orderID}`
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+    res.redirect('/emptyCart')
+  }
+}); 
+  
 })
 
 
