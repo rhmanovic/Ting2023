@@ -2,6 +2,7 @@ extends layout
 
 block content
 
+   
     // Button trigger modal
     button.btn.btn-primary#modalButton(hidden type='button' data-bs-toggle='modal' data-bs-target='#exampleModalCenter')
 
@@ -43,7 +44,11 @@ block content
         .card.container.mt-4.cardShadow.border-3
             .container.my-3
                 .row.row-cols-1.row-cols-lg-2.flex-row-reverse
-                    img.d-block.w-100.p-4(src=productData.img, alt='...' style="aspect-ratio: 1 / 1;")
+                    //div.insta
+                    img.d-block.w-100.p-4.insta(src=productData.img, alt='...' style="aspect-ratio: 1 / 1;")
+                    
+                    
+      
 
                     
                     form#cart(method='POST' action='/cart')
