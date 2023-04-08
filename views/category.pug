@@ -3,13 +3,15 @@ extends layout
 block content
   .main.container
     .row#cards
-
+      - var bgIndex = 0
       //- this should be repeated for each course
       each product,index in productData
         if (product.variant == false)
+          - bgIndex +=1
+          - if (bgIndex==5) {bgIndex = 1}
           .col-6.col-lg-4.px-2
             .card.cardShadow.mb-3
-              img(src=product.img style="aspect-ratio: 1 / 1;")
+              img.insta(src=product.img style=`aspect-ratio: 1 / 1;background-image: url("https://itc-4.abdulrahmanald1.repl.co/img/backgrounds/0${bgIndex}.png");`)
               .card-body
                 h5.card-title.text-center#card-title1= `${product.name}`
                 ///i.fas.fa-chalkboard-teacher.text-secondary
