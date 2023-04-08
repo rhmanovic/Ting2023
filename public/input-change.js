@@ -1,3 +1,22 @@
+
+function Pricechange(productID, index) {
+
+    console.log("index:  " + index)
+    console.log("productID:  " + productID)
+
+
+
+  var Q = document.getElementById(`${productID}-q=${index}`).value
+  var newPrice = document.getElementById(`${productID}-i=${index}`).value
+
+  console.log("newPrice:  " + newPrice)
+  console.log("Quantity:  " + Q)
+
+
+  Quantitychange(productID,Q,index, newPrice);
+  
+
+};
 function CartChange (index,length) {
 
   
@@ -22,7 +41,6 @@ function CartChange (index,length) {
 
   
 }
-
 function TotalChange (length) {
 
   
@@ -44,31 +62,6 @@ function TotalChange (length) {
 
 
 }
-
-
-
-
-$("#addorder").submit(function(e) {
-
-
-  var city = document.getElementById("city").value;
-
-
-  if (city > 20) {
-    $("#errorCart").html("يجب اختيار طريقة الشحن");
-    return false;
-  } else {
-    $("#errorCart").html("");
-
-  }
-
-});
-
-
-
-
-
-
 $("#cart").submit(function(e) {
 
 
@@ -86,21 +79,37 @@ $("#cart").submit(function(e) {
   }
 
 });
-
-$(".p-1").change(function() {
-  console.log("price changed")
-
+$("#discount").change(function() {
+  UpdateFinalPrice();
 });
 
 
+$("#addorder").submit(function(e) {
 
 
+  var city = document.getElementById("city").value;
 
+
+  if (city > 20) {
+    $("#errorCart").html("يجب اختيار المنقطة السكنية");
+    return false;
+  } else {
+    $("#errorCart").html("");
+
+  }
+
+});
 $("#city").change(function() {
 
   var subTotalPrice = document.getElementById("subTotalPrice").textContent;
   var shippingPrice = this.value.split("#")[1]
-  var discountrice = document.getElementById("discount").value;
+
+  if (document.getElementById("discount")) {
+    var discountrice = document.getElementById("discount").value;
+  } else {
+    var discountrice = 0;
+  }
+  
 
 
 
@@ -120,65 +129,24 @@ $("#city").change(function() {
 
 
 });
-
-
-$("#discount").change(function() {
-  // console.log("discount changed")
-
-  //   var discountrice = document.getElementById("discount").value;
-
-  //   var subTotalPrice = document.getElementById("subTotalPrice").textContent;
-
-
-  //   console.log("discount :" + discountrice)
-  //   console.log("subTotalPrice :" + subTotalPrice)
-
-
-  // $("#finalPrice").html( - Number(discountrice) + Number(subTotalPrice));
-  UpdateFinalPrice();
-
-});
-
-
-
-// $("#discount").change(function() {
-
-//   console.log("discount  changed!");
-
-//   // var discountrice = document.getElementById("discount").textContent;
-
-//   // $("#finalPrice").html(Number(shippingPrice) + Number(subTotalPrice));
-  
-// }
-
-
 $("#orderProduct").change(function() {
-
   document.getElementById("qurainProductOrder").value = this.value.split("#")[1]
   document.getElementById("naseemProductOrder").value = this.value.split("#")[2]
   document.getElementById("PriceO").value = this.value.split("#")[3]
-
 });
-
 $("#variant").change(function() {
-
   document.getElementById("pid").value = value = this.value.split("#")[0]
   document.getElementById("pprice").value = value = this.value.split("#")[1]
   document.getElementById("pproductNo").value = value = this.value.split("#")[2]
   document.getElementById("lprice").textContent = value = this.value.split("#")[1] + " K.D"
-
 });
-
-
-
 $(".input1").change(function() {
   console.log("Input text changed!");
-  Quantitychange(this.id, this.value)
+  Quantitychange2(this.id, this.value)
 });
-
 $(".remove").click(function() {
   console.log(this.value);
-  Quantitychange(this.value, 0)
+  Quantitychange2(this.value, 0)
 });
 
 
@@ -216,27 +184,32 @@ function Quantitychange(productID, Q, index, newPrice) {
   });
 
 };
+function Quantitychange2(productID, Q) {
+  if (Q == 0) {
+    var newQuantity = 0;
+  } else {
+    var newQuantity = document.getElementById(productID).value;
+  }
+  console.log("productID:  " + productID)
+  console.log("newQuantity:  " + newQuantity)
+  $.get(`/editProductQuantite2/${productID}/${newQuantity}`, function(data) {
+    var priceId = `#R${productID}`
+    $("#subTotalPrice").html(data.totalPrice)
+    $("#totalPrice").html(data.totalPrice)
+    if (data.quantity == "0") {
+      var divId = `#div${productID}`
+      $(divId).html("");
+    } else {
+      console.log(data)
+      $(priceId).html(data.price * 1000 * data.quantity / 1000);
+      UpdateFinalPrice()
+    }
 
 
-
-function Pricechange(productID, index) {
-
-    console.log("index:  " + index)
-    console.log("productID:  " + productID)
-
-
-
-  var Q = document.getElementById(`${productID}-q=${index}`).value
-  var newPrice = document.getElementById(`${productID}-i=${index}`).value
-
-  console.log("newPrice:  " + newPrice)
-  console.log("Quantity:  " + Q)
-
-
-  Quantitychange(productID,Q,index, newPrice);
-  
+  });
 
 };
+
 
 
 
@@ -248,11 +221,16 @@ function UpdateFinalPrice() {
   var shipping = document.getElementById("shipping").textContent;
   var shipping = document.getElementById("shipping").textContent;
     // var shippingPrice =document.getElementById("city").split("#")[1]
+  
+  
+  if (document.getElementById("discount")) {
+    var discountrice = document.getElementById("discount").value;
+  } else {
+    var discountrice = 0;
+  }
+  
 
-  var discountrice = document.getElementById("discount").value;
-
-  console.log(discountrice);
-  console.log("shipping:" + shipping);
+  
 
   $("#finalPrice").html((Number(shipping) + Number(subTotalPrice) -  Number(discountrice)).toFixed(3)) ;
 
@@ -263,5 +241,3 @@ function UpdateFinalPrice() {
   }
 
 }
-
-
