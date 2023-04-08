@@ -1,8 +1,6 @@
 extends layout
 
 block content
-  form#addorder(method='POST' action='/AddOrder')
-
     - var totalPrice = 0
     - var shippingPrice = 1002
     // Page Container
@@ -59,7 +57,7 @@ block content
                                                                                 span#basic-addon1.h3 -
                                                                                   
                                                                             
-                                                                            input.form-control.col.text-center.btn-number.input-number(type='text', id=`${product._id}-q=${index}`, name=`quantity${index}`, value=`${cartData2[index].Quantity}`, min='0', max='1000' onchange=`Pricechange("${product._id}",${index})`)
+                                                                            input.form-control.col.text-center.btn-number.input-number(type='text', id=`${product._id}`, name=`quantity${index}`, value=`${cartData2[index].Quantity}`, min='0', max='1000' onchange=`Quantitychange2("${product._id}")`)
 
                                                                             .input-group-prepend
                                                                                 button.btn.btn-danger.btn-number.tomato(type='button', data-type='plus', data-field=`quantity${index}`)
@@ -68,7 +66,6 @@ block content
                                                                     
                                                                 .p-2.bd-highlight
                                                                     h6.small-font= `سعر الحبة: ${product.price} K.D`
-                                                                    input.p-1(placeholder="" type='number' id=`${product._id}-i=${index}` name='shopPrice' step="0.001" value=`${product.price}` onchange=`Pricechange("${product._id}",${index})`)
                                                                 .p-2.bd-highlight
                                                                     span.small-font= `الاجمالي:`
                                                                     span.small-font= ` K.D `
@@ -82,7 +79,7 @@ block content
                                             
                 .col.col-md-4.p-0
                     .card.cardShadow.mr-md-2.mt-2.mt-md-0
-                        h4.mr-3.mt-2 ملخص الطلبية
+                        h4.mx-3.mt-2 ملخص الطلبية
                         hr.mx-3
                         .container
                             .row
@@ -93,14 +90,8 @@ block content
                             .row
                                 .col الشحن
                                 .col.text-left.ltr
-                                    span#shipping اختر توصيل/استلام
+                                    span#shipping اختر المنطقة
                                     span#shipping1
-                            .row
-                              .d-flex.flex-column.bd-highlight.mb-3
-                                .pt-2.bd-highlight الخصم:
-                                input.bd-highlight( type='number' id='discount' name='discount' value=0 step="0.001")
-
-                                    
                                 
                             hr.mx-3
                             .row
@@ -112,11 +103,11 @@ block content
                             form#addorder(method='POST' action='/AddOrder')
                                 .d-flex.flex-column.bd-highlight.mb-3
 
-                                    .pt-2.bd-highlight اختر توصيل/استلام:
+                                    .pt-2.bd-highlight اختر المنطقة:
                                     select.form-select#city(name='city' type='text')
                                       option(value="1001") المناطق
                                       each cityEnglish,index in citytData.cityEnglish
-                                        option(value=`${citytData.ID_CITY[index]}#${citytData.cost[index]}#${citytData.cityEnglish[index]}`)= `${citytData.cityArabic[index]}`
+                                        option(value=`${citytData.ID_CITY[index]}#${citytData.price[index]}#${citytData.cityEnglish[index]}`)= `${citytData.cityArabic[index]}`
 
                                    
 
@@ -129,17 +120,15 @@ block content
                                         
                                   
 
-                                    .pt-2.bd-highlight الفاتورة:
-                                    input.p-1.bd-highlight( type='number' id='invoice' name='invoice' required="required" oninvalid="this.setCustomValidity('ضع الفاتورة')" oninput="setCustomValidity('')" )
                                     .pt-2.bd-highlight الاسم:
-                                    input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
+                                    input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' required="required" oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
                                     .pt-2.bd-highlight رقم الهاتف:
 
                                     input.p-1.bd-highlight.input-number(placeholder="رقم الهاتف" type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
-                                    //.pt-2.bd-highlight الايميل (اختياري):
-                                    //input.p-1.bd-highlight(placeholder="example@example.com" type='text' id='email' name='email')
+                                    .pt-2.bd-highlight الايميل (اختياري):
+                                    input.p-1.bd-highlight(placeholder="example@example.com" type='text' id='email' name='email')
                                     .pt-2.bd-highlight العنوان:
-                                    textarea.p-1.bd-highlight(placeholder="العنوان الكامل" type='text' id='address' name='address' oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
+                                    textarea.p-1.bd-highlight(placeholder="العنوان الكامل" type='text' id='address' name='address' required="required" oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
 
                                     .row.mt-3
                                       .col            
