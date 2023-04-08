@@ -1181,7 +1181,7 @@ router.get('/send', function(req, res) {
 
 var mailOptions = {
   from: 'eng.dugaim@gmail.com',
-  to: 'i.dugaim@gmail.com',
+  to: 'i.dugaim@gmail.com, ITC-Amjad@outlook.com',
   subject: `${massege} رقم الطلب: ${orderID}`,
   text: `mobile: ${mobile},  orderID: ${orderID}. https://itcstore.net/manager/orderPage/${orderID}`
 };
