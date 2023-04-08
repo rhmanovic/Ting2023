@@ -1,1230 +1,1258 @@
 var express = require('express');
 var router = express.Router();
-
-var Charge = require('../models/charge');
-var Chapter = require('../models/chapter');
-var Course = require('../models/course');
-
-var Product = require('../models/product');
-var Category = require('../models/category');
-var Vendor = require('../models/vendor');
-var Brand = require('../models/brand');
-var Warehouse = require('../models/warehouse');
-var Order = require('../models/order');
-var TransferRequest = require('../models/transferRequest');
-var User = require('../models/user');
-var City = require('../models/city');
-
-
-var mid = require('../middleware');
-
+var Product = require('../../models/product');
+var Category = require('../../models/category');
+var Vendor = require('../../models/vendor');
+var Brand = require('../../models/brand');
+var Warehouse = require('../../models/warehouse');
+var Order = require('../../models/order');
+var Purchase = require('../../models/purchase');
+var TransferRequest = require('../../models/transferRequest');
+var User = require('../../models/user');
+var City = require('../../models/city');
+var mid = require('../../middleware');
 var nodemailer = require('nodemailer');
 
-router.get('/', function(req, res, next) {
-  // res.send('Hello World!')
 
-  Category.find({}).sort({ categoryNo: 1 }).exec(function(error, categoryData) {
+
+var fs = require('fs');
+const multer = require('multer')
+var path = require('path');
+
+// dublicted in app an admin
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+
+
+    cb(null, path.join(__dirname, '../../public/img/upload'));
+
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+
+  }
+});
+// init upload
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 100000000 }, // this Number is Bytes //it's error msg not OK
+  fileFilter: function(req, file, cb) {
+    chickFileType(file, cb);
+
+  }
+}).single('myFile');
+
+function chickFileType(file, cb) {
+  // allowed Extensions
+  const fileType = /jpeg|jpg|png|gif|mp4/; // need to be modified for videos
+  // check ext
+  const extname = fileType.test(path.extname(file.originalname).toLowerCase());
+  // check mime
+  const mimetype = fileType.test(file.mimetype);
+
+  if (mimetype && extname) {
+
+    return cb(null, true); // null of error, true for call back
+
+  } else {
+    cb('Error: Images Only!'); // need to be modified for videos
+  }
+}
+
+
+
+
+router.get('/', mid.requiresSaleseman, function(req, res, next) {
+  return res.render('manager/index', { title: 'Home' });
+});
+
+router.get('/products', mid.requiresSaleseman, function(req, res, next) {
+  Product.find({}).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
-      return res.render('home', { title: 'Home', categoryData: categoryData });
-    }
-  });
-
-});
-
-
-
-router.get('/test', function(req, res, next) {
-  return res.render('test')
-});
-
-
-
-router.get('/category/:categoryNo', function(req, res, next) {
-  const { categoryNo } = req.params;
-
-  Product.find({ categoryNo: categoryNo }).exec(function(error, productData) {
-    if (error) {
-      return next(error);
-    } else {
-
-      if (productData[0]) { var title = productData[0].categoryName }
-      else { var title = categoryNo }
-
-      return res.render('category', { title: title, productData: productData });
-    }
-  });
-
-});
-
-
-router.get('/product/:productNo', function(req, res, next) {
-  const { productNo } = req.params;
-  const { ShowModal } = req.query;
-  const { Q } = req.query;
-
-
-  Product.findOne({ productNo: productNo }).exec(function(error, productData) {
-    if (error) {
-      return next(error);
-    } else {
-
-      Product.find({ SuperProductID: productData._id }).exec(function(error, productSub) {
+      // use later function to make it shorter
+      Brand.find({}).exec(function(error, brandData) {
         if (error) {
           return next(error);
         } else {
-
-
-
-          //console.log(productSub); JSON.parse
-          // let reqq= JSON.parse(req);
-
-          console.log(req.headers.host)
-          console.log(req.headers.referer)
-          return res.render('product', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
-
-
-        }
-      });
-
-
-    }
-  });
-
-});
-
-
-const accountSid = 'ACa3ea7f269ecdff5eedf49b833ec2c5b9';
-const authToken = 'c300ca1c68fb6b403bd4e68f9c06876f';
-const client = require('twilio')(accountSid, authToken);
-
-router.get('/sms', function(req, res, next) {
-  client.messages.create({
-    body: 'Thank your for order form TingStore شكرا لطلبك',
-    from: '+12149831341',
-    to: '+96551755332'
-  }, function(err, data) {
-    if (err) {
-      console.log(err);
-    }
-    console.log(data)
-  })
-    .then(message => console.log(message.sid));
-
-});
-
-router.get('/editProductQuantite2/:productID/:newQuantity/:newPrice', function(req, res) {
-  const { productID } = req.params;
-  const { newQuantity } = req.params;
-  const { newPrice } = req.params;
-  var old = req.session.cartData0;
-
-  console.log("productID: " + productID)
-  console.log("newQuantity: " + newQuantity)
-  console.log("newPrice: " + newPrice)
-  console.log("old: " + old)
-
-  try{
-    var data = {
-      quantity: 0,
-      price: 0,
-      totalPrice: 0
-    }
-
-    if (old) {
-      old.forEach(function(product, index, array) {
-        if (product.ID == productID) {
-          console.log("product: " + JSON.stringify(product));
-          console.log("array[index]: " + JSON.stringify(array[index]));
-          array[index].Price = Number(newPrice)
-          array[index].Quantity = Number(newQuantity)
-          
-          
-        }
-       
-      })
-    }
-  } finally {
-    console.log("old: " + JSON.stringify(old))
-
-    req.session.save(function(err) {
-     
-      req.session.cartData0 = old;
-      return res.send("done");
-    })
-  }
-  
-})
-
-
-router.get('/editProductQuantite/:productID/:newQuantity/:newPrice', function(req, res) {
-  const { productID } = req.params;
-  const { newQuantity } = req.params;
-  const { newPrice } = req.params;
-  var old = req.session.cartData0;
-
-  console.log ( "newQuantity :" + newQuantity );
-  console.log ( "newPrice :" + newPrice );
-  console.log ( 1 );
-  console.log ( newPrice );
-
-  // console.log("you reached editProductQuantite")
-
-  try {
-    var data = {
-      quantity: 0,
-      price: 0,
-      totalPrice: 0
-    }
-    var indexToSplice = 1000000;
-
-    console.log ( 2 );
-
-
-    if (req.session.cartData0) {
-      old.forEach(function(product, index, array) {
-        // data.totalPrice += product.Price*1000 * product.Quantity/1000;
-        // console.log("product.Price " + product.Price)
-        console.log ( 3 );
-        if (product.ID == productID) {
-          data.totalPrice += newPrice * 1000 * newQuantity / 1000;
-          if (newQuantity == 0) {
-            // array.splice(index, 1);
-            indexToSplice = index;
-            data.quantity = newQuantity;
-            data.price = newPrice;
-
-            console.log ( 4 );
-          } else {
-            // console.log("array[index]  " + JSON.stringify(array[index]));
-
-            array[index].Quantity = newQuantity;
-            array[index].Price = newPrice;
-            // console.log(newPrice);
-            // console.log("array[index]  " + JSON.stringify(array[index]));
-
-            data.quantity = newQuantity;
-            data.price = newPrice;
-
-            console.log ( 5 );
-          }
-
-        } else {
-          data.totalPrice += 
-            newPrice * 1000 * product.Quantity / 1000;
-          console.log ( 6 );
-                      console.log(newPrice * 1000 * product.Quantity / 1000)
-
-        }
-      });
-
-    }
-  } finally {
-    if (indexToSplice != 1000000) {
-      old.splice(indexToSplice, 1);
-      console.log ( 7 );
-    }
-
-
-    req.session.cartData0 = old;
-    if (old.length == 0) {
-      req.session.cartCount = null;
-      console.log ( 8 );
-    }
-
-
-
-    req.session.save(function(err) {
-      console.log ( 9 );
-      console.log(old);
-      console.log(data);
-      req.session.cartData0 = old;
-      return res.send(data);
-    })
-  }
-
-})
-
-
-
-
-
-router.get('/cart', function(req, res, next) {
-
-  var cartIDs = [];
-  var productData = [];
-  var cartData = [];
-  var orderData = {};
-
-
-  if (req.session.orderID == null && req.session.cartData0 == null) {
-    // cart totally empty and the User just get in without adding any product
-    // Rout him to the cart so he can see Empty Cart
-    return res.render('cart', { title: 'Cart', cartData: productData, cartData2: cartData });
-
-  } else if (req.session.orderID == null && req.session.cartData0 != null) {
-    // The User have added product to Cart and we SHOULD make for him orderID here
-    // Create Order then route to the Cart
-    createOrder_SafeOrederIdToSession_thenRout();
-
-  } else if (req.session.orderID != null && req.session.cartData0 == null) {
-    // Cart empty and we had made for him order 
-    // this scenario not possible
-    // Do nothing
-  } else if (req.session.orderID != null && req.session.cartData0 != null) {
-    // The User have added product to Cart and we have made for him orderID here
-    // Just Rout him to the Cart to see his Cart
-    findProductsThenRoute()
-  }
-
-
-  function createOrder_SafeOrederIdToSession_thenRout() {
-    Order.create(orderData, function(error, theOrder) {
-      if (error) {
-        console.log(error.code);
-        return next(error);
-      } else {
-        console.log("ORDER CREATED")
-        console.log("ORDER ID: " + theOrder.id)
-        req.session.orderID = theOrder.id;
-        req.session.save(function(err) {
-          // session saved
-          // res.redirect('/')
-          findProductsThenRoute()
-        })
-      }
-    });
-  }
-
-  function findProductsThenRoute() {
-    var cartIDs = [];
-    var cartData = req.session.cartData0;
-    if (cartData) {
-      cartData.forEach(function(product, index, array) {
-        cartIDs.push(product.ID);
-      });
-    }
-
-    Product.find({ _id: { $in: cartIDs } }).exec(function(error, productData) {
-      // console.log("cartIDs:  " + cartIDs)
-      // console.log("cartData: " + JSON.stringify(cartData))
-
-
-      City.findOne({ _id: "63ad38dee77cc01557b258e4" }).exec(function(error, citytData) {
-        if (error) {
-          return next(error);
-        } else {
-
-
-
-          // return res.render('product', { title: 'Product]', productData: productData, ShowModal:ShowModal, Q:Q });
-          return res.render('cart2', { title: 'Cart', cartData: productData, cartData2: cartData, citytData: citytData });
-
-
-        }
-      });
-
-    });
-  }
-
-})
-
-
-
-router.post('/AddOrder2', function(req, res, next) {
-
-  var cartIDs = [];
-  var cartData = req.session.cartData0;
-  var orderID = req.session.orderID;
-  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Costs = []; var Warranties = [];
-
-  var orderData = {
-    'mobile': req.body.mobile,
-    'invoice': req.body.invoice,
-    'address': req.body.address,
-    'discount': req.body.discount,
-    'customerName': req.body.customerName,
-    'shippingCost': req.body.shippingCost,
-    // 'userID': req.body.userID,    
-    // 'email': req.body.email,    
-    // 'ID_CITY': req.body.city.split("#")[0],
-    // 'shippingCost': req.body.city.split("#")[1],
-    // 'city': req.body.city.split("#")[2],
-  };
-  
-
-  // console.log("req.session");
-  // console.log(req.session);
-  // console.log("req.body");
-  // console.log(JSON.stringify(req.body));
-
-  cartData.forEach(function(product, index, array) {
-    Names.push(product.Name);
-    cartIDs.push(product.ID);
-    Prices.push(product.Price);
-    Quantities.push(product.Quantity);    
-    Warranties.push(product.warranty);
-  });
-
-  
-
-  Product.find({ _id: { $in: cartIDs } }, { name: 1, price: 1, discountPrice: 1 , cost:1, warranty:1, productNo: 1}).exec(function(error, productData) {
-
-    cartData.forEach(function(product, index, array) {
-      let z = product.productNo;
-      console.log("z(" + index + "): "+ z);
-      let obj2 = productData.find(o => o.productNo === z);
-      Costs.push(obj2.cost);
-      
-    })  
-
-    FindOrderAndUpdate();
-    
-  })
-
-
-  
-
-  function FindOrderAndUpdate () {
-
-    arr_update_dict = { "$set": {} };
-    arr_update_dict["$set"]["cost"] = Costs;
-    arr_update_dict["$set"]["price"] = Prices;
-    arr_update_dict["$set"]["productNames"] = Names
-    arr_update_dict["$set"]["productIDs"] = cartIDs;
-    arr_update_dict["$set"]["quantity"] = Quantities; 
-    arr_update_dict["$set"]["warranty"] = Warranties;
-    
-
-    arr_update_dict["$set"]["warehouse"] = "qurain";
-    arr_update_dict["$set"]["mobile"] = orderData.mobile;
-    arr_update_dict["$set"]["address"] = orderData.address;
-    arr_update_dict["$set"]["invoice"] = orderData.invoice;
-    arr_update_dict["$set"]["discount"] = orderData.discount;
-    arr_update_dict["$set"]["customerName"] = orderData.customerName;
-    arr_update_dict["$set"]["shippingCost"] = orderData.shippingCost;
-    // arr_update_dict["$set"]["userID"] = orderData.userID;    
-    // arr_update_dict["$set"]["email"] = orderData.email;
-    // arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;    
-    // arr_update_dict["$set"]["city"] = orderData.city;
-
-    
-
-
-    Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(function() {
-      res.redirect('/emptyCart')
-    })
-  }
-
-})
-
-
-
-// POST /AddOrder
-router.post('/AddOrder', function(req, res, next) {
-
-  var cartIDs = [];
-  var cartData = req.session.cartData0;
-  var orderID = req.session.orderID;
-
-
-
-  if (cartData == null) { res.redirect('/cart') }
-
-  var orderData = {
-    'invoice': req.body.invoice,
-    'userID': req.body.userID,
-    'customerName': req.body.customerName,
-    'mobile': req.body.mobile,
-    'email': req.body.email,
-    'address': req.body.address,
-    'discount': req.body.discount,
-    'ID_CITY': req.body.city.split("#")[0],
-    'shippingCost': req.body.city.split("#")[1],
-    'city': req.body.city.split("#")[2],
-
-  };
-
-  console.log("orderData");
-
-  // console.log(orderData);
-  // console.log(req.body);
-
-  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Costs = []; var Warranties = [];
-
-  cartData.forEach(function(product, index, array) {
-    cartIDs.push(product.ID);
-  });
-
-
-
-  Product.find({ _id: { $in: cartIDs } }, { name: 1, price: 1, discountPrice: 1 , cost:1, warranty:1}).exec(function(error, productData) {
-
-
-    console.log("req.body.shopPrice : " + req.body.shopPrice)
-    console.log("req.body.shopPrice.length : " + req.body.shopPrice.length)
-    console.log("productData.length : " + productData.length)
-    
-    productData.forEach(function(product, index) {
-      IDs[index] = product._id
-      Names[index] = product.name
-      // Prices[index] = product.price
-
-      
-
-      console.log("req.body.shopPrice["+index+"] =" + req.body.shopPrice[index])
-
-      if (productData.length > 1) {
-        Prices[index] = req.body.shopPrice[index]
-      } else {
-        Prices[index] = req.body.shopPrice
-      }
-
-      console.log("Prices" + Prices)
-      
-      Costs[index] = product.cost
-      Warranties[index] = product.warranty
-      if (product.discountPrice != 0) { Prices[index] = product.discountPrice }
-      Quantities[index] = cartData[index].Quantity
-    });
-
-
-    arr_update_dict = { "$set": {} };
-    arr_update_dict["$set"]["productIDs"] = IDs;
-    arr_update_dict["$set"]["quantity"] = Quantities;
-    arr_update_dict["$set"]["productNames"] = Names;
-    arr_update_dict["$set"]["price"] = Prices;
-    arr_update_dict["$set"]["cost"] = Costs;
-    arr_update_dict["$set"]["warranty"] = Warranties;
-
-    arr_update_dict["$set"]["warehouse"] = "qurain";
-    arr_update_dict["$set"]["userID"] = orderData.userID;
-    arr_update_dict["$set"]["customerName"] = orderData.customerName;
-    arr_update_dict["$set"]["mobile"] = orderData.mobile;
-    arr_update_dict["$set"]["email"] = orderData.email;
-    arr_update_dict["$set"]["address"] = orderData.address;
-    arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;
-    arr_update_dict["$set"]["shippingCost"] = orderData.shippingCost;
-    arr_update_dict["$set"]["city"] = orderData.city;
-    arr_update_dict["$set"]["invoice"] = orderData.invoice;
-    arr_update_dict["$set"]["discount"] = orderData.discount;
-
-    // console.log(orderData)
-
-
-    Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(function() {
-      res.redirect('/emptyCart')
-    })
-
-
-    // res.redirect('/cart')
-  });
-
-
-
-})
-
-
-
-
-
-
-// GET /emptyCart
-router.get('/emptyCart', function(req, res, next) {
-  // if (!req.session.cartData0){
-  req.session.cartData0 = null;
-  req.session.orderID = null;
-  req.session.cartCount = null;
-  req.session.save(function(err) {
-    // session saved
-    return res.redirect('/');
-  })
-  // }
-
-
-});
-
-// addToCart
-router.post('/cart', function(req, res, next) {
-  var productExistInCart = false;
-  const host = req.headers.host;
-  var hostNew = "";
-
-  if (host == "localhost:3000"){
-    hostNew = "itcstore.net";
-  } else {
-    hostNew = host;
-  }
-  var newProduct = {
-    ID: req.body.productId,
-    Name: req.body.name,
-    Quantity: parseInt(req.body.quantity),
-    Price: parseFloat(req.body.price),
-    productNo: parseFloat(req.body.productNo),
-    parentNo: parseFloat(req.body.parentNo),
-    warranty: parseFloat(req.body.warranty),
-    // total : parseInt(req.body.quantity)*parseFloat(req.body.price)
-  }
-  console.log("req.session.cartData0" + req.session.cartData0);
-
-  if (!req.session.cartData0) {
-    req.session.cartData0 = []
-    var old = req.session.cartData0;
-  } else {
-
-    var old = req.session.cartData0;
-    var productExistInCart = false;
-
-    old.forEach(function(product, index, array) {
-      if (product.ID == req.body.productId) {
-        array[index].Quantity += newProduct.Quantity;
-        productExistInCart = true;
-      }
-    });
-  }
-
-  if (productExistInCart) {
-    req.session.cartData0 = old;
-    req.session.save(function(err) {
-      // session saved
-      return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
-    })
-  } else {
-    old.push(newProduct);
-    req.session.cartData0 = old;
-    req.session.cartData0 = old;
-    req.session.cartCount = req.session.cartData0.length;
-    // console.log(req.session.cartData0.length);
-    req.session.save(function(err) {
-      // session saved
-      return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
-    })
-  }
-
-})
-
-
-
-
-
-// GET /product 
-router.get('/product/:id', function(req, res, next) {
-  const { id } = req.params;
-  Chapter.findOne({ _id: id }).exec(function(error, productData) {
-    if (error) {
-      // console.log(error.name);
-      if (error.name == 'CastError') {
-        var err = new Error('File Not Found');
-        err.status = 404;
-        next(err);
-      }
-      return next(error);
-    } else if (productData == null) {
-      var err = new Error('File Not Found');
-      err.status = 404;
-      next(err);
-    } else {
-      return res.render('product', { title: 'Product', productData: productData });
-    }
-  });
-
-});
-
-router.get('/forgotPassword', function(req, res, next) {
-  // res.render('forgotPassword', { title: 'Reset Password'} )
-  return res.render('forgotPassword', { title: 'Reset Password' });
-})
-
-router.post('/sendResetEmail', function(req, res, next) {
-
-  const output = 'Email Body';
-
-  // console.log(req.body.email);
-  // res.send(req.body.email);
-
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    // host: 'smtp.ethereal.email',
-    // port: 587,
-    // secure: false, // true for 465, false for other ports
-    auth: {
-      user: "add014mam@gmail.com", // generated ethereal user
-      pass: "Aldhufiri014" // generated ethereal password
-    }
-  });
-
-  let mailOptions = {
-    from: 'add014mam@gmail.com',
-    to: req.body.email,
-    subject: 'Resset Password',
-    text: 'You are trying to reset your password!'
-  }
-
-  transporter.sendMail(mailOptions, function(err, data) {
-    if (err) {
-      console.log(err)
-      res.send('error ocurs');
-    } else {
-      res.send('email sent!!!');
-    }
-  });
-
-})
-
-
-// Get  /Course
-router.get('/Course/:id', function(req, res, next) {
-  const { id } = req.params;
-  Course.findOne({ _id: id }).exec(function(error, courseData) {
-    if (error) {
-      // console.log(error.name);
-      if (error.name == 'CastError') {
-        var err = new Error('File Not Found');
-        err.status = 404;
-        next(err);
-      }
-      return next(error);
-    } else {
-      var find = Chapter.find({ courseID: id }).sort({ order: 1 }).exec(function(error, ChaptersData) {
-        try {
-          // // console.log(ChaptersData)
-          var ChaptersDataEdited = [];
-
-          if (req.session.userId) {
-            // console.log(req.session.userId);
-            var subscriptions = User.findById(req.session.userId)
-              .exec(function(error, user) {
+          Category.find({}).exec(function(error, categoryData) {
+            if (error) {
+              return next(error);
+            } else {
+
+              Warehouse.find({}).exec(function(error, warehouseData) {
                 if (error) {
                   return next(error);
                 } else {
-                  // // console.log( "name:"+ user.name+ " / favorite:"+ user.favoriteBook + " / subscription:" + user.subscription );
-                  // console.log('xxx---xxxx')
-                  passPermitedLinks(user.subscription);
-                }
-              })
-          } else {
-            passPermitedLinks("NoUserSignedIn")
-          }
-
-          function passPermitedLinks(subscription) {
-            try {
-
-              for (const chapter of ChaptersData) {
-
-                if (chapter.price > 0) {
-                  // console.log(chapter._id)
-
-                  if (subscription != "NoUserSignedIn") {
-                    function checkSubscription(sub) {
-                      return sub == chapter._id;
+                  Vendor.find({}).exec(function(error, vendorData) {
+                    if (error) {
+                      return next(error);
+                    } else {
+                      return res.render('manager/products', { title: 'Product', productData: productData, categoryData: categoryData, warehouseData: warehouseData, brandData: brandData, vendorData: vendorData });
                     }
-
-
-                    var x = subscription.some(checkSubscription);
-                    // console.log(subscription.some(checkSubscription))
-                  }
-
-
-                  if (x) {
-                    // not free ==> But subscribed
-                    chapter.status = 'subscribed';
-                  } else {
-                    // not free not subscribed
-                    chapter.sectionsLinks = [null];
-                  }
-                  // chapter is not free the user can not see links unless he has paid
-
-                } else {
-                  // chapter is free the user can see links
-                  chapter.status = 'free';
+                  });
                 }
-              }
-              return res.render('Course', { title: 'Course', courseData: courseData, ChaptersData: ChaptersData });
-            } catch (e) {
-              return next(e);
+              });
             }
-          }
-        } catch (e) {
-          return next(e);
-        }
-
-      })
-    }
-  });
-});
-
-
-// GET /redirect
-router.get('/redirect', function(req, res, next) {
-  // console.log("__________Redirect has been called______");
-
-  const { tap_id } = req.query;
-  console.log(tap_id);
-
-  var http = require("https");
-
-  var options = {
-    "method": "GET",
-    "hostname": `api.tap.company`,
-    "port": null,
-    "path": `/v2/charges/${tap_id}`,
-    "headers": {
-      "authorization": "Bearer sk_test_XKokBfNWv6FIYuTMg5sLPjhJ"
-    }
-  };
-
-  var req = http.request(options, function(res) {
-    var chunks = [];
-
-    res.on("data", function(chunk) {
-      chunks.push(chunk);
-    });
-
-    res.on("end", function() {
-      var body = Buffer.concat(chunks);
-      console.log(body.toString());
-    });
-  });
-
-  req.write("{}");
-  req.end();
-
-});
-
-
-router.get('/redirect2', function(req, res, next) {
-  var request = require("request");
-
-  // console.log("__________Redirect2 has been called______");
-
-  const { tap_id } = req.query;
-  // console.log(tap_id);
-
-  var options = {
-    method: 'GET',
-    url: `https://api.tap.company/v2/charges/${tap_id}`,
-    headers: { authorization: 'Bearer sk_test_XKokBfNWv6FIYuTMg5sLPjhJ' },
-    body: '{}'
-  };
-
-  request(options, function(error, response, body) {
-    if (error) throw new Error(error);
-
-    bodyJSON = JSON.parse(body)
-    // console.log(body);
-
-    if (bodyJSON.response) {
-      const status = bodyJSON.response.message;
-      console.log(`_Redirect2 _______________________________`)
-      console.log(`   - Charge Id=${bodyJSON.id}`)
-      console.log(`   - status = ${status}`)
-      console.log(`   - MetaData = ${JSON.stringify(bodyJSON.metadata)}`)
-
-
-      console.log(`__________________________________________`)
-
-
-
-      Charge.findOne({ _id: bodyJSON.metadata.ChargeID }).exec(function(error, chargeData) {
-        if (error) {
-          // console.log(error.name);
-          return next(error);
-        } else {
-          if (status == "Captured") {
-            req.session.cartData0 = []
-            req.session.save(function(err) {
-              // session saved
-              // return res.redirect('cart');
-              return res.render('redirect', { title: 'Payment Statment', status: status, chargeData: chargeData, courseId: "courseId" });
-            })
-          } else {
-            return res.render('redirect', { title: 'Payment Statment', status: status, chargeData: chargeData, courseId: "courseId" });
-          }
+          });
         }
       });
-    } else {
-      var err = new Error('Error P01');
-      // err.status = 404;
-      return next(err);
+
+      // return res.render('products', { title: 'Product', productData: productData});
     }
-
-
   });
+});
 
+router.get('/category', mid.requiresSaleseman, function(req, res, next) {
+  Category.find({}).exec(function(error, categoryData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/category', { title: 'Category', categoryData: categoryData });
+    }
+  });
+});
 
+router.get('/transferRequestPage', mid.requiresSaleseman, function(req, res, next) {
+  TransferRequest.find({}).sort({ _id: -1 }).exec(function(error, requestData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/transferRequestPage', { title: 'Transfer Request', requestData: requestData });
+    }
+  });
+});
+
+router.get('/users', mid.requiresAdmin, function(req, res, next) {
+
+  
+
+  
+  User.find({}).exec(function(error, usersData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/users', { title: 'Users', usersData: usersData });
+    }
+  });
+});
+
+router.get('/userPage/:userId/', mid.requiresAdmin, function(req, res, next) {
+  const { userId } = req.params;
+
+  User.findOne({ _id: userId }).exec(function(error, userData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/userPage', { title: 'User Page', userData: userData });
+    }
+  });
 });
 
 
-// post /pay /// this should connet tap payment
-router.post('/pay', async function(req, res1, next) {
-  function makeid(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-  var internalChgId = makeid(8);
 
-  var http = require("https");
-  const id = req.body.chapterId;
+router.get('/vendor', mid.requiresAdmin, function(req, res, next) {
+  Vendor.find({}).exec(function(error, vendorData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/vendor', { title: 'Vendor', vendorData: vendorData });
+    }
+  });
+});
+
+router.get('/brand', mid.requiresSaleseman, function(req, res, next) {
+  Brand.find({}).exec(function(error, brandData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/brand', { title: 'brand', brandData: brandData });
+    }
+  });
+});
+
+router.get('/warehousePage/:warehouseID', mid.requiresSaleseman, function(req, res, next) {
+  const { warehouseID } = req.params;
+  Product.find({}).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/warehousePage', { title: 'Warehouse', productData: productData });
+    }
+  });
+});
+
+router.get('/warehouse', mid.requiresSaleseman, function(req, res, next) {
+  Warehouse.find({}).exec(function(error, warehouseData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/warehouse', { title: 'Warehouse', warehouseData: warehouseData });
+    }
+  });
+});
+
+
+router.get('/purchase', mid.requiresSaleseman, function(req, res, next) {
+  Purchase.find({}).sort({ _id: -1 }).exec(function(error, purchaseData) {
+    if (error) {
+      return next(error);
+    } else {
+
+      Vendor.find({}).exec(function(error, vendorData) {
+        if (error) {
+          return next(error);
+        } else {
+          return res.render('manager/purchase', { title: 'Purchase', purchaseData: purchaseData ,vendorData: vendorData});
+
+        }
+      });
+
+
+      
+    }
+  });
+});
+
+
+router.get('/order/:sortTo', mid.requiresSaleseman, function(req, res, next) {
+  var { sortTo } = req.params;
+
+  if (sortTo == 1) {
+    sortTo = "invoice"
+  } else if (sortTo == 2) {
+    sortTo = "orderNo"
+  }
+  
+  
+  Order.find({}).sort({ [sortTo]: -1 }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/order', { title: 'Order', orderData: orderData });
+    }
+  });
+});
+
+
+
+
+router.get('/order/:userID', mid.requiresSaleseman, function(req, res, next) {
+  const { userID } = req.params;
+
+  Order.find({ userID: userID }).sort({ _id: -1 }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/order', { title: 'Order', orderData: orderData });
+    }
+  });
+});
+
+router.get('/orderMobile/:mobile', mid.requiresSaleseman, function(req, res, next) {
+  const { mobile } = req.params;
+
+  Order.find({ mobile: mobile }).sort({ _id: -1 }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/order', { title: 'Order', orderData: orderData });
+    }
+  });
+});
+
+
+
+
+router.get('/transferRequest', mid.requiresSaleseman, function(req, res, next) {
+
+
+  Product.find({}).sort({ _id: 1 }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      console.log(productData)
+      return res.render('manager/transferRequest', { title: 'Transfer Request', productData: productData });
+    }
+  });
+});
+
+router.get('/transferSenderApprove/:requstID/:fromName', mid.requiresSaleseman, function(req, res, next) {
+  const { requstID } = req.params;
+  const { fromName } = req.params;
+  console.log(req.session.userId);
+
+  User.findOne({ _id: req.session.userId }).exec(function(error, userData) {
+    if (error) {
+      return next(error);
+    } else {
+      console.log(userData.managerOf)
+      console.log(fromName)
+
+      if (fromName == userData.managerOf) {
+        console.log ("your are the manager of: " + fromName);
+
+        arr_update_dict = { "$set": {} };
+        arr_update_dict["$set"]["senderApprove"] = true;
+            
+        TransferRequest.findOneAndUpdate({ _id: requstID }, arr_update_dict).then(function() {
+      
+          res.redirect('back')
+      
+        })
+      } else {
+        console.log ("your are not the manager of: " + fromName);
+        var err = new Error("Your are not the manager of: " + fromName + ". Please call this place manager");
+        err.status = 401;
+        return next(err);
+      }
+    }
+  });  
+});
+
+router.get('/transferReceiverApprove/:requstID/:toName/:fromName/:productID/:quantity', mid.requiresSaleseman, function(req, res, next) {
+  const { requstID } = req.params;
+  const { toName } = req.params;
+  const { fromName } = req.params;
+  const { productID } = req.params;
+  const { quantity } = req.params;
+  
+  console.log(req.session.userId);
+
+  User.findOne({ _id: req.session.userId }).exec(function(error, userData) {
+    if (error) {
+      return next(error);
+    } else {
+      console.log(userData.managerOf)
+      console.log(toName)
+
+      if (toName == userData.managerOf) {
+        console.log ("your are the manager of: " + toName);
+
+        function buildUpdateOneWriteOperations(toName, fromName, productID,  quantity) {
+
+          const writeOperations = [
+            {
+              updateOne: {
+                filter: { _id: productID },
+                update: { $inc: { [toName]: +quantity, [fromName]: -quantity } }
+              }
+            },];
+            // important this above , comma solved bulkWrite issue
+          return writeOperations;
+        }
+
+        var writeOperations = buildUpdateOneWriteOperations(toName, fromName, productID,  quantity)
+
+        console.log(writeOperations.updateOne)
+
+        try {
+          console.log("98")
+          Product.bulkWrite(writeOperations).then(function() {
+
+            console.log("97")
+            res.redirect('back')
+
+
+
+          })
+        } catch (error) {
+          return next(err);
+        }
+        
+        // arr_update_dict = { "$set": {} };
+        // arr_update_dict["$set"]["receiverApprove"] = true;
+            
+        // TransferRequest.findOneAndUpdate({ _id: requstID }, arr_update_dict).then(function() {
+      
+        //   res.redirect('back')
+      
+        // })
+      } else {
+        console.log ("your are not the manager of: " + toName);
+        var err = new Error("Your are not the manager of: " + toName + ". Please call this place manager");
+        err.status = 401;
+        return next(err);
+      }
+    }
+  });  
+});
+
+
+
+
+router.get('/purchasePage/:purchaseId/', mid.requiresSaleseman, function(req, res, next) {
+  const { purchaseId } = req.params;
+
+  Purchase.findOne({ _id: purchaseId }).exec(function(error, purchaseData) {
+    if (error) {
+      return next(error);
+    } else {
+      Product.find({}).exec(function(error, productsData) {
+        if (error) {
+          return next(error);
+        } else {
+          return res.render('manager/purchasePage', { title: 'Purchase', purchaseData: purchaseData, productsData: productsData });
+        }
+      });
+    }
+  });
+});
+
+
+
+
+router.get('/orderPage/:orderId/', mid.requiresSaleseman, function(req, res, next) {
+  const { orderId } = req.params;
+
+  Order.findOne({ _id: orderId }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      Product.find({}).exec(function(error, productsData) {
+        if (error) {
+          return next(error);
+        } else {
+          return res.render('manager/orderPage', { title: 'Order', orderData: orderData, productsData: productsData });
+        }
+      });
+    }
+  });
+});
+
+
+
+
+router.get('/productPage/:productId/', mid.requiresSaleseman, function(req, res, next) {
+  const { productId } = req.params;
+
+  Product.findOne({ _id: productId }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/productPage', { title: 'productPage', productData: productData });
+    }
+  });
+});
+
+
+router.get('/editAny/:collection/:id/:field/:value/:type/:returnTo', mid.requiresSaleseman, function(req, res, next) {
+
+  const data = {
+    'collection': req.params.collection,
+    'value': req.params.value,
+    'id': req.params.id,
+    'field': req.params.field,
+    'type': req.params.type,
+    'returnTo': req.params.returnTo,
+    'referer': req.headers.referer,
+  }
+
+  
+  
+  return res.render('manager/formEditAny', { title: 'Edit', data: data, });
+  
+});
+
+
+router.get('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, function(req, res, next) {
+
+  const data = {
+    'collection': req.params.collection,
+    'id': req.params.id,
+    'returnTo': req.params.returnTo,
+  }
+  return res.render('manager/formUploadImage', { title: 'Upload', data: data, });
+});
+
+router.post('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, function(req, res, next) {
+  const data = {
+    'collection': req.params.collection,
+    'id': req.params.id,
+    'returnTo': req.params.returnTo,
+  }
+
   const host = req.headers.host;
   const referer = req.headers.referer;
 
-  const userData = req.body;
+  console.log("host: " + host );
+  console.log("referer: " + referer );
 
-  userData.host = req.headers.host;
-  userData.referer = req.headers.referer;
-  userData.userId = "Guest";
-
-  // console.log("userData: "+ JSON.stringify(userData));
-
-  var totalPrice = 0;
-
-  var cartIDs = []; // to use in find
-  var cartData = req.session.cartData0;
-  cartData.forEach(function(product, index, array) {
-    cartIDs.push(product.ID);
-  });
-
-  // todo: use same in cart
-  Chapter.find({ _id: { $in: cartIDs } }, { name: 1, price: 1 }).exec(function(error, productData) {
-    if (error) {
-      // console.log(error.name);
-      if (error.name == 'CastError') {
-        var err = new Error('File Not Found');
-        err.status = 404;
-        next(err);
-      }
-      return next(error);
+  upload(req, res, (err) => {
+    if (err) {
+      res.send(err);
     } else {
-      var ProductIDs = [];
-      var Quantity = [];
-      var Price = [];
-      var Name = [];
-      // console.log("productData: "+productData);
-      // console.log("cartData: "+cartIDs);
-      for (var i = 0; i < productData.length; i++) {
-        console.log("productData(" + i + "): " + productData[i]._id);
-        console.log("cartData(" + i + ")   : " + cartData[i].ID);
-        console.log("cartIDs(" + i + ")    : " + cartIDs[i]);
+      if (req.file) {
 
-        if (productData[i]._id == cartData[i].ID) {
+        const filename = req.file.filename;
+        const fileLInk = `https://${host}/` + filename;
+        addLinkImgLingToAny(data.collection, data.id, data.returnTo, filename, res)
 
-          ProductIDs.push(productData[i]._id);
-          Quantity.push(parseInt(cartData[i].Quantity));
-          Price.push(productData[i].price);
-          Name.push(productData[i].name);
-
-          totalPrice += productData[i].price * 1000 * cartData[i].Quantity / 1000;
-
-        } else {
-          var err = new Error('Error E0001');
-          err.status = 404;
-          next(err);
-        }
+        // return res.render("manager", { title: '', fileLInk: fileLInk });
+      } else {
+        res.send(`Error: No file selected`)
       }
-
-      chargeData = {
-        ProductIDs: ProductIDs,
-        Quantity: Quantity,
-        Price: Price,
-        Name: Name,
-        CustomerID: userData.userId,
-        CustomerName: userData.name,
-        TotalPrice: totalPrice,
-        Email: userData.email ? userData.email : 'none@none.none',
-        Mobile: userData.mobile,
-        Address: userData.address,
-        InternalChgId: internalChgId,
-        Status: "onProgress"
-      }
-
-
-      console.log("chargeData: " + JSON.stringify(chargeData));
-      console.log("chargeData: " + chargeData);
-      console.log("TotalPrice: " + chargeData.TotalPrice);
-
-
-      // payforThis(chargeData, userData, totalPrice);
-      Charge.create(chargeData, function(error, ChargeResult) {
-        if (error) {
-          console.log(error.code);
-        } else {
-          console.log("ChargeResult: " + JSON.stringify(ChargeResult));
-          payforThis(ChargeResult);
-        }
-      });
     }
   })
+})
 
-  function payforThis(ChargeResult) {
-    var options = {
-      "method": "POST",
-      "hostname": "api.tap.company",
-      "port": null,
-      "path": "/v2/charges",
-      "headers": {
-        "authorization": "Bearer sk_test_XKokBfNWv6FIYuTMg5sLPjhJ",
-        "content-type": "application/json"
-      }
-    };
+function addLinkImgLingToAny(collection, id, returnTo, filename, res) {
+  arr_update_dict = { "$set": {} };
+  //this shoudl be dynamic us refere
+  var z = 0;
+  if (collection == "Product") { var x = Product; var returnLink = '/manager/productPage/' + id; z = 1 }
+  else if (collection == "Product" && returnTo == "productshop") { var x = Product; var returnLink = '../product/' + id; z = 1 }
+  else if (collection == "Category") { var x = Category;; var returnLink = '/manager/category/'; z = 1 }
 
-    // console.log("dataToPay"+JSON.stringify(dataToPay));
+  if (z == 1) {
 
-    var req = http.request(options, function(res) {
-      var chunks = [];
+    
+    arr_update_dict["$set"]["img"] = '/img/upload/' + filename;
+    x.findOneAndUpdate({ _id: id }, arr_update_dict).then(function() {
 
-      res.on("data", function(chunk) {
-        chunks.push(chunk);
-      });
-
-      res.on("end", function() {
-        var body = Buffer.concat(chunks);
-        // // console.log(body.toString());
-        var profile = JSON.parse(body);
-        if (!profile.transaction) {
-          console.log("profile.transaction)");
-          var err = new Error('Error E002: Payment Gateway Error');
-          next(err);
-        } else {
-          transactionUrl = profile.transaction.url;
-          return res1.redirect(transactionUrl)
-        }
-      });
-    });
-
-    req.write(JSON.stringify({
-      amount: ChargeResult.TotalPrice,
-      currency: 'KWD',
-      threeDSecure: true,
-      save_card: false,
-      description: 'TengStore payment',
-      statement_descriptor: "pay for products",
+      res.redirect(returnLink) // do to my specific product todo
 
 
-      metadata: {
-        ChargeID: ChargeResult._id,
-        InternalChgId: ChargeResult.InternalChgId
-      },
-
-      reference: { transaction: 'txn_0001', order: 'ord_0001' },
-      receipt: { email: false, sms: true },
-      customer:
-      {
-        first_name: ChargeResult.CustomerName,
-        middle_name: "userId",
-        last_name: 'test',
-        email: ChargeResult.Email,
-        phone: { country_code: '965', number: ChargeResult.Mobile }
-      },
-      source: { id: 'src_kw.knet' },
-      post: { url: `https://${host}/getPay` },
-      redirect: { url: `https://${host}/redirect2` }
-    }));
-    req.end();
-  }
-
-
-});
-
-// GET /Courses Page /safe
-router.get('/', function(req, res, next) {
-  Course.find({}).exec(function(error, courseData) {
-    if (error) {
+    }).catch(function(error) {
       return next(error);
-    } else {
-      Chapter.find({}).exec(function(error, chapterData) {
-        if (error) {
-          return next(error);
-        } else {
-
-
-          return res.render('CoursesPage', { title: 'Home Page', courseData: courseData, chapterData: chapterData });
-        }
-      });
-
-      // return res.render('CoursesPage', { title: 'Home Page', courseData: courseData, length: courseData.length});
-    }
-  });
-});
-
-
-
-// POST /
-router.post('/getPay', function(req, res, next) {
-  // 
-
-
-  var chargeData = {
-    ChargeID: req.body.metadata.ChargeID,
-    InternalChgId: req.body.metadata.InternalChgId,
+    });
+  } else {
+    res.send(`Error: No Collection provided`)
   }
+}
 
-  console.log("status:       " + req.body.status.toLowerCase());
-  console.log("ChargeID:     " + chargeData.ChargeID);
-  console.log("InternalChgId:" + chargeData.InternalChgId);
+
+router.post('/editAny', mid.requiresSaleseman, function(req, res, next) {
+
+  var data = {
+    'collection': req.body.collection,
+    'id': req.body.id,
+    'field': req.body.field,
+    'value': req.body.value,
+    'returnTo': req.body.returnTo,
+    'referer': req.body.referer,
+  };
+
+
+  if (data.collection == "Product") { var x = Product } // is there somesing more todo
+  else if (data.collection == "Category") { var x = Category }
+  else if (data.collection == "Vendor") { var x = Vendor }
+  else if (data.collection == "Brand") { var x = Brand }
+  else if (data.collection == "Warehouse") { var x = Warehouse }
+  else if (data.collection == "Order") { var x = Order }
+  else if (data.collection == "TransferRequest") { var x = TransferRequest }
+  else if (data.collection == "User") { var x = User }
+
+
 
 
   arr_update_dict = { "$set": {} };
-  arr_update_dict["$set"]["status"] = req.body.status.toLowerCase();
-  Charge.findOneAndUpdate({ _id: chargeData.ChargeID }, arr_update_dict).then(function() {
-    if (error) {
-      console.log(error.code);
+  arr_update_dict["$set"][data.field] = data.value;
+  x.findOneAndUpdate({ _id: data.id }, arr_update_dict).then(function() {
+    
+
+
+    if (data.returnTo == "productshop") {
+      return res.redirect(data.referer);
     } else {
-      return res.send('getPay has been called -1');
+      return res.redirect(data.returnTo + "/" + data.id);
     }
   })
 
-  // todo 2020 find user and update
-  // User.findOneAndUpdate({_id: chargeData.userId},
-  //   {$push:
-  //     {
-  //       subscription: chargeData.chapterId,
-  //       charge: chargeData.charge,
-  //       courseName: chargeData.courseName,
-  //       chapterName: chargeData.chapterName,
-  //     }
-  //   }).then(function(){
 
-  //     Charge.create(chargeData, function (error, user) {
-  //       if (error) {
-  //         console.log(error.code);
-  //       } else {
-  //         return res.send('getPay has been called -1');
-  //       }
-  //     });
-
-  // }).catch(function(error){
-  //   return next(error);
-  // });
-
-  // return res.send('getPay has been called -2');
-});
-
-
-
-// GET /about /safe
-router.get('/about', function(req, res, next) {
-  return res.render('about', { title: 'About' });
-});
-
-// GET /contact /safe
-router.get('/contact', function(req, res, next) {
-  return res.render('contact', { title: 'Contact' });
-});
-
-
-
-// GET /login
-router.get('/login', mid.loggedOut, function(req, res, next) {
-  return res.render('login', { title: 'Log In' });
-});
-
-// POST /login
-router.post('/login', function(req, res, next) {
-  console.log(req)
-  // console.log('login from main')
-  if (req.body.email && req.body.password) {
-    User.authenticate(req.body.email.toLowerCase(), req.body.password, function(error, user) {
-      if (error || !user) {
-        var err = new Error('Wrong email or password.');
-        err.status = 401;
-        return next(err);
-      } else {
-        req.session.userId = user._id;
-        req.session.email = user.email;
-        req.session.manager = user.admin;
-        req.session.theSaleseman = user.saleseman;
-        req.session.userName = user.name;
-        console.log("admin: " + user.admin)
-        console.log("saleseman: " + user.saleseman)
-
-        // return res.redirect('/');
-        req.session.save(function(err) {
-          // session saved
-          res.redirect('/')
-        })
-      }
-    });
-  } else {
-    var err = new Error('Email and password are required.');
-    err.status = 401;
-    return next(err);
-  }
-});
-
-// GET /register
-router.get('/register', mid.loggedOut, function(req, res, next) {
-  return res.render('register', { title: 'Sign Up' });
-});
-
-// POST /register
-router.post('/register', function(req, res, next) {
-  console.log(req)
-  if (req.body.email &&
-    req.body.name &&
-    req.body.password &&
-    req.body.confirmPassword) {
-
-    // confirm that user typed same password twice
-    if (req.body.password !== req.body.confirmPassword) {
-      var err = new Error('Passwords do not match.');
-      err.status = 400;
-      return next(err);
-    }
-
-    // create object with form input
-    var userData = {
-      email: req.body.email.toLowerCase(),
-      name: req.body.name,
-      favoriteBook: req.body.favoriteBook,
-      password: req.body.password,
-    };
-
-    // use schema's `create` method to insert document into Mongo
-    User.create(userData, function(error, user) {
-      if (error) {
-        console.log(error.code);
-        if (error.code === 11000) {
-          // res.redirect('back')
-          var err = new Error('Email already registered.');
-          // err.status = 400;
-          return next(err);
-        }
-        return next(error);
-      } else {
-        req.session.userId = user._id;
-        req.session.email = user.email;
-        req.session.save(function(err) {
-          // session saved
-          res.redirect('/')
-        })
-        // return res.redirect('/');
-      }
-    });
-
-  } else {
-    var err = new Error('All fields required.');
-    err.status = 400;
-    return next(err);
-  }
 })
 
-// GET /logout
-router.get('/logout', function(req, res, next) {
-  if (req.session) {
-    // delete session object
-    req.session.destroy(function(err) {
-      if (err) {
-        return next(err);
-      } else {
-        return res.redirect('/');
-      }
-    });
-  }
+router.post('/editOrder', mid.requiresSaleseman, function(req, res, next) {
+
+      console.log("lll");
+
+    var data 
+
+    var data = {
+      'orderID': req.body.orderID,
+      'field': req.body.field,
+      'Value': req.body.Value,
+      'index': req.body.index,
+    }
+
+
+
+  console.log(data)
+
+  
+  Order.update(
+    {_id : data.orderID},
+    {$set : {[data.field+"."+data.index]: data.Value}}
+  ).then(function() {
+      return res.redirect("back");
+  })
+
+
+
+
+})
+
+
+router.get('/city', mid.requiresSaleseman, function(req, res, next) {
+  City.find({}).exec(function(error, cityData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/city', { title: 'City', cityData: cityData });
+    }
+  });
 });
+
+
+
+router.post('/city', mid.requiresAdmin, function(req, res, next) {
+
+  console.log(req.body.data)
+
+  var x = JSON.parse(req.body.data);
+
+  var cityEnglish = [];
+  var cityArabic = [];
+  var ID_CITY = [];
+  var price = [];
+  var cost = [];
+  var shippingFrom = [];
+  x.forEach(myFunction);
+
+  function myFunction(value, index, array) {
+    cityEnglish.push(value.cityEnglish);
+    cityArabic.push(value.cityArabic);
+    ID_CITY.push(value.ID_CITY);
+    price.push(value.price);
+    cost.push(value.cost);
+    shippingFrom.push(value.shippingFrom);
+  }
+
+
+
+  arr_update_dict = { "$set": {} };
+  arr_update_dict["$set"]["cityEnglish"] = cityEnglish;
+  arr_update_dict["$set"]["cityArabic"] = cityArabic;
+  arr_update_dict["$set"]["ID_CITY"] = ID_CITY;
+  arr_update_dict["$set"]["price"] = price;
+  arr_update_dict["$set"]["cost"] = cost;
+  arr_update_dict["$set"]["shippingFrom"] = shippingFrom;
+
+  City.findOneAndUpdate({ _id: "63ad38dee77cc01557b258e4" }, arr_update_dict)
+    .then(function() {
+      res.redirect('back');
+    }).catch(function(error) {
+      return next(error);
+    });
+
+
+});
+
+
+
+
+// This can be deleted
+router.get('/test', mid.requiresAdmin, function(req, res, next) {
+
+
+  Product.find({}, { name: 1 }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      console.log(productData);
+    }
+  });
+})
+
+
+router.get('/completeOrder/:orderId/', mid.requiresSaleseman, function(req, res, next) {
+  const { orderId } = req.params;
+
+  Order.findOne({ _id: orderId }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      arr_update_dict = { "$set": {} };
+      arr_update_dict["$set"]["status"] = "completed";
+      arr_update_dict["$set"]["totalPrice"] = (orderData.quantity.reduce(function(r,a,i) { return r + a * orderData.price[i] }, 0) - orderData.discount + orderData.shippingCost).toFixed(3) ;
+      arr_update_dict["$set"]["totalCost"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * orderData.cost[i] }, 0)).toFixed(3)
+
+
+      Order.findOneAndUpdate({ _id: orderId }, arr_update_dict).then(function() {
+
+        function buildUpdateOneWriteOperations(productIDs, warehouse, quantity) {
+          console.log("warehouse: " + warehouse)
+
+          const writeOperations = productIDs.map((productID, index) => (
+            {
+              updateOne: {
+                filter: { _id: productID },
+                update: { $inc: { [warehouse]: -quantity[index], quantity: -quantity[index], sellCount: +quantity[index]} }
+              }
+            }));
+
+          return writeOperations;
+        }
+
+        var writeOperations = buildUpdateOneWriteOperations(orderData.productIDs, orderData.warehouse, orderData.quantity)
+
+        console.log(writeOperations)
+
+        try {
+          Product.bulkWrite(writeOperations).then(function() {
+            res.redirect('back')
+          })
+        } catch (error) {
+          print(error)
+        }
+        // res.redirect('back');
+      })
+
+    }
+  });
+});
+
+
+router.get('/returnOrder/:orderId/', mid.requiresSaleseman, function(req, res, next) {
+  const { orderId } = req.params;
+
+  Order.findOne({ _id: orderId }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      arr_update_dict = { "$set": {} };
+      arr_update_dict["$set"]["status"] = "returned";
+      arr_update_dict["$set"]["totalCost"] = (orderData.quantity.reduce(function(r,a,i) { return r + a * orderData.price[i] }, 0) - orderData.discount + orderData.shippingCost).toFixed(3) ;
+      arr_update_dict["$set"]["totalPrice"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * orderData.cost[i] }, 0)).toFixed(3)
+
+
+      Order.findOneAndUpdate({ _id: orderId }, arr_update_dict).then(function() {
+
+        function buildUpdateOneWriteOperations(productIDs, warehouse, quantity) {
+          console.log("warehouse: " + warehouse)
+
+          const writeOperations = productIDs.map((productID, index) => (
+            {
+              updateOne: {
+                filter: { _id: productID },
+                update: { $inc: { [warehouse]: +quantity[index], quantity: +quantity[index], sellCount: -quantity[index]} }
+              }
+            }));
+
+          return writeOperations;
+        }
+
+        var writeOperations = buildUpdateOneWriteOperations(orderData.productIDs, orderData.warehouse, orderData.quantity)
+
+        console.log(writeOperations)
+
+        try {
+          Product.bulkWrite(writeOperations).then(function() {
+            res.redirect('back')
+          })
+        } catch (error) {
+          print(error)
+        }
+        // res.redirect('back');
+      })
+
+    }
+  });
+});
+
+
+router.get('/completePurchase/:purchaseId/', mid.requiresSaleseman, function(req, res, next) {
+  const { purchaseId } = req.params;
+
+  Purchase.findOne({ _id: purchaseId }).exec(function(error, purchaseData) {
+    if (error) {
+      return next(error);
+    } else {
+      arr_update_dict = { "$set": {} };
+      arr_update_dict["$set"]["status"] = "completed";
+      arr_update_dict["$set"]["totalCost"] = purchaseData.quantity.reduce(function(r, a, i) { return r + a * purchaseData.cost[i] }, 0)
+
+
+      Purchase.findOneAndUpdate({ _id: purchaseId }, arr_update_dict).then(function() {
+
+        function buildUpdateOneWriteOperations(productIDs, warehouse, quantity) {
+          console.log("warehouse: " + warehouse)
+
+          const writeOperations = productIDs.map((productID, index) => (
+            {
+              updateOne: {
+                filter: { _id: productID },
+                update: { $inc: { [warehouse]: +quantity[index], quantity: +quantity[index]}}
+              }
+            }));
+
+          return writeOperations;
+        }
+
+        var writeOperations = buildUpdateOneWriteOperations(purchaseData.productIDs, purchaseData.warehouse, purchaseData.quantity)
+
+        console.log(writeOperations)
+
+        try {
+          Product.bulkWrite(writeOperations).then(function() {
+
+
+            res.redirect('back')
+
+
+
+          })
+        } catch (error) {
+          print(error)
+        }
+        // res.redirect('back');
+      })
+
+    }
+  });
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+// POST /AddProduct
+router.post('/AddProduct', mid.requiresAdmin, function(req, res, next) {
+
+  var productData = {
+    // 'SKU':req.body.SKU,
+    'name': req.body.name,
+    'variantName': req.body.variantName,
+    'price': req.body.price,
+    'cost': req.body.cost,
+    "status": req.body.status,
+    'quantity': req.body.quantity,
+    'naseem': req.body.naseem,
+    'qurain': req.body.qurain,
+    "description": req.body.description,
+    "discountPrice": req.body.discountPrice,
+    "category": req.body.category.split("#")[0],
+    "categoryName": req.body.category.split("#")[1],
+    "categoryNo": req.body.category.split("#")[2],
+    "brand": req.body.brand.slice(0, 24),
+    "brandName": req.body.brand.slice(24),
+    "vendor": req.body.vendor.slice(0, 24),
+    "vendorName": req.body.vendor.slice(24),
+    'SuperProductID': req.body.SuperProductID,
+    'variant': req.body.variant,
+    'group': req.body.group,
+    'warranty': req.body.warranty
+  };
+
+
+  Product.create(productData, function(error, theProduct) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      if (productData.SuperProductID) {
+      Product.findOneAndUpdate({ _id: productData.SuperProductID },
+        {
+          $push:
+          {
+            SubProductId: theProduct.id,
+          }
+        }).then(function() {
+          res.redirect('products')
+          // res.redirect('back')
+        }).catch(function(error) {
+          return next(error);
+        });
+      } else{
+        res.redirect('products')
+
+      }
+
+
+
+      // res.redirect('products')
+    }
+  });
+
+})
+
+// POST /AddCategory
+router.post('/AddCategory', mid.requiresAdmin, function(req, res, next) {
+
+  var categoryData = {
+    'name': req.body.name
+  };
+
+  Category.create(categoryData, function(error, theCategory) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect('category')
+    }
+  });
+
+})
+
+// POST /AddVendor
+router.post('/AddVendor', mid.requiresAdmin, function(req, res, next) {
+
+  var vendorData = {
+    'name': req.body.name,
+    'vendorNo': req.body.vendorNo
+  };
+
+  Vendor.create(vendorData, function(error, theVendor) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect('vendor')
+    }
+  });
+
+})
+// POST /AddBrand
+router.post('/AddBrand', mid.requiresAdmin, function(req, res, next) {
+
+  var brandData = {
+    'name': req.body.name
+  };
+
+
+
+  Brand.create(brandData, function(error, theBrand) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect('brand')
+    }
+  });
+
+})
+
+// POST /AddWarehouse
+router.post('/AddWarehouse', mid.requiresAdmin, function(req, res, next) {
+
+  var warehouseData = {
+    'name': req.body.name
+  };
+
+  Warehouse.create(warehouseData, function(error, theWarehouse) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect('/warehouse')
+    }
+  });
+
+})
+
+// POST /AddOrder
+router.post('/AddOrder', mid.requiresSaleseman, function(req, res, next) {
+
+  var orderData = {
+    'name': req.body.name,
+    'warehouse': req.body.warehouse
+  };
+  console.log(orderData);
+
+  Order.create(orderData, function(error, theOrder) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect('orderPage/' + theOrder._id)
+    }
+  });
+
+})
+
+// POST /AddPurchase
+router.post('/AddPurchase', mid.requiresSaleseman, function(req, res, next) {
+
+  var purchaseData = {
+    'warehouse': req.body.warehouse,
+    "vendorID": req.body.vendor.split("#")[0],
+    "vendorName": req.body.vendor.split("#")[1],
+    
+  };
+
+  Purchase.create(purchaseData, function(error, thePurchase) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect('purchasePage/' + thePurchase._id)
+    }
+  });
+
+})
+
+
+
+
+
+
+// POST /CreateTransferRequest
+router.post('/CreateTransferRequest', mid.requiresSaleseman, function(req, res, next) {
+
+  var transferRequestData = {
+    'quantity': req.body.quantity,
+    "productID": req.body.data.slice(0, 24),
+    "toName": req.body.data.slice(24,30),
+    "fromName": req.body.data.slice(30,36)
+  };
+
+  Product.findOne({ _id: transferRequestData.productID }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+
+      var createTransferData = {
+        "quantity": transferRequestData.quantity,
+        "productID": productData._id,
+        "productNo": productData.productNo,
+        "productName": productData.name,
+        "toID": transferRequestData.productID,
+        "toName": transferRequestData.toName,
+        "fromName": transferRequestData.fromName,
+        // "quantity": yyyy,
+      }
+
+
+      TransferRequest.create(createTransferData, function(error, theRequest) {
+        if (error) {
+          console.log(error.code);
+          return next(error);
+        } else {
+          res.redirect('transferRequest')
+        }
+      });
+    }
+  });
+
+
+
+})
+
+
+// POST /Add Product to Order
+router.post('/AddProductToOrder', mid.requiresSaleseman, function(req, res, next) {
+
+  const productID = req.body.productID.split("#")[0];
+  const quantity = req.body.quantity;
+  const orderID = req.body.orderID;
+  const PriceO = req.body.PriceO;
+
+  Product.findOne({ _id: productID }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      Order.findOneAndUpdate({ _id: orderID },
+        {
+          $push:
+          {
+            productIDs: productData._id,
+            quantity: quantity,
+            productNames: productData.name,
+            cost: productData.cost,
+            warranty: productData.warranty,
+            price: PriceO,
+          }
+        }).catch(function(error) {
+          return next(error);
+        }).then(function() {
+          return res.redirect('orderPage/' + orderID);
+        
+        });
+    }
+  });
+});
+
+
+// POST /Add Product to Order
+router.post('/AddProductToPurchase', mid.requiresSaleseman, function(req, res, next) {
+
+  const productID = req.body.productID.split("#")[0];
+  const quantity = req.body.quantity;
+  const purchaseID = req.body.purchaseID;
+  const cost = req.body.cost;
+
+  Product.findOne({ _id: productID }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      Purchase.findOneAndUpdate({ _id: purchaseID },
+        {
+          $push:
+          {
+            productIDs: productData._id,
+            quantity: quantity,
+            productNames: productData.name,
+            cost: cost,
+          }
+          
+        }).then(function() {
+          return res.redirect('purchasePage/' + purchaseID);
+        }).catch(function(error) {
+          return next(error);
+        });
+    }
+  });
+});
+
+
+
+
+
+//Get // 
+router.get('/deletProduct/:productId/', mid.requiresAdmin, function(req, res) {
+
+  const { productId } = req.params;
+  Product.deleteOne({ _id: productId }).then(function() {
+    res.redirect('back')
+  })
+})
+
+router.get('/deletCategory/:categoryId/', mid.requiresAdmin, function(req, res) {
+
+  const { categoryId } = req.params;
+  Category.deleteOne({ _id: categoryId }).then(function() {
+    res.redirect('back')
+  })
+})
+router.get('/deletVendor/:vendorId/', mid.requiresAdmin, function(req, res) {
+
+  const { vendorId } = req.params;
+  Vendor.deleteOne({ _id: vendorId }).then(function() {
+    res.redirect('back')
+  })
+})
+router.get('/deletBrand/:brandId/', mid.requiresAdmin, function(req, res) {
+
+  const { brandId } = req.params;
+  Brand.deleteOne({ _id: brandId }).then(function() {
+    res.redirect('back')
+  })
+})
+
+router.get('/deletWarehouse/:warehouseId/', mid.requiresAdmin, function(req, res) {
+
+  const { warehouseId } = req.params;
+  Warehouse.deleteOne({ _id: warehouseId }).then(function() {
+    res.redirect('back')
+  })
+})
+
+router.get('/send', function(req, res) {
+
+  const { user } = req.query;
+  const { orderID } = req.query;
+  const { mobile } = req.query;
+  const { massege } = req.query;
+
+ 
+
+   const output = 'Email Body';
+  // get it from here https://myaccount.google.com/apppasswords
+  var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eng.dugaim@gmail.com',
+    pass: 'kioxedtstdtierbv'
+  }
+    
+});
+
+var mailOptions = {
+  from: 'eng.dugaim@gmail.com',
+  to: 'i.dugaim@gmail.com',
+  subject: `${massege} رقم الطلب: ${orderID}`,
+  text: `mobile: ${mobile},  orderID: ${orderID}. https://itcstore.net/manager/orderPage/${orderID}`
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+    res.redirect('/emptyCart')
+  }
+}); 
+  
+})
+
+
+
+
+
+
+
+router.get('/deletProductDiscount/:productId/', mid.requiresAdmin, function(req, res, next) {
+  const { productId } = req.params;
+  var noDiscount = 0
+
+  arr_update_dict = { "$set": {} };
+  arr_update_dict["$set"]["discountPrice"] = noDiscount;
+  Product.findOneAndUpdate({ _id: productId }, arr_update_dict).then(function() {
+    res.redirect('back')
+  })
+});
+
 module.exports = router;
+
+// this good set and mul examples, inside findOneAndUpdate
+    // $set: { "quantity": 3 }
+    // $mul: {quantity: 2}
+
+    // Product.updateMany({_id: { $in: [orderData.productIDs[0], orderData.productIDs[1]] }},{
+
+    //     $inc: { quantity: -1 }
+
+    // }).then(function(){
+    //     res.redirect('back')
+    // })
+
+
+    // roduct.bulkWrite(
+    //          [
+    //        { updateOne: {
+    //           filter: { _id: "638513a4ab6217c642c0cdc7" },
+    //           update: { $inc: { naseem: 1 } }
+    //        } },
+    //        { updateOne: {
+    //           filter: { _id: "6385142fab6217c642c0cdcc" },
+    //           update: { $inc: { naseem: 1 } }
+    //        } },
+
+    //     ]
+
+    //     ).then(function(){
+    //         res.redirect('back')
+    //     })
+
+    // arr_update_dict = { "$set": {} };
+    // arr_update_dict["$set"]["status"] = "completed" ;
+    // arr_update_dict["$set"]["totalPrice"] = "qurain" ;
+
+    // console.log(arr_update_dict)
+
+    // Order.findOneAndUpdate({_id:orderId},arr_update_dict).exec(function (error, orderData){
+    //     console.log(orderData);
+    //     res.redirect('back');
+    // })
