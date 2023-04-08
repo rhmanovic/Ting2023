@@ -1,5 +1,18 @@
-//@import './~bootstrap-icons/font/bootstrap-icons.css';
+@import './~bootstrap-icons/font/bootstrap-icons.css';
 /* @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"); */
+
+.insta{
+/*   background-image: url("https://itc-4.abdulrahmanald1.repl.co/img/backgrounds/01.png"); */
+  /*   background-color: #c84646; */
+  background-size:     cover;                     
+  background-repeat:   no-repeat;
+  background-position: center center;    
+}
+
+
+
+
+
 
 .Bgray{
 	background-color: #F7F7F7;
