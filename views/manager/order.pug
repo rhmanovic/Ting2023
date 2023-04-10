@@ -25,6 +25,15 @@ block content
               label.text-white .
               br
               button.btn.btn-primary(type='submit') طلب جديد
+
+        
+        .ist-group.my-3
+          .list-group-item
+            a.navbar-brand(href=`/manager/order/2`) رتب حسب رقم الطلب
+          
+          .list-group-item
+            a.navbar-brand(href=`/manager/order/1`) رتب حسب رقم الفاتورة
+          
         .col.col-lg-6
             table.table
                 thead
@@ -33,6 +42,7 @@ block content
                             th(scope='col') رقم الفاتورة
                             //- th(scope='col') Order No
                                 //-   th(scope='col') ID
+                            th(scope='col') رقم الهاتف
                             th(scope='col') المتجر
                             th(scope='col') الحالة
                             th(scope='col') التاريخ
@@ -43,11 +53,11 @@ block content
                 tbody
                         - var previousIndexOrder = 0
                         each order,index in orderData
-                          if (order.status != "deleted")
+                          if (order.status != "deleted" && order.warehouse)
                             
                             tr
                                 th(scope='row')
-                                    a(href=`orderPage/${order._id}`)
+                                    a(href=`/manager/orderPage/${order._id}`)
                                         div= `${order.orderNo}`
                                         //- div= index+1
                                 //- td= `${order.orderNo}`
@@ -56,6 +66,7 @@ block content
                                   td= order.invoice  
                                 else
                                   td.bg-danger= order.invoice  
+                                td= order.mobile  
 
                                 - previousIndexOrder = order.invoice
 
@@ -97,6 +108,7 @@ block content
                                     -  profit += (order.totalPrice - order.totalCost)
 
                         p= profit
+                        
 
 
 
