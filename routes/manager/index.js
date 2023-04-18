@@ -1166,6 +1166,8 @@ router.get('/send', function(req, res) {
   const { mobile } = req.query;
   const { massege } = req.query;
 
+  console.log("orderID:" + orderID)
+
  
 
    const output = 'Email Body';
@@ -1181,7 +1183,7 @@ router.get('/send', function(req, res) {
 
 var mailOptions = {
   from: 'eng.dugaim@gmail.com',
-  to: 'i.dugaim@gmail.com, ITC-Amjad@outlook.com',
+  to: 'eng.dugaim@gmail.com, ITC-Amjad@outlook.com',
   subject: `${massege} رقم الطلب: ${orderID}`,
   text: `mobile: ${mobile},  orderID: ${orderID}. https://itcstore.net/manager/orderPage/${orderID}`
 };
