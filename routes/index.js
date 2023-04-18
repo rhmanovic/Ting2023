@@ -35,6 +35,295 @@ router.get('/', function(req, res, next) {
 });
 
 
+router.post('/upSellApprove', function(req, res, next) {
+  
+  var cartData = req.session.cartData0;
+
+  console.log(cartData);
+  
+  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Costs = []; var Warranties = []; cartIDs = [];
+
+  cartData.forEach(function(product, index, array) {
+    Names.push(product.Name);
+    cartIDs.push(product.ID);
+    Prices.push(product.upsell);
+    Quantities.push(product.Quantity);    
+    // Warranties.push(product.warranty);
+  });
+
+  var orderData = {
+    'mobile': req.body.mobile,
+    //'invoice': req.body.invoice,
+    'address': req.body.address,
+    // 'discount': req.body.discount,
+    'customerName': req.body.customerName,
+    'shippingCost': 1.5,
+    'price' : Prices,
+    'productIDs' : cartIDs,
+    'quantity' : Quantities,
+    'warehouse' : "qurain",
+    'productNames' : Names,
+    
+  };
+  
+  
+
+
+   FindOrderAndUpdate ()
+  
+  function FindOrderAndUpdate () {
+
+    arr_update_dict = { "$set": {} };
+    // arr_update_dict["$set"]["cost"] = Costs;
+    arr_update_dict["$set"]["price"] = Prices;
+    arr_update_dict["$set"]["productNames"] = Names
+    arr_update_dict["$set"]["productIDs"] = cartIDs;
+    arr_update_dict["$set"]["quantity"] = Quantities; 
+    // arr_update_dict["$set"]["warranty"] = Warranties;
+    
+
+    arr_update_dict["$set"]["warehouse"] = "qurain";
+    arr_update_dict["$set"]["mobile"] = orderData.mobile;
+    arr_update_dict["$set"]["address"] = orderData.address;
+    // arr_update_dict["$set"]["invoice"] = orderData.invoice;
+    // arr_update_dict["$set"]["discount"] = orderData.discount;
+    arr_update_dict["$set"]["customerName"] = orderData.customerName;
+    arr_update_dict["$set"]["shippingCost"] = orderData.shippingCost;
+    // arr_update_dict["$set"]["userID"] = orderData.userID;    
+    // arr_update_dict["$set"]["email"] = orderData.email;
+    // arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;    
+    // arr_update_dict["$set"]["city"] = orderData.city;
+
+    
+    
+
+    Order.create(orderData, function(error, theOrder) {
+      if (error) {
+        console.log(error.code);
+        return next(error);
+      } else {
+        console.log("order created")
+        console.log("")
+        console.log(theOrder._id)
+        console.log((theOrder._id).toString())
+        // res.redirect('/emptyCart')
+
+        res.redirect(url.format({
+           pathname:"manager/send",
+           query: {
+              "user": "customer",
+              "orderID": (theOrder._id).toString(),
+              "mobile": orderData.mobile,
+              "massege":"تم استلام طلب جديد upsell"
+            }
+         }));
+      }
+      
+    })
+  }
+
+  
+  // Order.create(orderData, function(error, theOrder) {
+  //   if (error) {
+  //     console.log(error.code);
+  //     return next(error);
+  //   } else {
+  //     // console.log("ORDER CREATED")
+  //     // console.log("ORDER ID: " + theOrder.id)
+  //     req.session.orderID = theOrder.id;
+  //     req.session.save(function(err) {
+  //       // session saved
+  //       // res.redirect('/')
+  //       findProductsThenRoute()
+  //     })
+  //   }
+  // });
+  
+})
+
+router.get('/upSellCart', function(req, res, next) {
+
+  console.log("req.session.cartData0: " + req.session.cartData0)
+
+  if (!req.session.cartData0) {
+    console.log("rrr")
+    req.session.cartData0 = []
+    var old = req.session.cartData0;
+    res.redirect('/')
+  } else {
+        console.log("ttt")
+
+    var old = req.session.cartData0;
+  }
+  
+ 
+  cartData = old;
+  
+  
+  return res.render('upSell2', { title: 'Product', cartData:cartData})
+})
+
+
+
+
+// /upSellAdd/:productNo
+router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
+  const { productNo } = req.params; 
+  const { upsellPrice } = req.params; 
+
+  console.log("productNo :" + productNo);
+  console.log("upsellPrice :" + upsellPrice);
+  
+  
+  var productExistInCart = false;
+  const host = req.headers.host;
+  var hostNew = "";
+
+  Product.findOne({ productNo: productNo }).exec(function(error, productData) {
+
+    if ( productData.upsell == 0) {
+      res.redirect('/emptyCart')
+    }
+
+    console.log("productData.upsell :" + productData.upsell);
+    
+    if (error) {
+      return next(error);
+    } else {
+      
+    
+
+  
+      if (host == "localhost:3000"){
+        hostNew = "itcstore.net";
+      } else {
+        hostNew = host;
+      }
+      
+      var newProduct = {
+        ID: productData._id,
+        Name: productData.name,
+        img: productData.img,
+        Quantity: 1,
+        Price: productData.price,
+        upsell: productData.discountPrice,
+        nextUpSell: productData.upsell,
+        isUpSell: true,
+        productNo: parseFloat(productNo),
+        parentNo: parseFloat(productData.parentNo),
+        warranty: parseFloat(productData.warranty),
+        // total : parseInt(req.body.quantity)*parseFloat(req.body.price)
+      }
+
+      if ( upsellPrice  == productData.upsell) {
+        
+        console.log("upsellPrice  == productData.upsell :" + "true");
+        
+        newProduct.Price = productData.price;
+        newProduct.upsell = productData.upsell;
+        newProduct.isUpSellSecond = true
+      }
+
+      console.log("newProduct.isUpSellSecond = " + newProduct.isUpSellSecond )
+
+    
+      if (!req.session.cartData0) {
+        if (upsellPrice != productData.discountPrice) {
+          newProduct.upsell = productData.discountPrice;
+        }
+
+        req.session.cartData0 = []
+        var old = req.session.cartData0;
+        
+        
+      } else if (newProduct.isUpSellSecond) {  
+
+        
+       var old = req.session.cartData0;  
+        
+      
+      
+      
+      } else {
+        console.log ("5")
+        req.session.cartData0 = []
+        var old = req.session.cartData0;
+      }
+
+      // req.session.cartData0 = []
+      var old = req.session.cartData0;
+      console.log (old)
+
+      
+    cartData = req.session.cartData0;
+    
+     old.push(newProduct);
+      req.session.cartData0 = old;
+      req.session.cartData0 = old;
+      req.session.cartCount = req.session.cartData0.length;
+      // console.log(req.session.cartData0.length);
+      req.session.save(function(err) {
+        // session saved
+        res.redirect('/upSellCart')
+
+        // return res.render('upSell2', { title: 'Product', cartData:cartData})
+        // return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
+      })
+    
+    }
+  })
+
+
+
+})
+
+
+
+
+router.get('/upSell/:productNo', function(req, res, next) {
+  const { productNo } = req.params;
+  const { ShowModal } = req.query;
+  const { Q } = req.query;
+
+
+  Product.findOne({ productNo: productNo }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+
+      if ( productData.upsell == 0) {
+        res.redirect('/emptyCart')
+      }
+
+      Product.find({ SuperProductID: productData._id, variant: true }).exec(function(error, productSub) {
+        if (error) {
+          return next(error);
+        } else {
+
+
+
+          //console.log(productSub); JSON.parse
+          // let reqq= JSON.parse(req);
+
+          console.log(req.headers.host)
+          console.log(req.headers.referer)
+          
+          return res.render('upSell', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+
+
+        }
+      });
+
+
+    }
+  });
+
+});
+
+
+
+
+
 
 router.get('/test', function(req, res, next) {
   return res.render('test')
@@ -71,7 +360,7 @@ router.get('/product/:productNo', function(req, res, next) {
       return next(error);
     } else {
 
-      Product.find({ SuperProductID: productData._id }).exec(function(error, productSub) {
+      Product.find({ SuperProductID: productData._id, variant: true }).exec(function(error, productSub) {
         if (error) {
           return next(error);
         } else {
