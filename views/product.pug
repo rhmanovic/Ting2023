@@ -117,27 +117,27 @@ block content
 
 
 
-                            p= currentURL
-                            div.mt-5
-                              if productSub.length > 0
-                                each sub,index in productSub
-                                  a(href=`../manager/editAny/Product/${sub._id}/qurain//${sub.qurain?sub.qurain:"NaN"}/${typeof sub.qurain}/productshop`)
-                                    p= `المخزون في القرين لـ  ${sub.variantName} =  ${sub.qurain} `
-                                  a(href=`../manager/editAny/Product/${sub._id}/naseem//${sub.naseem?sub.naseem:"NaN"}/${typeof sub.naseem}/productshop`)
-                                    p= `المخزون في الجهراء لـ  ${sub.variantName} =  ${sub.naseem} `
-
-
-
-                                    
-                              else
-                                a(href=`../manager/editAny/Product/${productData._id}/qurain//${productData.qurain?productData.qurain:"NaN"}/${typeof productData.qurain}/productshop`)
-                                  p= `المخزون في القرين لـ  ${productData.name} =  ${productData.qurain} `
-                            
-                                a(href=`../manager/editAny/Product/${productData._id}/naseem//${productData.naseem?productData.naseem:"NaN"}/${typeof productData.naseem}/productshop`)
-                                  p= `المخزون في الجهراء لـ  ${productData.name} =  ${productData.naseem} `
-
-                              a(href=`../manager/uploadImage/Product/${productData._id}/productshop`)
-                               span.badge.text-bg-success تعدل صوره العرض
+                            if managerNow || theSalesemanNow
+                              div.mt-5
+                                if productSub.length > 0
+                                  each sub,index in productSub
+                                    a(href=`../manager/editAny/Product/${sub._id}/qurain//${sub.qurain?sub.qurain:"NaN"}/${typeof sub.qurain}/productshop`)
+                                      p= `المخزون في القرين لـ  ${sub.variantName} =  ${sub.qurain} `
+                                    a(href=`../manager/editAny/Product/${sub._id}/naseem//${sub.naseem?sub.naseem:"NaN"}/${typeof sub.naseem}/productshop`)
+                                      p= `المخزون في الجهراء لـ  ${sub.variantName} =  ${sub.naseem} `
+  
+  
+  
+                                      
+                                else
+                                  a(href=`../manager/editAny/Product/${productData._id}/qurain//${productData.qurain?productData.qurain:"NaN"}/${typeof productData.qurain}/productshop`)
+                                    p= `المخزون في القرين لـ  ${productData.name} =  ${productData.qurain} `
+                              
+                                  a(href=`../manager/editAny/Product/${productData._id}/naseem//${productData.naseem?productData.naseem:"NaN"}/${typeof productData.naseem}/productshop`)
+                                    p= `المخزون في الجهراء لـ  ${productData.name} =  ${productData.naseem} `
+  
+                                a(href=`../manager/uploadImage/Product/${productData._id}/productshop`)
+                                 span.badge.text-bg-success تعدل صوره العرض
                             
                     
                     
