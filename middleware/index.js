@@ -52,7 +52,7 @@ function requiresSaleseman(req, res, next) {
           return next();
         } else {
           console.log(user);
-          var err = new Error('This page only for Salesman or admin.');
+          var err = new Error('هذه الصفحه فقط لموظفين الشرك');
           err.status = 401;
           return next(err);
         }
@@ -61,7 +61,7 @@ function requiresSaleseman(req, res, next) {
 
   
   } else {
-    var err = new Error('Loggin to see this page. only"Salesman or admin');
+    var err = new Error('الرجاء تسجيل الدخول، فقط فريق العمل من يستطيع الدخول لهذه الصفحة');
     err.status = 401;
     return next(err);
   }
