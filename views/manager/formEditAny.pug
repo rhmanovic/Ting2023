@@ -16,6 +16,18 @@ block content
                 select.form-select(name='value' type='string')
                   option(value="qurain") القرين
                   option(value="naseem") النسيم
+            
+            else if ( data.field == "status" ) 
+              .col-sm
+                select.form-select(name='value' type='string')
+                  option(value="canceled") الغاء الطلب
+                  option(value="processing") تحويل الحاله الى جديد
+                  option(value="deleted") حذف الطلب
+
+                h5.mt-3.text-danger في حال حذف الطلب لن تتمكن من استرجاعه
+            
+
+
             else
               .col-sm
                 label(for=`${data.field}`)= `${data.field}`
@@ -33,5 +45,5 @@ block content
             .col-sm
               label.text-white .
               br
-              button.btn.btn-primary(type='submit') Submit
+              button.btn.btn-primary(type='submit') تعديل
 
