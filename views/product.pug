@@ -125,6 +125,13 @@ block content
                                       p= `المخزون في القرين لـ  ${sub.variantName} =  ${sub.qurain} `
                                     a(href=`../manager/editAny/Product/${sub._id}/naseem//${sub.naseem?sub.naseem:"NaN"}/${typeof sub.naseem}/productshop`)
                                       p= `المخزون في الجهراء لـ  ${sub.variantName} =  ${sub.naseem} `
+
+                                  a(href=`../manager/editAny/Product/${productData._id}/price//${productData.price?productData.price:"NaN"}/${typeof productData.price}/productshop`)
+                                    p= `سعر  ${productData.name} =  ${productData.price} `
+
+                                  each sub,index in productSub
+                                    a(href=`../manager/editAny/Product/${sub._id}/price//${sub.price?sub.price:"NaN"}/${typeof sub.price}/productshop`)
+                                      p= `سعر  ${sub.variantName} =  ${sub.price} K.D`
   
   
   
@@ -138,6 +145,11 @@ block content
   
                                 a(href=`../manager/uploadImage/Product/${productData._id}/productshop`)
                                  span.badge.text-bg-success تعدل صوره العرض
+
+                            if managerNow
+                              if productSub.length > 0
+                                
+                          
                             
                     
                     
@@ -188,5 +200,5 @@ block content
       
                     
 
-     
+    
     
