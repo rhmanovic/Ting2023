@@ -4,14 +4,23 @@ block content
   .main.container
     .row#cards
       - var bgIndex = 0
+      - var bg = 0
+      - var bgManagerIndex = 0
       //- this should be repeated for each course
       each product,index in productData
         if (product.variant == false)
           - bgIndex +=1
+          - bgManagerIndex +=1
           - if (bgIndex==5) {bgIndex = 1}
+          - if (bgManagerIndex==7) {bgManagerIndex = 1}
+          if (managerNow ) 
+            - bg = "a0"+bgManagerIndex 
+          else 
+            - bg = "0"+bgIndex 
           .col-6.col-lg-4.px-2
             .card.cardShadow.mb-3
-              img.insta(src=product.img style=`aspect-ratio: 1 / 1;background-image: url("https://itc-4.abdulrahmanald1.repl.co/img/backgrounds/0${bgIndex}.png");`)
+              if kkkk
+              img.insta(src=product.img style=`aspect-ratio: 1 / 1;background-image: url("https://itcstore.net/img/bg/${bg}.png");`)
               .card-body
                 h5.card-title.text-center#card-title1= `${product.name}`
                 ///i.fas.fa-chalkboard-teacher.text-secondary
