@@ -8,7 +8,7 @@ block content
       - var bgManagerIndex = 0
       //- this should be repeated for each course
       each product,index in productData
-        if (product.variant == false)
+        if (product.variant == false && product.group != true )
           - bgIndex +=1
           - bgManagerIndex +=1
           - if (bgIndex==5) {bgIndex = 1}
