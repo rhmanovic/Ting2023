@@ -17,7 +17,7 @@ block content
                   option(value="qurain") القرين
                   option(value="naseem") النسيم
             
-            else if ( data.field == "status" ) 
+            else if ( data.field == "status" && data.collection == "Order" ) 
               .col-sm
                 select.form-select(name='value' type='string')
                   option(value="canceled") الغاء الطلب
