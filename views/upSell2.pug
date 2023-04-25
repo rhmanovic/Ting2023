@@ -7,7 +7,7 @@ block content
     
     - var totalPrice = 0
     - var shippingPrice = 1.5
-    p= cartData
+    p= JSON.stringify(cartData)
     .container.mt-3
       each product,index in cartData
         if product.upsell
