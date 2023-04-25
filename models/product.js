@@ -33,6 +33,10 @@ var ProductSchema = new mongoose.Schema({
         type: Number,
         default: 0
     } ,
+    upsell: {
+        type: Number,
+        default: 0
+    } ,
     sellCount: {
         type: Number,
         default: 0
