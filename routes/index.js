@@ -334,7 +334,7 @@ router.get('/test', function(req, res, next) {
 router.get('/category/:categoryNo', function(req, res, next) {
   const { categoryNo } = req.params;
 
-  Product.find({ categoryNo: categoryNo , status: "A"}).exec(function(error, productData) {
+  Product.find({ categoryNo: categoryNo , status: "A"  }).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
@@ -343,6 +343,7 @@ router.get('/category/:categoryNo', function(req, res, next) {
       else { var title = categoryNo }
 
       return res.render('category', { title: title, productData: productData });
+      
     }
   });
 
