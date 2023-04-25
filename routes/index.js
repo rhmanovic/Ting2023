@@ -264,7 +264,7 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
       // console.log(req.session.cartData0.length);
       req.session.save(function(err) {
         // session saved
-        res.redirect('/upSellCart')
+        res.redirect('/')
 
         // return res.render('upSell2', { title: 'Product', cartData:cartData})
         // return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
