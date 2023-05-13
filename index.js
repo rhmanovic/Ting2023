@@ -91,6 +91,7 @@ app.use(function(req, res, next) {
   res.locals.managerNow = req.session.manager;
   res.locals.theSalesemanNow = req.session.theSaleseman;
   res.locals.currentUserName = req.session.userName;
+  res.locals.theMutlaa = req.session.mutlaa;
 
   next();
 });
