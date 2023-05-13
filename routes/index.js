@@ -54,7 +54,7 @@ router.get('/mutlaa', function(req, res, next) {
   req.session.mutlaa = true;
   req.session.save(function(err) {
     // session saved
-    res.redirect('/mutlaa')
+    return res.render('mutlaa', { title: 'ITC Discount' });
   })
 
 
