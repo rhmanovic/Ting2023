@@ -12,7 +12,12 @@ block content
                     h3.mb-4 عربة التسوق
                     // Product Container
                     .card.cardShadow
+                        p= `${JSON.stringify(cartData2)}`
                         each product,index in cartData
+                            each product2,index in cartData2
+                              if product2.ID == product._id
+                                - productQuantity = product2.Quantity
+                           
                             div(id=`div${product._id}`)
                                 .container-fluid.p-0.border
                                     .row.row-cols-2.m-0
@@ -57,7 +62,7 @@ block content
                                                                                 span#basic-addon1.h3 -
                                                                                   
                                                                             
-                                                                            input.form-control.col.text-center.btn-number.input-number(type='text', id=`${product._id}`, name=`quantity${index}`, value=`${cartData2[index].Quantity}`, min='0', max='1000' onchange=`Quantitychange2("${product._id}")`)
+                                                                            input.form-control.col.text-center.btn-number.input-number(type='text', id=`${product._id}`, name=`quantity${index}`, value=`${productQuantity}`, min='0', max='1000' onchange=`Quantitychange2("${product._id}")`)
 
                                                                             .input-group-prepend
                                                                                 button.btn.btn-danger.btn-number.tomato(type='button', data-type='plus', data-field=`quantity${index}`)
@@ -65,6 +70,10 @@ block content
                                                                                   //i.fa.fa-plus(aria-hidden='true')
                                                                     
                                                                 .p-2.bd-highlight
+                                                                    if cartData2[index].isUpSell
+                                                                      - product.price = cartData2[index].upsell
+                                                                    if theMutlaa
+                                                                      - product.price = product.discountPrice
                                                                     h6.small-font= `سعر الحبة: ${product.price} K.D`
                                                                 .p-2.bd-highlight
                                                                     span.small-font= `الاجمالي:`
@@ -90,7 +99,7 @@ block content
                             .row
                                 .col الشحن
                                 .col.text-left.ltr
-                                    span#shipping اختر المنطقة
+                                    span#shipping اختر توصيل/استلام
                                     span#shipping1
                                 
                             hr.mx-3
@@ -118,15 +127,15 @@ block content
                                     // User ID
                                     input.p-1.bd-highlight(value= currentUser hidden  name='userID')
                                         
-                                  
+                                    if theMutlaa 
 
                                     .pt-2.bd-highlight الاسم:
                                     input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' required="required" oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
                                     .pt-2.bd-highlight رقم الهاتف:
 
                                     input.p-1.bd-highlight.input-number(placeholder="رقم الهاتف" type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
-                                    .pt-2.bd-highlight الايميل (اختياري):
-                                    input.p-1.bd-highlight(placeholder="example@example.com" type='text' id='email' name='email')
+                                    //.pt-2.bd-highlight الايميل (اختياري):
+                                    //input.p-1.bd-highlight(placeholder="example@example.com" type='text' id='email' name='email')
                                     .pt-2.bd-highlight العنوان:
                                     textarea.p-1.bd-highlight(placeholder="العنوان الكامل" type='text' id='address' name='address' required="required" oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
 
