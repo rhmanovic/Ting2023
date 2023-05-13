@@ -43,7 +43,7 @@ router.post('/Disc', function(req, res, next) {
 
 router.get('/mutlaaWelcome', function(req, res, next) {
 
-  return res.render('mutlaa', { title: 'ITC Discount' });
+  return res.render('mutlaa2', { title: 'ITC Discount' });
   
 
 });
