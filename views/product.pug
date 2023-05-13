@@ -61,8 +61,16 @@ block content
                                     span.badge.badge-light.mt-2
                                         span= "التوافر:  "
                                         Span.text-success متوفر
-                                .col.p-0.mt-4.mt-md-0
-                                    h5.mt-2.text-danger.ltr#lprice= `${productData.price} K.D`
+                                if theMutlaa
+                                  .container
+                                    .row
+                                      .col-4.p-0.mt-4.mt-md-0
+                                          h5.mt-2.ltr.text-decoration-line-through.text-end= `${productData.price} K.D`
+                                      .col-4.p-0.mt-4.mt-md-0
+                                          h5.mt-2.text-danger.ltr.text-end#lprice= `${productData.discountPrice} K.D`
+                                else
+                                  .col.p-0.mt-4.mt-md-0
+                                      h5.mt-2.text-danger.ltr#lprice= `${productData.price} K.D`
                             br
 
                             p.my-0 الكمية
@@ -92,19 +100,30 @@ block content
                               span= productSub.length
   
                               input#pname(type="" name="name" value= productData.name)
-                              input#pprice(type="" name="price" value= productData.price)
+                              
                               input#pproductNo(type="" name="productNo" value= productData.productNo)
                               input#pproductNo(type="" name="parentNo" value= productData.productNo)
                               input#pwarranty(type="" name="warranty" value= productData.warranty)
+
+
+
+                              if theMutlaa
+                                input#pprice(type="" name="price" value= productData.discountPrice)
+                              else
+                                input#pprice(type="" name="price" value= productData.price)
 
 
                             if productSub.length > 0
                               .my-0.mb-1.mt-4 اختر من القائمة:
                               select.form-select#variant(name='variant' type='text')
                                 option(value  = "0#0") الخيارات
-                                  
-                                each sub,index in productSub
-                                  option(value=`${sub._id}#${sub.price}#${sub.productNo}#${sub.qurain}`)= sub.variantName
+
+                                if theMutlaa
+                                  each sub,index in productSub
+                                    option(value=`${sub._id}#${sub.discountPrice}#${sub.productNo}#${sub.qurain}`)= sub.variantName
+                                else
+                                  each sub,index in productSub
+                                    option(value=`${sub._id}#${sub.price}#${sub.productNo}#${sub.qurain}`)= sub.variantName
 
                             h3.mx-1#errorProduct.text-danger.mt-2 
 
@@ -126,12 +145,19 @@ block content
                                     a(href=`../manager/editAny/Product/${sub._id}/naseem//${sub.naseem?sub.naseem:"NaN"}/${typeof sub.naseem}/productshop`)
                                       p= `المخزون في الجهراء لـ  ${sub.variantName} =  ${sub.naseem} `
 
-                                  a(href=`../manager/editAny/Product/${productData._id}/price//${productData.price?productData.price:"NaN"}/${typeof productData.price}/productshop`)
-                                    p= `سعر  ${productData.name} =  ${productData.price} `
+                                  if managerNow  
+                                    p.text-danger= `التكلفه    ${productData.name} =  ${productData.cost} `
+                                    a(href=`../manager/editAny/Product/${productData._id}/price//${productData.price?productData.price:"NaN"}/${typeof productData.price}/productshop`)
+                                      p= `سعر  ${productData.name} =  ${productData.price} `
+                                    a(href=`../manager/editAny/Product/${productData._id}/discountPrice//${productData.discountPrice?productData.discountPrice:"NaN"}/${typeof productData.discountPrice}/productshop`)
+                                      p.text-primary= `خصم المطلاع   ${productData.name} =  ${productData.discountPrice} `
 
-                                  each sub,index in productSub
-                                    a(href=`../manager/editAny/Product/${sub._id}/price//${sub.price?sub.price:"NaN"}/${typeof sub.price}/productshop`)
-                                      p= `سعر  ${sub.variantName} =  ${sub.price} K.D`
+                                  if managerNow
+                                    each sub,index in productSub
+                                      a(href=`../manager/editAny/Product/${sub._id}/price//${sub.price?sub.price:"NaN"}/${typeof sub.price}/productshop`)
+                                        p= `سعر  ${sub.variantName} =  ${sub.price} K.D`
+                                      a(href=`../manager/editAny/Product/${sub._id}/discountPrice//${sub.discountPrice?sub.discountPrice:"NaN"}/${typeof sub.discountPrice}/productshop`)
+                                        p.text-primary= `خصم المطلاع  ${sub.variantName} =  ${sub.discountPrice} K.D`
   
   
   
