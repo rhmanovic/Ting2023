@@ -26,7 +26,12 @@ block content
                 ///i.fas.fa-chalkboard-teacher.text-secondary
 
                 
-                span.card-text.m-2#card-text1= `${product.price} د.ك`
+                if theMutlaa
+                  span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.price} د.ك`
+                  span.card-text.m-2#card-text1.fw-bold= `${product.discountPrice} د.ك`                 
+                else
+                  span.card-text.m-2#card-text1= `${product.price} د.ك`
+
                 br
                 if theSalesemanNow || managerNow
                   span.card-text.m-2#card-text1.badge.bg-dark= `${product.brandName}`
