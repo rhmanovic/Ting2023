@@ -21,6 +21,47 @@ var mid = require('../middleware');
 var nodemailer = require('nodemailer');
 const url = require('url'); 
 
+
+router.post('/Disc', function(req, res, next) {
+
+  var code = req.body.code;
+
+  console.log("code: "+code);
+
+  
+  if (code == "ITC") {
+    res.redirect('/mutlaa')
+    
+  } else {
+    return res.render('mutlaa2', { title: 'ITC Discount' });
+  }
+  
+    
+
+})
+
+
+router.get('/mutlaaWelcome', function(req, res, next) {
+
+  return res.render('mutlaa', { title: 'ITC Discount' });
+  
+
+});
+
+router.get('/mutlaa', function(req, res, next) {
+  // res.send('Hello World!')
+
+  req.session.mutlaa = true;
+  req.session.save(function(err) {
+    // session saved
+    res.redirect('/mutlaaWelcome')
+  })
+
+
+});
+
+
+
 router.get('/', function(req, res, next) {
   // res.send('Hello World!')
 
@@ -695,6 +736,8 @@ router.get('/cart', function(req, res, next) {
 
 router.post('/AddOrder2', function(req, res, next) {
 
+  
+
   var cartIDs = [];
   var cartData = req.session.cartData0;
   var orderID = req.session.orderID;
@@ -783,6 +826,8 @@ router.post('/AddOrder2', function(req, res, next) {
 // POST /AddOrder
 router.post('/AddOrder', function(req, res, next) {
 
+  console.log("......req.session.mutlaa" + req.session.mutlaa);
+
   var cartIDs = [];
   var cartData = req.session.cartData0;
   var orderID = req.session.orderID;
@@ -822,6 +867,7 @@ router.post('/AddOrder', function(req, res, next) {
       Prices[index] = product.price
       if (product.discountPrice != 0) { Prices[index] = product.discountPrice }
       Quantities[index] = cartData[index].Quantity
+      if ( req.session.mutlaa ) { Prices[index] = product.discountPrice };
     });
 
 
@@ -907,7 +953,10 @@ router.post('/cart', function(req, res, next) {
     warranty: parseFloat(req.body.warranty),
     // total : parseInt(req.body.quantity)*parseFloat(req.body.price)
   }
+
+  
   console.log("req.session.cartData0" + req.session.cartData0);
+  
 
   if (!req.session.cartData0) {
     req.session.cartData0 = []
