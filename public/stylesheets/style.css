@@ -9,7 +9,30 @@
   background-position: center center;    
 }
 
+.float1{
+  	position:fixed;
+  bottom:25px;  
+	right:20px;
+}
 
+.float2{
+
+}
+
+.float{
+	
+	width:70px;
+	height:70px;
+	background-color:#25D366;
+	color:#FFF;
+	border-radius:50px;
+	text-align:center;
+	box-shadow: 2px 2px 3px #999;
+}
+
+.my-float{
+	margin-top:12px;
+}
 
 
 
@@ -507,6 +530,11 @@ body {
     vertical-align: top;
     margin-left: -10px; 
 }
+
+
+
+
+
 
 
 
