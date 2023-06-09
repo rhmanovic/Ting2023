@@ -3,6 +3,10 @@ extends layout
 block content
 
   - var profit = 0
+  - var profit5 = 0
+  - var profit4 = 0
+  - var profit3 = 0
+  - var profit2 = 0
 
   .main.container
     h1 صفحة الطلبات
@@ -106,8 +110,17 @@ block content
                                   if (!isNaN(order.totalPrice - order.totalCost))
                                     td= (order.totalPrice - order.totalCost).toFixed(3)
                                     -  profit += (order.totalPrice - order.totalCost)
-
+                                    if (order.time.getMonth() == 5)
+                                      -  profit5 += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 4)
+                                      -  profit4 += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 3)
+                                      -  profit3 += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 2)
+                                      -  profit2 += (order.totalPrice - order.totalCost)
+                                   
                         p= profit
+                        p= profit4
                         
 
 
