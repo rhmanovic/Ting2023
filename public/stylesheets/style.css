@@ -44,7 +44,7 @@
 	color: #363636;
 }
 .color3{
-	color: #FF6978 !important;
+	color: tomato !important;
 }
 .carousel-indicators {
 	position: absolute;
@@ -52,7 +52,7 @@
 	bottom: -47px;
 }
 .carousel-indicators .active{
-    background-color: #FF6978;
+    background-color: tomato;
 }
 .carousel-indicators li{
     background-color: gray;
@@ -122,16 +122,16 @@ a:hover {
 /* Button Styles */
 
 .btn-primary {
-	background: #417aba;
-	border-color: #417aba;
+	background: tomato;
+	border-color:tomato;
 }
 .btn-info {
-	background-color: #31b0d5;
-	border-color: #2aabd2;
+	background-color: tomato;
+	border-color:tomato;
 }
 .btn-info:hover {
-	background-color: #5bc0de;
-	border-color: #5bc0de;
+	background-color:tomato;
+	border-color:tomato;
 }
 .btn-light {
 	color:black;
@@ -481,10 +481,10 @@ body {
 }
 
 .tomato{
-	background-color: #49C6E5 !important;
+	background-color:tomato !important;
 }
 .tx-tomato {
-	color: #49C6E5 !important;
+	color: tomato !important;
 }
 .border-3 {
 
@@ -494,7 +494,7 @@ body {
 	border-left: 0;
 	border-radius: 0%;
 	border-width:3px !important;
-	border-color:#49C6E5 !important;
+	border-color: tomato !important;
 }
 
  /* add shadow under navbar */
