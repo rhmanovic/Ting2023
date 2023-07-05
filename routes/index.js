@@ -94,6 +94,7 @@ router.post('/upSellApprove', function(req, res, next) {
 
   var orderData = {
     'mobile': req.body.mobile,
+    'note': req.body.color,
     //'invoice': req.body.invoice,
     'address': req.body.address,
     // 'discount': req.body.discount,
@@ -155,6 +156,7 @@ router.post('/upSellApprove', function(req, res, next) {
               "user": "customer",
               "orderID": (theOrder._id).toString(),
               "mobile": orderData.mobile,
+              "color": orderData.note,
               "massege":"تم استلام طلب جديد upsell"
             }
          }));
