@@ -25,7 +25,6 @@ block content
               .small-font= ` سعر الحبة الاساسي: ${product.price} د.ك`          
                
 
-
               each cartProduct,index in cartData2
                 
                 if cartProduct.ID == product._id
@@ -42,6 +41,9 @@ block content
                   .row.form-group.mt-1
                     label.col-3.col-form-label السعر:
                     .col
+                      if cartProduct.isUpSell
+                        - product.price = cartProduct.upsell
+                    
                       input.form-control.text-center.input-number(type='number', id=`p=${index}`, name=`price`, value=product.price , min='0', max='1000' onchange=`CartChange("${index}","${cartData2.length}")`)
 
 
