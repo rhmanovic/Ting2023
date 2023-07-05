@@ -23,7 +23,6 @@ var ProductSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    description: String,
     SKU: String,
     cost: {
         type: Number,
@@ -98,6 +97,22 @@ var ProductSchema = new mongoose.Schema({
         default: ""
     } ,
     SuperProductID: {  
+        type: String,
+        default: "-"
+    } ,
+    Size: {  
+        type: String,
+        default: "-"
+    } ,
+    Dim: {  
+        type: String,
+        default: "-"
+    } ,
+    Water: {  
+        type: String,
+        default: "-"
+    } ,
+    description: {  
         type: String,
         default: "-"
     } ,
