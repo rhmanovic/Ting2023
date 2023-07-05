@@ -7,7 +7,6 @@ block content
     
     - var totalPrice = 0
     - var shippingPrice = 1.5
-    
     .container.mt-3
       each product,index in cartData
         if product.upsell
@@ -35,30 +34,56 @@ block content
               a.d-grid.gap-2(href=`../upSellAdd/${cartData[0].productNo}/${cartData[0].nextUpSell}`)
                 button.btn.btn-danger.btn-lg(type='button')= `احصل على 50 حبة اضافيه بـ ${cartData[0].nextUpSell} د.ك`
     
-      
-      .card.cardShadow.m-3
-        h4.mx-3.mt-2 ملخص الطلبية
-        hr.mx-3
+      form#addorder(method='POST' action='/upSellApprove')
+
+        
+
         .container
-            .row.mx-1
-                .col الاجمالي
+          hr.mx-2.mt-3
+          .col
+            h4.mx-3.mt-2 اختر اللون المطلوب :
+            .form-check.mx-1.fs-5
+              input.mx-1(type='radio' name='color' value='ww')
+              label(for='html') ابيض
+              br
+              input.mx-1(type='radio' name='color' value='wh')
+              label(for='css') اصفر
+              br
+              input.mx-1(type='radio' name='color' value='ww/wh')
+              label(for='javascript') نص ابيض/نص اصفر
+          hr.mx-2.mb-4.mt-3
+
+
+
+
+  
+        .card.cardShadow.m-3
+          h4.mx-3.mt-2 ملخص الطلبية
+          hr.mx-3
+          .container
+              .row.mx-1
+                  .col الاجمالي
+                  .col.text-left.ltr
+                      span(id="subTotalPrice")= totalPrice
+                      span= " K.D"
+              .row.mx-1
+                  .col التوصيل
+                  .col.text-left.ltr
+                      span#shipping= shippingPrice
+                      span#shipping1= " K.D"
+                  
+              hr.mx-3
+              .row.mx-1
+                .col الاجمالي الكلي
                 .col.text-left.ltr
-                    span(id="subTotalPrice")= totalPrice
+                    span#finalPrice= totalPrice + shippingPrice
                     span= " K.D"
-            .row.mx-1
-                .col التوصيل
-                .col.text-left.ltr
-                    span#shipping= shippingPrice
-                    span#shipping1= " K.D"
-                
-            hr.mx-3
-            .row.mx-1
-              .col الاجمالي الكلي
-              .col.text-left.ltr
-                  span#finalPrice= totalPrice + shippingPrice
-                  span= " K.D"
-    
-        form#addorder(method='POST' action='/upSellApprove')
+          
+        
+
+
+          
+
           .d-flex.flex-column.bd-highlight.m-3
       
               //.pt-2.bd-highlight اختر المنطقة:
