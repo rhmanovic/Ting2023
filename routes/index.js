@@ -48,6 +48,16 @@ router.get('/mutlaaWelcome', function(req, res, next) {
 
 });
 
+router.get('/orderReceived', function(req, res, next) {
+
+  return res.render('redirect', { title: 'ITC Discount' });
+  
+
+});
+
+
+
+
 router.get('/mutlaa', function(req, res, next) {
   // res.send('Hello World!')
 
