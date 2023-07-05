@@ -51,6 +51,7 @@ var OrderSchema = new mongoose.Schema({
   },
   
   city: String,
+  note: String,
   status: {
     type: String,
     default: "processing"
