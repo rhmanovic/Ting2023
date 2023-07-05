@@ -937,7 +937,7 @@ router.get('/emptyCart', function(req, res, next) {
   req.session.cartCount = null;
   req.session.save(function(err) {
     // session saved
-    return res.redirect('/');
+    return res.redirect('/orderReceived');
   })
   // }
 
