@@ -333,6 +333,48 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
 
 
 
+
+
+
+router.get('/upsellCategory/:productNo', function(req, res, next) {
+  const { productNo } = req.params;
+  const { ShowModal } = req.query;
+  const { Q } = req.query;
+
+
+  Product.findOne({ productNo: productNo }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+
+      if ( productData.upsell == 0) {
+        res.redirect('/emptyCart')
+      }
+
+      Product.find({ SuperProductID: productData._id }).exec(function(error, productSub) {
+        if (error) {
+          return next(error);
+        } else {
+
+
+
+          //console.log(productSub); JSON.parse
+          // let reqq= JSON.parse(req);
+
+          console.log(req.headers.host)
+          console.log(req.headers.referer)
+          
+          return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+
+
+        }
+      });
+
+
+    }
+  });
+
+});
 router.get('/upSell/:productNo', function(req, res, next) {
   const { productNo } = req.params;
   const { ShowModal } = req.query;
