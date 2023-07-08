@@ -56,7 +56,15 @@ var ProductSchema = new mongoose.Schema({
         type: Number,
         default: 0
     } ,
+    package: {
+        type: Number,
+        default: 0
+    } ,
     discountPrice: {
+        type: Number,
+        default: 0
+    } ,
+    beforePrice: {
         type: Number,
         default: 0
     } ,
