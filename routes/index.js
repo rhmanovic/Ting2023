@@ -386,9 +386,9 @@ router.get('/upSell/:productNo', function(req, res, next) {
       return next(error);
     } else {
 
-      if ( productData.upsell == 0) {
-        res.redirect('/emptyCart')
-      }
+      // if ( productData.upsell == 0) {
+      //   res.redirect('/emptyCart')
+      // }
 
       Product.find({ SuperProductID: productData._id, variant: true }).exec(function(error, productSub) {
         if (error) {
