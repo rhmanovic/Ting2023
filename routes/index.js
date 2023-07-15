@@ -265,6 +265,7 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
         productNo: parseFloat(productNo),
         parentNo: parseFloat(productData.parentNo),
         warranty: parseFloat(productData.warranty),
+        colortype: parseFloat(productData.colortype),
         // total : parseInt(req.body.quantity)*parseFloat(req.body.price)
       }
 
