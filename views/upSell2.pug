@@ -5,10 +5,12 @@ block content
   - var upSelling = true
   if cartData.length > 0
     
+    - var colortype = 0
     - var totalPrice = 0
     - var shippingPrice = 1.5
     .container.mt-3
-      each product,index in cartData
+      each product,index in cartData 
+        - colortype = product.colortype
         if product.upsell
           
           - totalPrice += product.upsell
@@ -36,21 +38,21 @@ block content
     
       form#addorder(method='POST' action='/upSellApprove')
 
-        
-
-        .container
-          hr.mx-2.mt-3
-          .col
-            h4.mx-3.mt-2 اختر اللون المطلوب :
-            .form-check.mx-1.fs-5
-              input.mx-1(type='radio' name='color' value='wh')
-              label(for='html') ابيض
-              br
-              input.mx-1(type='radio' name='color' value='ww')
-              label(for='css') اصفر
-              br
-              input.mx-1(type='radio' name='color' value='4k')
-              label(for='javascript') وورم(اوف وايت)
+        if colortype == 1 || colortype == 2
+          .container
+            hr.mx-2.mt-3
+            .col
+              h4.mx-3.mt-2 اختر اللون المطلوب :
+              .form-check.mx-1.fs-5
+                input.mx-1(type='radio' name='color' value='wh')
+                label(for='html') ابيض
+                br
+                input.mx-1(type='radio' name='color' value='ww')
+                label(for='css') اصفر
+                br
+                if colortype == 1
+                  input.mx-1(type='radio' name='color' value='4k')
+                  label(for='javascript') وورم(اوف وايت)
               
           hr.mx-2.mb-4.mt-3
 
@@ -106,7 +108,7 @@ block content
             
       
               .pt-2.bd-highlight الاسم:
-              input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' required="required" oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
+              input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' value"-")
               .pt-2.bd-highlight رقم الهاتف:
       
               input.p-1.bd-highlight.input-number(placeholder="رقم الهاتف" type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
