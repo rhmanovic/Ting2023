@@ -24,6 +24,10 @@ var ProductSchema = new mongoose.Schema({
         default: ""
     },
     SKU: String,
+    colortype: {
+        type: Number,
+        default: 0
+    } ,
     cost: {
         type: Number,
         default: 0
