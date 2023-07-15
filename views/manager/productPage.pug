@@ -82,6 +82,13 @@ block content
                           a(href=`../editAny/Product/${productData._id}/discountPrice//${productData.discountPrice}/${typeof productData.discountPrice}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
+                        th beforePrice
+                        th :
+                        td= `${productData.beforePrice}`
+                        td 
+                          a(href=`../editAny/Product/${productData._id}/beforePrice//${productData.beforePrice}/${typeof productData.beforePrice}/productPage`)
+                            span.badge.text-bg-success Edit
+                    tr
                         th upsell
                         th :
                         td= `${productData.upsell}`
@@ -208,6 +215,13 @@ block content
                       td= `${productData.group}`
                       td 
                         a(href=`../editAny/Product/${productData._id}/group//${productData.group}/${typeof productData.group}/productPage`)
+                          span.badge.text-bg-success Edit
+                    tr      
+                      th package
+                      th :
+                      td= `${productData.package}`
+                      td 
+                        a(href=`../editAny/Product/${productData._id}/package//${productData.package}/${typeof productData.package}/productPage`)
                           span.badge.text-bg-success Edit
 
                     tr      
