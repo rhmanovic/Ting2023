@@ -1186,7 +1186,11 @@ var mailOptions = {
   from: 'eng.dugaim@gmail.com',
   to: 'eng.dugaim@gmail.com, ITC-Amjad@outlook.com',
   subject: `${massege} رقم الطلب: ${orderID}`,
-  text: `mobile: ${mobile},  orderID: ${orderID}. https://itcstore.net/manager/orderPage/${orderID}, color: ${color},`
+  text: `mobile: ${mobile},
+  orderID: ${orderID}. 
+  https://itcstore.net/manager/orderPage/${orderID}, 
+  color: ${color},
+  source: ${req.session.source}`
 };
 
 transporter.sendMail(mailOptions, function(error, info){
