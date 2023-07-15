@@ -1,6 +1,6 @@
 {
   "watch": ["server", "client"],
-  "ignore_watch" : ["node_modules", "public/img"],
+  "ignore_watch" : ["node_modules", "public/img/upload"],
   "watch_options": {
     "followSymlinks": false
   }
