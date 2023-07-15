@@ -337,10 +337,17 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
 
 
 
-router.get('/upsellCategory/:productNo', function(req, res, next) {
+router.get('/upsellCategory/:productNo/:source', function(req, res, next) {
   const { productNo } = req.params;
+  const { source } = req.params;
   const { ShowModal } = req.query;
   const { Q } = req.query;
+
+  req.session.source = source;
+  req.session.save(function(err) {
+    // session saved
+    // return res.render('mutlaa', { title: 'ITC Discount' });
+  })
 
 
   Product.findOne({ productNo: productNo }).exec(function(error, productData) {
@@ -365,7 +372,14 @@ router.get('/upsellCategory/:productNo', function(req, res, next) {
           console.log(req.headers.host)
           console.log(req.headers.referer)
           
-          return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+          // return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+
+
+          req.session.save(function(err) {
+            return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+            // session saved
+            // return res.render('mutlaa', { title: 'ITC Discount' });
+          })
 
 
         }
@@ -376,11 +390,18 @@ router.get('/upsellCategory/:productNo', function(req, res, next) {
   });
 
 });
-router.get('/upSell/:productNo', function(req, res, next) {
+router.get('/upSell/:productNo/:source', function(req, res, next) {
   const { productNo } = req.params;
+  const { source } = req.params;
   const { ShowModal } = req.query;
   const { Q } = req.query;
 
+
+  req.session.source = source;
+  req.session.save(function(err) {
+    // session saved
+    // return res.render('mutlaa', { title: 'ITC Discount' });
+  })
 
   Product.findOne({ productNo: productNo }).exec(function(error, productData) {
     if (error) {
@@ -978,6 +999,7 @@ router.get('/emptyCart', function(req, res, next) {
   req.session.cartData0 = null;
   req.session.orderID = null;
   req.session.cartCount = null;
+  
   req.session.save(function(err) {
     // session saved
     return res.redirect('/orderReceived');
