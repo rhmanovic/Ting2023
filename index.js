@@ -92,6 +92,7 @@ app.use(function(req, res, next) {
   res.locals.theSalesemanNow = req.session.theSaleseman;
   res.locals.currentUserName = req.session.userName;
   res.locals.theMutlaa = req.session.mutlaa;
+  res.locals.source = req.session.source;
 
   next();
 });
