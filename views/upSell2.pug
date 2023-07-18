@@ -34,7 +34,7 @@ block content
               // button.btn.btn-primary(type='button') اضف 50 حبة زيادة بـ 8.900 د.ك
     
               a.d-grid.gap-2(href=`../upSellAdd/${cartData[0].productNo}/${cartData[0].nextUpSell}`)
-                button.btn.btn-danger.btn-lg(type='button')= `احصل على نفس العرض بـ ${cartData[0].nextUpSell} د.ك`
+                button.btn.btn-danger.btn-lg(type='button')= `زيد من نفس العرض بـ ${cartData[0].nextUpSell} د.ك`
     
       form#addorder(method='POST' action='/upSellApprove')
 
