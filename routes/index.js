@@ -22,6 +22,9 @@ var nodemailer = require('nodemailer');
 const url = require('url'); 
 
 
+
+
+
 router.post('/Disc', function(req, res, next) {
 
   var code = req.body.code;
@@ -47,6 +50,27 @@ router.get('/mutlaaWelcome', function(req, res, next) {
   
 
 });
+router.get('/sheet', function(req, res, next) {
+
+  Product.find({ googleSheet:  true }).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      
+      return res.render('sheet', { title: 'sheet', productData: productData });
+
+
+    }
+  });
+  
+  
+  
+
+});
+
+
+
+
 
 router.get('/orderReceived', function(req, res, next) {
 
@@ -60,7 +84,6 @@ router.get('/orderReceived', function(req, res, next) {
 
 router.get('/mutlaa', function(req, res, next) {
   // res.send('Hello World!')
-
   req.session.mutlaa = true;
   req.session.save(function(err) {
     // session saved
@@ -451,7 +474,7 @@ router.get('/test', function(req, res, next) {
 router.get('/category/:categoryNo', function(req, res, next) {
   const { categoryNo } = req.params;
 
-  Product.find({ categoryNo: categoryNo , status: "A"  }).exec(function(error, productData) {
+  Product.find({ categoryNo: categoryNo , status: "A"  }).sort({ productNo: 1 }).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
@@ -490,7 +513,7 @@ router.get('/product/:productNo', function(req, res, next) {
 
           console.log(req.headers.host)
           console.log(req.headers.referer)
-          return res.render('product', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+          return res.render('product', { title: productData.name, productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
 
 
         }
