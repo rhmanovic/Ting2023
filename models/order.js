@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var OrderSchema = new mongoose.Schema({
   orderNo: Number,
+  img: String,
   warehouse: String,
   customerName: {
     type: String,
