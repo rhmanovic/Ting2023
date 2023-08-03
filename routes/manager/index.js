@@ -463,6 +463,7 @@ router.get('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, function
     'id': req.params.id,
     'returnTo': req.params.returnTo,
   }
+  console.log(data);
   return res.render('manager/formUploadImage', { title: 'Upload', data: data, });
 });
 
@@ -476,6 +477,7 @@ router.post('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, functio
   const host = req.headers.host;
   const referer = req.headers.referer;
 
+  console.log(data)
   console.log("host: " + host );
   console.log("referer: " + referer );
 
@@ -487,6 +489,9 @@ router.post('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, functio
 
         const filename = req.file.filename;
         const fileLInk = `https://${host}/` + filename;
+        console.log("filename")
+        console.log(filename)
+        console.log(fileLInk)
         addLinkImgLingToAny(data.collection, data.id, data.returnTo, filename, res)
 
         // return res.render("manager", { title: '', fileLInk: fileLInk });
@@ -504,6 +509,7 @@ function addLinkImgLingToAny(collection, id, returnTo, filename, res) {
   if (collection == "Product") { var x = Product; var returnLink = '/manager/productPage/' + id; z = 1 }
   else if (collection == "Product" && returnTo == "productshop") { var x = Product; var returnLink = '../product/' + id; z = 1 }
   else if (collection == "Category") { var x = Category;; var returnLink = '/manager/category/'; z = 1 }
+  else if (collection == "Order") { var x = Order;; var returnLink = '/manager/orderPage/' + id; z = 1 }
 
   if (z == 1) {
 
