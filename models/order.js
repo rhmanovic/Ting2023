@@ -12,7 +12,7 @@ var OrderSchema = new mongoose.Schema({
     type: String,
     default: "-"
   },
-  userID: String,
+  userID: String, 
 
 
   productIDs: Array,
@@ -47,8 +47,8 @@ var OrderSchema = new mongoose.Schema({
   },
   
   invoice: {
-    type: String,
-    default: "-"
+    type: Number,
+    default: 0
   },
   
   city: String,
