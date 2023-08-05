@@ -456,7 +456,7 @@ router.get('/editAny/:collection/:id/:field/:value/:type/:returnTo', mid.require
 });
 
 
-router.get('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, function(req, res, next) {
+router.get('/uploadImage/:collection/:id/:returnTo', mid.requiresSaleseman, function(req, res, next) {
 
   const data = {
     'collection': req.params.collection,
@@ -467,7 +467,7 @@ router.get('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, function
   return res.render('manager/formUploadImage', { title: 'Upload', data: data, });
 });
 
-router.post('/uploadImage/:collection/:id/:returnTo', mid.requiresAdmin, function(req, res, next) {
+router.post('/uploadImage/:collection/:id/:returnTo', mid.requiresSaleseman, function(req, res, next) {
   const data = {
     'collection': req.params.collection,
     'id': req.params.id,
@@ -612,7 +612,8 @@ router.get('/city', mid.requiresSaleseman, function(req, res, next) {
 
 
 
-router.post('/city', mid.requiresAdmin, function(req, res, next) {
+router.post('/city', mid.
+            in, function(req, res, next) {
 
   console.log(req.body.data)
 
