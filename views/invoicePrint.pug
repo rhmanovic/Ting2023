@@ -1,0 +1,55 @@
+extends layoutInvoice
+
+block content
+  main.container.px-0.fw-bold
+    p.fs-1.text-center.mt-5 فاتورة
+    p.fs-4.mx-2 شركة اي تي سي لتجارة الادوات الكهربائية
+    
+    table.table
+      tbody.fw-bold.fs-4
+        tr 
+          th رقم الفاتورة
+          th :
+          td= `${orderData.invoice}`
+        tr 
+          th اسم العميل
+          th :
+          td= `${orderData.customerName}`
+        tr 
+          th العنوان
+          th :
+          td= `${orderData.customerName}`
+
+    table.table
+      thead.table-secondary
+        tr
+          //th #
+          th 
+            span اسم المنتج
+            br
+            span (الكفالة)
+          //th الكفاله
+          //- th ID
+          th الكمية
+          th 
+            span السعر
+            br
+            span د.ك
+          th 
+            span الاجمالي
+            br
+            span د.ك
+          
+      tbody.fw-bold.fs-4
+        each product,index in orderData.productIDs
+          tr
+            td
+              span= orderData.productNames[index]
+              br
+              span= `(الكفالة: ${orderData.warranty[index]} سنة)`
+
+            td= orderData.quantity[index]
+            td= orderData.price[index]
+            td= orderData.price[index] * orderData.quantity[index]
+            
+    
