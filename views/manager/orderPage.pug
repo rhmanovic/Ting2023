@@ -121,7 +121,13 @@ block content
                         th userID
                         th :
                         td= `${orderData.userID}`
-                    
+
+
+        a(href=`/invoicePrint/${orderData.invoice}`)
+          .btn.btn-success.bg-warning.mb-2 اطبع الفاتورة
+
+
+
         if (orderData.status != "canceled")      
           table.table
               thead.table-secondary
