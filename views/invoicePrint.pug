@@ -5,19 +5,23 @@ block content
     p.fs-1.text-center.mt-5 فاتورة
     p.fs-4.mx-2 شركة اي تي سي لتجارة الادوات الكهربائية
     
-    table.table
+    table.table-responsive.mb-2
       tbody.fw-bold.fs-4
         tr 
-          th رقم الفاتورة
-          th :
-          td= `${orderData.invoice}`
+          th التاريخ
+          th.px-2 :
+          td= `${orderData.time.toLocaleDateString("en-GB")}`
         tr 
+          th رقم الفاتورة
+          th.px-2 :
+          td= `${orderData.invoice}`
+        tr
           th اسم العميل
-          th :
+          th.px-2 :
           td= `${orderData.customerName}`
         tr 
           th العنوان
-          th :
+          th.px-2 :
           td= `${orderData.customerName}`
 
     table.table
@@ -51,5 +55,16 @@ block content
             td= orderData.quantity[index]
             td= orderData.price[index]
             td= orderData.price[index] * orderData.quantity[index]
+
+    ul
+      li البضاعة المباعة ترد وتستبدل خلال 14 يوم.
+      li الاسلاك والمخفيات بعد القص لا تعتبر في حالتها الاصلية فلا ترد ولا تستبدل.
+      li الكفالة لا تشمل الكسر او سوء الاستخدام.
+
+    span العنوان: اسوق القرين - شارع سوق السرحان - كهرباء مول - محل رقم 2
+    br
+    span هاتف: 90903115
+    br
+    span انستجرام: itcstorekw
             
     
