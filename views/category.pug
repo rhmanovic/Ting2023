@@ -20,7 +20,7 @@ block content
           .col-6.col-lg-4.px-2
             .card.cardShadow.mb-3
               if kkkk
-              img.insta(src=product.img style=`aspect-ratio: 1 / 1;background-image: url("https://itcstore.net/img/bg/${bg}.png");`)
+              img.insta(src=product.img style=`aspect-ratio: 1 / 1;background-image: url("https://itcstore.net/img/bg/${bg}.png");` alt=product.name,)
               .card-body
                 h5.card-title.text-center#card-title1= `${product.name}`
                 ///i.fas.fa-chalkboard-teacher.text-secondary
@@ -44,6 +44,8 @@ block content
                           span.card-text.m-2#card-text1.badge.bg-warning= ` كفالة ${product.warranty} سنة`
                         if product.warranty == 2
                           span.card-text.m-2#card-text1.badge.bg-success= ` كفالة ${product.warranty} سنة`
+                        if product.warranty == 3
+                          span.card-text.m-2#card-text1.badge.bg-primary= ` كفالة ${product.warranty} سنة`
   
                 
                 if theSalesemanNow || managerNow
