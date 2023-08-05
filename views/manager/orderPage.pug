@@ -27,8 +27,8 @@ block content
                         th :
                         td= `${orderData.invoice}`
                         td  
-                          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
-                            a(href=`../editAny/Order/${orderData._id}/invoice//${orderData.invoice?orderData.invoice:"NaN"}/${typeof orderData.invoice}/orderPage`)
+                          //if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                          a(href=`../editAny/Order/${orderData._id}/invoice//${orderData.invoice?orderData.invoice:"NaN"}/${typeof orderData.invoice}/orderPage`)
                               span.badge.text-bg-success تعديل
                     tr
                         th المتجر
@@ -206,7 +206,7 @@ block content
                  
                     
   
-                    
+                     
   
   
   
@@ -252,5 +252,6 @@ block content
                 .col.mt-4.ltr
                     a(href=`../returnOrder/${orderData._id}`)
                         .btn.btn-success ارجاع الطلب
-  
+        
+    
     
