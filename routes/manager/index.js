@@ -612,8 +612,7 @@ router.get('/city', mid.requiresSaleseman, function(req, res, next) {
 
 
 
-router.post('/city', mid.
-            in, function(req, res, next) {
+router.post('/city', mid.requiresAdmin, function(req, res, next) {
 
   console.log(req.body.data)
 
