@@ -54,7 +54,7 @@ block content
 
             td= orderData.quantity[index]
             td= orderData.price[index]
-            td= (orderData.price[index]).toFixed(3) * orderData.quantity[index]
+            td= (orderData.price[index] * orderData.quantity[index]).toFixed(3)
 
     ul
       li البضاعة المباعة ترد وتستبدل خلال 14 يوم.
