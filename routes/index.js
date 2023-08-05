@@ -19,27 +19,44 @@ var City = require('../models/city');
 var mid = require('../middleware');
 
 var nodemailer = require('nodemailer');
-const url = require('url'); 
+const url = require('url');
 
 
 
+
+router.get('/invoicePrint/:invoiceNo', function(req, res, next) {
+
+  const { invoiceNo } = req.params;
+
+  Order.findOne({ invoice: invoiceNo }).exec(function(error, orderData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('invoicePrint', { title: 'invoicePrint' , orderData: orderData});
+    }
+  })
+
+  
+
+
+})
 
 
 router.post('/Disc', function(req, res, next) {
 
   var code = req.body.code;
 
-  console.log("code: "+code);
+  console.log("code: " + code);
 
-  
+
   if (code == "ITC") {
     res.redirect('/mutlaa')
-    
+
   } else {
     return res.render('mutlaa2', { title: 'ITC Discount' });
   }
-  
-    
+
+
 
 })
 
@@ -47,24 +64,24 @@ router.post('/Disc', function(req, res, next) {
 router.get('/mutlaaWelcome', function(req, res, next) {
 
   return res.render('mutlaa2', { title: 'ITC Discount' });
-  
+
 
 });
 router.get('/sheet', function(req, res, next) {
 
-  Product.find({ googleSheet:  true }).exec(function(error, productData) {
+  Product.find({ googleSheet: true }).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
-      
+
       return res.render('sheet', { title: 'sheet', productData: productData });
 
 
     }
   });
-  
-  
-  
+
+
+
 
 });
 
@@ -75,7 +92,7 @@ router.get('/sheet', function(req, res, next) {
 router.get('/orderReceived', function(req, res, next) {
 
   return res.render('redirect', { title: 'ITC Discount' });
-  
+
 
 });
 
@@ -110,18 +127,19 @@ router.get('/', function(req, res, next) {
 
 
 router.post('/upSellApprove', function(req, res, next) {
-  
+
   var cartData = req.session.cartData0;
 
   console.log(cartData);
-  
+
   var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Costs = []; var Warranties = []; cartIDs = [];
 
   cartData.forEach(function(product, index, array) {
     Names.push(product.Name);
     cartIDs.push(product.ID);
-    Prices.push(product.upsell);
-    Quantities.push(product.Quantity);    
+    Prices.push(product.upsell); 
+    Costs.push(product.cost); 
+    Quantities.push(product.Quantity);
     // Warranties.push(product.warranty);
   });
 
@@ -133,29 +151,31 @@ router.post('/upSellApprove', function(req, res, next) {
     // 'discount': req.body.discount,
     'customerName': req.body.customerName,
     'shippingCost': 1.5,
-    'price' : Prices,
-    'productIDs' : cartIDs,
-    'quantity' : Quantities,
-    'warehouse' : "qurain",
-    'productNames' : Names,
-    
+    'price': Prices,
+    'cost': Costs,
+    'productIDs': cartIDs,
+    'quantity': Quantities,
+    'warehouse': "qurain",
+    'productNames': Names,
+
   };
-  
-  
 
 
-   FindOrderAndUpdate ()
-  
-  function FindOrderAndUpdate () {
+
+
+  FindOrderAndUpdate()
+
+  function FindOrderAndUpdate() {
 
     arr_update_dict = { "$set": {} };
     // arr_update_dict["$set"]["cost"] = Costs;
     arr_update_dict["$set"]["price"] = Prices;
+    arr_update_dict["$set"]["cost"] = Costs;
     arr_update_dict["$set"]["productNames"] = Names
     arr_update_dict["$set"]["productIDs"] = cartIDs;
-    arr_update_dict["$set"]["quantity"] = Quantities; 
+    arr_update_dict["$set"]["quantity"] = Quantities;
     // arr_update_dict["$set"]["warranty"] = Warranties;
-    
+
 
     arr_update_dict["$set"]["warehouse"] = "qurain";
     arr_update_dict["$set"]["mobile"] = orderData.mobile;
@@ -169,8 +189,8 @@ router.post('/upSellApprove', function(req, res, next) {
     // arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;    
     // arr_update_dict["$set"]["city"] = orderData.city;
 
-    
-    
+
+
 
     Order.create(orderData, function(error, theOrder) {
       if (error) {
@@ -184,21 +204,21 @@ router.post('/upSellApprove', function(req, res, next) {
         // res.redirect('/emptyCart')
 
         res.redirect(url.format({
-           pathname:"manager/send",
-           query: {
-              "user": "customer",
-              "orderID": (theOrder._id).toString(),
-              "mobile": orderData.mobile,
-              "color": orderData.note,
-              "massege":"تم استلام طلب جديد upsell"
-            }
-         }));
+          pathname: "manager/send",
+          query: {
+            "user": "customer",
+            "orderID": (theOrder._id).toString(),
+            "mobile": orderData.mobile,
+            "color": orderData.note,
+            "massege": "تم استلام طلب جديد upsell"
+          }
+        }));
       }
-      
+
     })
   }
 
-  
+
   // Order.create(orderData, function(error, theOrder) {
   //   if (error) {
   //     console.log(error.code);
@@ -214,7 +234,7 @@ router.post('/upSellApprove', function(req, res, next) {
   //     })
   //   }
   // });
-  
+
 })
 
 router.get('/upSellCart', function(req, res, next) {
@@ -227,16 +247,16 @@ router.get('/upSellCart', function(req, res, next) {
     var old = req.session.cartData0;
     res.redirect('/')
   } else {
-        console.log("ttt")
+    console.log("ttt")
 
     var old = req.session.cartData0;
   }
-  
- 
+
+
   cartData = old;
-  
-  
-  return res.render('upSell2', { title: 'Product', cartData:cartData})
+
+
+  return res.render('upSell2', { title: 'Product', cartData: cartData })
 })
 
 
@@ -244,44 +264,45 @@ router.get('/upSellCart', function(req, res, next) {
 
 // /upSellAdd/:productNo
 router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
-  const { productNo } = req.params; 
-  const { upsellPrice } = req.params; 
+  const { productNo } = req.params;
+  const { upsellPrice } = req.params;
 
   console.log("productNo :" + productNo);
   console.log("upsellPrice :" + upsellPrice);
-  
-  
+
+
   var productExistInCart = false;
   const host = req.headers.host;
   var hostNew = "";
 
   Product.findOne({ productNo: productNo }).exec(function(error, productData) {
 
-    if ( productData.upsell == 0) {
+    if (productData.upsell == 0) {
       res.redirect('/emptyCart')
     }
 
     console.log("productData.upsell :" + productData.upsell);
-    
+
     if (error) {
       return next(error);
     } else {
-      
-    
 
-  
-      if (host == "localhost:3000"){
+
+
+
+      if (host == "localhost:3000") {
         hostNew = "itcstore.net";
       } else {
         hostNew = host;
       }
-      
+
       var newProduct = {
         ID: productData._id,
         Name: productData.name,
         img: productData.img,
         Quantity: 1,
         Price: productData.price,
+        Cost: productData.cost,
         upsell: productData.discountPrice,
         nextUpSell: productData.upsell,
         isUpSell: true,
@@ -292,18 +313,18 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
         // total : parseInt(req.body.quantity)*parseFloat(req.body.price)
       }
 
-      if ( upsellPrice  == productData.upsell) {
-        
+      if (upsellPrice == productData.upsell) {
+
         console.log("upsellPrice  == productData.upsell :" + "true");
-        
+
         newProduct.Price = productData.price;
         newProduct.upsell = productData.upsell;
         newProduct.isUpSellSecond = true
       }
 
-      console.log("newProduct.isUpSellSecond = " + newProduct.isUpSellSecond )
+      console.log("newProduct.isUpSellSecond = " + newProduct.isUpSellSecond)
 
-    
+
       if (!req.session.cartData0) {
         if (upsellPrice != productData.discountPrice) {
           newProduct.upsell = productData.discountPrice;
@@ -311,30 +332,30 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
 
         req.session.cartData0 = []
         var old = req.session.cartData0;
-        
-        
-      } else if (newProduct.isUpSellSecond) {  
 
-        
-       var old = req.session.cartData0;  
-        
-      
-      
-      
+
+      } else if (newProduct.isUpSellSecond) {
+
+
+        var old = req.session.cartData0;
+
+
+
+
       } else {
-        console.log ("5")
+        console.log("5")
         req.session.cartData0 = []
         var old = req.session.cartData0;
       }
 
       // req.session.cartData0 = []
       var old = req.session.cartData0;
-      console.log (old)
+      console.log(old)
 
-      
-    cartData = req.session.cartData0;
-    
-     old.push(newProduct);
+
+      cartData = req.session.cartData0;
+
+      old.push(newProduct);
       req.session.cartData0 = old;
       req.session.cartData0 = old;
       req.session.cartCount = req.session.cartData0.length;
@@ -346,7 +367,7 @@ router.get('/upSellAdd/:productNo/:upsellPrice', function(req, res, next) {
         // return res.render('upSell2', { title: 'Product', cartData:cartData})
         // return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
       })
-    
+
     }
   })
 
@@ -378,7 +399,7 @@ router.get('/upsellCategory/:productNo/:source', function(req, res, next) {
       return next(error);
     } else {
 
-      if ( productData.upsell == 0) {
+      if (productData.upsell == 0) {
         res.redirect('/emptyCart')
       }
 
@@ -394,12 +415,12 @@ router.get('/upsellCategory/:productNo/:source', function(req, res, next) {
 
           console.log(req.headers.host)
           console.log(req.headers.referer)
-          
+
           // return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
 
 
           req.session.save(function(err) {
-            return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+            return res.render('upsellCategory', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub, currentURL: req });
             // session saved
             // return res.render('mutlaa', { title: 'ITC Discount' });
           })
@@ -447,8 +468,8 @@ router.get('/upSell/:productNo/:source', function(req, res, next) {
 
           console.log(req.headers.host)
           console.log(req.headers.referer)
-          
-          return res.render('upSell', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+
+          return res.render('upSell', { title: 'Product', productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub, currentURL: req });
 
 
         }
@@ -474,7 +495,7 @@ router.get('/test', function(req, res, next) {
 router.get('/category/:categoryNo', function(req, res, next) {
   const { categoryNo } = req.params;
 
-  Product.find({ categoryNo: categoryNo , status: "A"  }).sort({ productNo: 1 }).exec(function(error, productData) {
+  Product.find({ categoryNo: categoryNo, status: "A" }).sort({ productNo: 1 }).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
@@ -483,7 +504,7 @@ router.get('/category/:categoryNo', function(req, res, next) {
       else { var title = categoryNo }
 
       return res.render('category', { title: title, productData: productData });
-      
+
     }
   });
 
@@ -513,7 +534,7 @@ router.get('/product/:productNo', function(req, res, next) {
 
           console.log(req.headers.host)
           console.log(req.headers.referer)
-          return res.render('product', { title: productData.name, productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub , currentURL: req });
+          return res.render('product', { title: productData.name, productData: productData, ShowModal: ShowModal, Q: Q, productSub: productSub, currentURL: req });
 
 
         }
@@ -556,7 +577,7 @@ router.get('/editProductQuantite2/:productID/:newQuantity/:newPrice', function(r
   console.log("newPrice: " + newPrice)
   console.log("old: " + old)
 
-  try{
+  try {
     var data = {
       quantity: 0,
       price: 0,
@@ -570,22 +591,22 @@ router.get('/editProductQuantite2/:productID/:newQuantity/:newPrice', function(r
           console.log("array[index]: " + JSON.stringify(array[index]));
           array[index].Price = Number(newPrice)
           array[index].Quantity = Number(newQuantity)
-          
-          
+
+
         }
-       
+
       })
     }
   } finally {
     console.log("old: " + JSON.stringify(old))
 
     req.session.save(function(err) {
-     
+
       req.session.cartData0 = old;
       return res.send("done");
     })
   }
-  
+
 })
 
 
@@ -657,10 +678,10 @@ router.get('/editProductQuantite/:productID/:newQuantity/:newPrice', function(re
   const { newPrice } = req.params;
   var old = req.session.cartData0;
 
-  console.log ( "newQuantity :" + newQuantity );
-  console.log ( "newPrice :" + newPrice );
-  console.log ( 1 );
-  console.log ( newPrice );
+  console.log("newQuantity :" + newQuantity);
+  console.log("newPrice :" + newPrice);
+  console.log(1);
+  console.log(newPrice);
 
   // console.log("you reached editProductQuantite")
 
@@ -672,14 +693,14 @@ router.get('/editProductQuantite/:productID/:newQuantity/:newPrice', function(re
     }
     var indexToSplice = 1000000;
 
-    console.log ( 2 );
+    console.log(2);
 
 
     if (req.session.cartData0) {
       old.forEach(function(product, index, array) {
         // data.totalPrice += product.Price*1000 * product.Quantity/1000;
         // console.log("product.Price " + product.Price)
-        console.log ( 3 );
+        console.log(3);
         if (product.ID == productID) {
           data.totalPrice += newPrice * 1000 * newQuantity / 1000;
           if (newQuantity == 0) {
@@ -688,7 +709,7 @@ router.get('/editProductQuantite/:productID/:newQuantity/:newPrice', function(re
             data.quantity = newQuantity;
             data.price = newPrice;
 
-            console.log ( 4 );
+            console.log(4);
           } else {
             // console.log("array[index]  " + JSON.stringify(array[index]));
 
@@ -700,14 +721,14 @@ router.get('/editProductQuantite/:productID/:newQuantity/:newPrice', function(re
             data.quantity = newQuantity;
             data.price = newPrice;
 
-            console.log ( 5 );
+            console.log(5);
           }
 
         } else {
-          data.totalPrice += 
+          data.totalPrice +=
             newPrice * 1000 * product.Quantity / 1000;
-          console.log ( 6 );
-                      console.log(newPrice * 1000 * product.Quantity / 1000)
+          console.log(6);
+          console.log(newPrice * 1000 * product.Quantity / 1000)
 
         }
       });
@@ -716,20 +737,20 @@ router.get('/editProductQuantite/:productID/:newQuantity/:newPrice', function(re
   } finally {
     if (indexToSplice != 1000000) {
       old.splice(indexToSplice, 1);
-      console.log ( 7 );
+      console.log(7);
     }
 
 
     req.session.cartData0 = old;
     if (old.length == 0) {
       req.session.cartCount = null;
-      console.log ( 8 );
+      console.log(8);
     }
 
 
 
     req.session.save(function(err) {
-      console.log ( 9 );
+      console.log(9);
       console.log(old);
       console.log(data);
       req.session.cartData0 = old;
@@ -754,7 +775,7 @@ router.get('/cart', function(req, res, next) {
   console.log("manager: " + req.session.manager);
 
   var renderCart = "cart";
-  if ( req.session.theSaleseman || req.session.manager) {
+  if (req.session.theSaleseman || req.session.manager) {
     renderCart = "cart2";
   }
 
@@ -835,7 +856,7 @@ router.get('/cart', function(req, res, next) {
 
 router.post('/AddOrder2', function(req, res, next) {
 
-  
+
 
   var cartIDs = [];
   var cartData = req.session.cartData0;
@@ -855,7 +876,7 @@ router.post('/AddOrder2', function(req, res, next) {
     // 'shippingCost': req.body.city.split("#")[1],
     // 'city': req.body.city.split("#")[2],
   };
-  
+
 
   // console.log("req.session");
   // console.log(req.session);
@@ -866,39 +887,39 @@ router.post('/AddOrder2', function(req, res, next) {
     Names.push(product.Name);
     cartIDs.push(product.ID);
     Prices.push(product.Price);
-    Quantities.push(product.Quantity);    
+    Quantities.push(product.Quantity);
     Warranties.push(product.warranty);
   });
 
-  
 
-  Product.find({ _id: { $in: cartIDs } }, { name: 1, price: 1, discountPrice: 1 , cost:1, warranty:1, productNo: 1}).exec(function(error, productData) {
+
+  Product.find({ _id: { $in: cartIDs } }, { name: 1, price: 1, discountPrice: 1, cost: 1, warranty: 1, productNo: 1 }).exec(function(error, productData) {
 
     cartData.forEach(function(product, index, array) {
       let z = product.productNo;
-      console.log("z(" + index + "): "+ z);
+      console.log("z(" + index + "): " + z);
       let obj2 = productData.find(o => o.productNo === z);
       Costs.push(obj2.cost);
-      
-    })  
+
+    })
 
     FindOrderAndUpdate();
-    
+
   })
 
 
-  
 
-  function FindOrderAndUpdate () {
+
+  function FindOrderAndUpdate() {
 
     arr_update_dict = { "$set": {} };
     arr_update_dict["$set"]["cost"] = Costs;
     arr_update_dict["$set"]["price"] = Prices;
     arr_update_dict["$set"]["productNames"] = Names
     arr_update_dict["$set"]["productIDs"] = cartIDs;
-    arr_update_dict["$set"]["quantity"] = Quantities; 
+    arr_update_dict["$set"]["quantity"] = Quantities;
     arr_update_dict["$set"]["warranty"] = Warranties;
-    
+
 
     arr_update_dict["$set"]["warehouse"] = "qurain";
     arr_update_dict["$set"]["mobile"] = orderData.mobile;
@@ -912,11 +933,19 @@ router.post('/AddOrder2', function(req, res, next) {
     // arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;    
     // arr_update_dict["$set"]["city"] = orderData.city;
 
-    
+
 
 
     Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(function() {
-      res.redirect('/emptyCart')
+      req.session.cartData0 = null;
+      req.session.orderID = null;
+      req.session.cartCount = null;
+    
+      req.session.save(function(err) {
+        // session saved
+        res.redirect('/manager/orderPage/'+orderID)
+      })
+      
     })
   }
 
@@ -966,7 +995,7 @@ router.post('/AddOrder', function(req, res, next) {
       Prices[index] = product.price
       if (product.discountPrice != 0) { Prices[index] = product.discountPrice }
       Quantities[index] = cartData[index].Quantity
-      if ( req.session.mutlaa ) { Prices[index] = product.discountPrice };
+      if (req.session.mutlaa) { Prices[index] = product.discountPrice };
     });
 
 
@@ -991,14 +1020,14 @@ router.post('/AddOrder', function(req, res, next) {
       //res.redirect('/send')
 
       res.redirect(url.format({
-       pathname:"manager/send",
-       query: {
+        pathname: "manager/send",
+        query: {
           "user": "customer",
           "orderID": orderID,
           "mobile": orderData.mobile,
-          "massege":"تم استلام طلب جديد"
+          "massege": "تم استلام طلب جديد"
         }
-     }));
+      }));
       //res.redirect('/emptyCart')
     })
 
@@ -1022,7 +1051,7 @@ router.get('/emptyCart', function(req, res, next) {
   req.session.cartData0 = null;
   req.session.orderID = null;
   req.session.cartCount = null;
-  
+
   req.session.save(function(err) {
     // session saved
     return res.redirect('/orderReceived');
@@ -1038,7 +1067,7 @@ router.post('/cart', function(req, res, next) {
   const host = req.headers.host;
   var hostNew = "";
 
-  if (host == "localhost:3000"){
+  if (host == "localhost:3000") {
     hostNew = "itcstore.net";
   } else {
     hostNew = host;
@@ -1054,9 +1083,9 @@ router.post('/cart', function(req, res, next) {
     // total : parseInt(req.body.quantity)*parseFloat(req.body.price)
   }
 
-  
+
   console.log("req.session.cartData0" + req.session.cartData0);
-  
+
 
   if (!req.session.cartData0) {
     req.session.cartData0 = []
