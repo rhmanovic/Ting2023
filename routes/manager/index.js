@@ -682,7 +682,13 @@ router.get('/completeOrder/:orderId/', mid.requiresSaleseman, function(req, res,
       arr_update_dict = { "$set": {} };
       arr_update_dict["$set"]["status"] = "completed";
       arr_update_dict["$set"]["totalPrice"] = (orderData.quantity.reduce(function(r,a,i) { return r + a * orderData.price[i] }, 0) - orderData.discount + orderData.shippingCost).toFixed(3) ;
+
+      if (orderData.cost == orderData.price.length) {
       arr_update_dict["$set"]["totalCost"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * orderData.cost[i] }, 0)).toFixed(3)
+      } else {
+        console.log(2222)
+      arr_update_dict["$set"]["totalCost"] = (orderData.quantity.reduce(function(r, a, i) { return r + a * 0 }, 0)).toFixed(3)
+      }
 
 
       Order.findOneAndUpdate({ _id: orderId }, arr_update_dict).then(function() {
@@ -777,7 +783,14 @@ router.get('/completePurchase/:purchaseId/', mid.requiresSaleseman, function(req
     } else {
       arr_update_dict = { "$set": {} };
       arr_update_dict["$set"]["status"] = "completed";
-      arr_update_dict["$set"]["totalCost"] = purchaseData.quantity.reduce(function(r, a, i) { return r + a * purchaseData.cost[i] }, 0)
+      if (purchaseData.cost) {
+        console.log(1111)
+        arr_update_dict["$set"]["totalCost"] = purchaseData.quantity.reduce(function(r, a, i) { return r + a * purchaseData.cost[i] }, 0)
+      } else {
+        console.log(2222)
+        arr_update_dict["$set"]["totalCost"] = purchaseData.quantity.reduce(function(r, a, i) { return r + a * 0 }, 0)
+      }
+      
 
 
       Purchase.findOneAndUpdate({ _id: purchaseId }, arr_update_dict).then(function() {
