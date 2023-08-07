@@ -30,6 +30,8 @@ block content
                   span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.price} د.ك`
                   span.card-text.m-2#card-text1.fw-bold= `${product.discountPrice} د.ك`                 
                 else
+                  if product.beforePrice > 0
+                    span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.beforePrice} د.ك`
                   span.card-text.m-2#card-text1= `${product.price} د.ك`
 
                 br
