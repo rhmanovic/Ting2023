@@ -24,11 +24,11 @@ const url = require('url');
 
 
 
-router.get('/invoicePrint/:invoiceNo', function(req, res, next) {
+router.get('/invoicePrint/:orderNo', function(req, res, next) {
 
-  const { invoiceNo } = req.params;
+  const { orderNo } = req.params;
 
-  Order.findOne({ invoice: invoiceNo }).exec(function(error, orderData) {
+  Order.findOne({ orderNo: orderNo }).exec(function(error, orderData) {
     if (error) {
       return next(error);
     } else {
@@ -132,7 +132,7 @@ router.post('/upSellApprove', function(req, res, next) {
 
   console.log(cartData);
 
-  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Costs = []; var Warranties = []; cartIDs = [];
+  var IDs = []; var Names = []; var Prices = []; var Quantities = []; Warrantys = []; var Costs = []; var Warranties = []; cartIDs = [];
 
   cartData.forEach(function(product, index, array) {
     Names.push(product.Name);
@@ -140,6 +140,7 @@ router.post('/upSellApprove', function(req, res, next) {
     Prices.push(product.upsell); 
     Costs.push(product.cost); 
     Quantities.push(product.Quantity);
+    Warrantys.push(product.warranty);
     // Warranties.push(product.warranty);
   });
 
@@ -155,6 +156,7 @@ router.post('/upSellApprove', function(req, res, next) {
     'cost': Costs,
     'productIDs': cartIDs,
     'quantity': Quantities,
+    'warranty': Warrantys,
     'warehouse': "qurain",
     'productNames': Names,
 
@@ -174,6 +176,7 @@ router.post('/upSellApprove', function(req, res, next) {
     arr_update_dict["$set"]["productNames"] = Names
     arr_update_dict["$set"]["productIDs"] = cartIDs;
     arr_update_dict["$set"]["quantity"] = Quantities;
+    arr_update_dict["$set"]["warranty"] = Warrantys;
     // arr_update_dict["$set"]["warranty"] = Warranties;
 
 
@@ -951,7 +954,7 @@ router.post('/AddOrder2', function(req, res, next) {
 
 })
 
-// POST /AddOrder
+// POST /AddOrder 
 router.post('/AddOrder', function(req, res, next) {
 
   console.log("......req.session.mutlaa" + req.session.mutlaa);
