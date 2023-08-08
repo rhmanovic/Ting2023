@@ -123,8 +123,10 @@ block content
                         td= `${orderData.userID}`
 
 
-        a(href=`/invoicePrint/${orderData.invoice}`)
+        a(href=`/invoicePrint/${orderData.orderNo}`)
           .btn.btn-success.bg-warning.mb-2 اطبع الفاتورة
+
+        
 
 
 
@@ -259,5 +261,9 @@ block content
                     a(href=`../returnOrder/${orderData._id}`)
                         .btn.btn-success ارجاع الطلب
         
-    
-    
+        a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${orderData.mobile}/?text=تم%20استلام%20طلبك%20من%20شركة%20ITC%0aرقم%20الطلب: %20${orderData.orderNo}%0aالاجمالي:${total}%0aللاطلاع على تفاصيل الطلب:%0ahttps://itcstore.net/invoicePrint/${orderData.orderNo}`)
+          .btn.btn-success.bg-warning.mb-2 واتساب تم استلام الطلب
+
+
+        a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${orderData.mobile}`)
+          .btn.btn-success.bg-warning.mb-2 واتساب فارغ
