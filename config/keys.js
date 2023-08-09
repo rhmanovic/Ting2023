@@ -7,7 +7,7 @@ module.exports = {
   },
   mongodb: {
     // dbURI: 'mongodb+srv://user02:Aa66787785@cluster0-hmsvk.gcp.mongodb.net/tingStore?retryWrites=true'
-    dbURI: 'mongodb+srv://user2023:qEcyyl1kHEO3last@cluster0.k0kof.gcp.mongodb.net/?retryWrites=true&w=majority'
+    dbURI: 'mongodb+srv://user2023:qEcyyl1kHEO3last@cluster0.k0kof.gcp.mongodb.net/Ting?retryWrites=true&w=majority'
     // dbURI: 'mongodb+srv://user2023:123789@cluster0.k0kof.gcp.mongodb.net/?retryWrites=true&w=majority'
   },
   admin: {
