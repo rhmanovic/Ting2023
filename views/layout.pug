@@ -1,5 +1,14 @@
 doctype html(lang='en')
 head
+
+  // Google tag (gtag.js)
+  script(async='' src='https://www.googletagmanager.com/gtag/js?id=AW-731533762')
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-731533762');
+
   meta(charset='utf-8')
   meta(name='viewport', content='width=device-width')
   meta(http-equiv='x-ua-compatible', content='ie=edge')
@@ -15,13 +24,7 @@ head
 
   link(rel='stylesheet', href='/stylesheets/style.css')
 
-// Google tag (gtag.js)
-script(async='' src='https://www.googletagmanager.com/gtag/js?id=AW-731533762')
-script.
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-731533762');
+  
 
 
   
