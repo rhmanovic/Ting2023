@@ -22,6 +22,7 @@ block content
           thead
             tr
               th(scope='col') Category No
+              th(scope='col') Category id
               th(scope='col') Name
               th(scope='col') Image
               //- th(scope='col') ID
@@ -30,6 +31,9 @@ block content
             each category,index in categoryData
               tr
                 th(scope='row')= category.categoryNo
+                td
+                  a(href=`/manager/categoryPage/${category._id}`)
+                    div= `${category._id}`
                 td= `${category.name}`
                 if category.img
                   td 
@@ -49,5 +53,11 @@ block content
                         .badge.text-bg-danger.ms-1
                             i.bi.bi-trash.m-2
 
-                
 
+    .row.ltr
+      each category,index in categoryData
+        if category.parent == "/"
+          p= category.category
+          each subCategory,index in categoryData
+            if category.category == subCategory.parent
+              p.px-5= `${subCategory.category}`
