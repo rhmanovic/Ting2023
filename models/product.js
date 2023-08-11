@@ -7,6 +7,14 @@ var ProductSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
+    group: {
+      type: Boolean,
+      default: false
+    },
+    googleSheet: {
+      type: Boolean,
+      default: false
+    },
     variant: {
       type: Boolean,
       default: false
