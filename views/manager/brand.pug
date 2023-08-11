@@ -22,15 +22,18 @@ block content
           thead
             tr
               th(scope='col') Brand No
+              th(scope='col') Category id
               th(scope='col') Name
-              //- th(scope='col') ID
+              th(scope='col') Image
               th(scope='col') 
           tbody
             each brand,index in brandData
               tr
                 th(scope='row')= brand.brandNo
+                td
+                  a(href=`/manager/brandPage/${brand._id}`)
+                    div= `${brand._id}`
                 td= `${brand.name}`
-                //- td= `${category._id}`
                 td
                     a(href=`/manager/deletBrand/${brand._id}`)
                         .badge.text-bg-danger.ms-1
