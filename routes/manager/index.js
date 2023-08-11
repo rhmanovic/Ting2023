@@ -11,13 +11,41 @@ var TransferRequest = require('../../models/transferRequest');
 var User = require('../../models/user');
 var City = require('../../models/city');
 var mid = require('../../middleware');
+
+
 var nodemailer = require('nodemailer');
+
 
 
 
 var fs = require('fs');
 const multer = require('multer')
 var path = require('path');
+
+router.get('/brandPage/:brandId/', mid.requiresSaleseman, function(req, res, next) {
+  const { brandId } = req.params;
+
+  Brand.findOne({ _id: brandId }).exec(function(error, brandData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/brandPage', { title: 'brandPage', brandData: brandData });
+    }
+  });
+});
+
+router.get('/categoryPage/:categoryId/', mid.requiresSaleseman, function(req, res, next) {
+  const { categoryId } = req.params;
+
+  Category.findOne({ _id: categoryId }).exec(function(error, categoryData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/categoryPage', { title: 'categoryPage', categoryData: categoryData });
+    }
+  });
+});
+
 
 // dublicted in app an admin
 const storage = multer.diskStorage({
@@ -550,7 +578,8 @@ router.post('/editAny', mid.requiresSaleseman, function(req, res, next) {
   else if (data.collection == "TransferRequest") { var x = TransferRequest }
   else if (data.collection == "User") { var x = User }
 
-
+  console.log(data)
+  console.log(x)
 
 
   arr_update_dict = { "$set": {} };
@@ -909,9 +938,11 @@ router.post('/AddProduct', mid.requiresAdmin, function(req, res, next) {
 
 // POST /AddCategory
 router.post('/AddCategory', mid.requiresAdmin, function(req, res, next) {
-
+  
+  
   var categoryData = {
-    'name': req.body.name
+    'name': req.body.name,
+   
   };
 
   Category.create(categoryData, function(error, theCategory) {
