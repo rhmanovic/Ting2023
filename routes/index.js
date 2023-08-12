@@ -495,14 +495,14 @@ router.get('/test', function(req, res, next) {
 
 
 
-router.get('/category/:categoryNo', function(req, res, next) {
-  const { categoryNo } = req.params;
-
-  Product.find({ categoryNo: categoryNo, status: "A" }).sort({ productNo: 1 }).exec(function(error, productData) {
+router.get('/category/:category', function(req, res, next) {
+  const { category } = req.params;
+  //, status: "A" 
+  Product.find({ "category": category}).sort({ productNo: 1 }).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
-
+      
       if (productData[0]) { var title = productData[0].categoryName }
       else { var title = categoryNo }
 
