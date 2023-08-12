@@ -568,6 +568,8 @@ router.post('/editAny', mid.requiresSaleseman, function(req, res, next) {
     'referer': req.body.referer,
   };
 
+  
+
 
   if (data.collection == "Product") { var x = Product } // is there somesing more todo
   else if (data.collection == "Category") { var x = Category }
@@ -578,6 +580,9 @@ router.post('/editAny', mid.requiresSaleseman, function(req, res, next) {
   else if (data.collection == "TransferRequest") { var x = TransferRequest }
   else if (data.collection == "User") { var x = User }
 
+  if (data.field == 'category'){var usingSplit = data.value.split(','); data.value = usingSplit}
+  
+  console.log(usingSplit)
   console.log(data)
   console.log(x)
 
@@ -882,26 +887,26 @@ router.post('/AddProduct', mid.requiresAdmin, function(req, res, next) {
   var productData = {
     // 'SKU':req.body.SKU,
     'name': req.body.name,
-    'variantName': req.body.variantName,
-    'price': req.body.price,
-    'cost': req.body.cost,
-    "status": req.body.status,
-    'quantity': req.body.quantity,
-    'naseem': req.body.naseem,
-    'qurain': req.body.qurain,
-    "description": req.body.description,
-    "discountPrice": req.body.discountPrice,
-    "category": req.body.category.split("#")[0],
-    "categoryName": req.body.category.split("#")[1],
-    "categoryNo": req.body.category.split("#")[2],
-    "brand": req.body.brand.slice(0, 24),
-    "brandName": req.body.brand.slice(24),
-    "vendor": req.body.vendor.slice(0, 24),
-    "vendorName": req.body.vendor.slice(24),
-    'SuperProductID': req.body.SuperProductID,
-    'variant': req.body.variant,
-    'group': req.body.group,
-    'warranty': req.body.warranty
+    // 'variantName': req.body.variantName,
+    // 'price': req.body.price,
+    // 'cost': req.body.cost,
+    // "status": req.body.status,
+    // 'quantity': req.body.quantity,
+    // 'naseem': req.body.naseem,
+    // 'qurain': req.body.qurain,
+    // "description": req.body.description,
+    // "discountPrice": req.body.discountPrice,
+    // "category": req.body.category.split("#")[0],
+    // "categoryName": req.body.category.split("#")[1],
+    // "categoryNo": req.body.category.split("#")[2],
+    // "brand": req.body.brand.slice(0, 24),
+    // "brandName": req.body.brand.slice(24),
+    // "vendor": req.body.vendor.slice(0, 24),
+    // "vendorName": req.body.vendor.slice(24),
+    // 'SuperProductID': req.body.SuperProductID,
+    // 'variant': req.body.variant,
+    // 'group': req.body.group,
+    // 'warranty': req.body.warranty
   };
 
 
