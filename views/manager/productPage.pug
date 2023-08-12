@@ -10,7 +10,7 @@ block content
         
         .col.col-lg-2
             table.table.table-sm 
-                //- thead
+                //- thead 
                     tr
                     th(scope='col') Proparty
                     th(scope='col') Value
@@ -47,11 +47,11 @@ block content
 
 
                     tr
-                        th Arabic Name
+                        th English Name
                         th :
-                        td= `${productData.arabicName}`
+                        td= `${productData.nameE}`
                         td 
-                          a(href=`../editAny/Product/${productData._id}/arabicName//${productData.arabicName?productData.arabicName:"NaN"}/${typeof productData.arabicName}/productPage`)
+                          a(href=`../editAny/Product/${productData._id}/nameE//${productData.nameE?productData.nameE:"NaN"}/${typeof productData.nameE}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
                         th status
@@ -124,11 +124,11 @@ block content
                           a(href=`../editAny/Product/${productData._id}/sellCount//${productData.sellCount}/${typeof productData.sellCount}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
-                        th category
+                        th category URLs
                         th :
                         td= `${productData.category}`
                         td 
-                          a(href=`../editAny/Product/${productData._id}/category//${productData.category}/${typeof productData.category}/productPage`)
+                          a(href=`../editAny/Product/${productData._id}/category//x/${typeof productData.category}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
                         th categoryName
@@ -156,7 +156,7 @@ block content
                         th :
                         td= `${productData.brandName}`
                         td 
-                          a(href=`../editAny/Product/${productData._id}/brandName//${productData.brandName}/${typeof productData.brandName}/productPage`)
+                          a(href=`../editAny/Product/${productData._id}/brandName//${productData.brandName?productData.brandName:"NaN"}/${typeof productData.brandName}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
                         th vendor
@@ -190,7 +190,7 @@ block content
                         
                         td 
                           a(href=`../uploadImage/Product/${productData._id}/productPage`)
-                            span.badge.text-bg-success Upload Image
+                            span.badge.text-bg-success Upload Image 
 
                     tr      
                       th SubProducts
@@ -248,11 +248,11 @@ block content
                           span.badge.text-bg-success Edit
                
                     tr      
-                      th color type
+                      th color
                       th :
-                      td= `${productData.colortype}`
+                      td= `${productData.color}`
                       td 
-                        a(href=`../editAny/Product/${productData._id}/colortype//${productData.colortype}/${typeof productData.colortype}/productPage`)
+                        a(href=`../editAny/Product/${productData._id}/color//${productData.color?productData.color:"NaN"}/${typeof productData.color}/productPage`)
                           span.badge.text-bg-success Edit
                
         
