@@ -3,10 +3,11 @@ var bcrypt = require('bcryptjs');
 var ProductSchema = new mongoose.Schema({
    
     productNo: {
-        type: String,
-        default: ""
+      type: String,
+      default: "",
+      unique: true,
     },
-    img: String,
+    
     group: {
       type: Boolean,
       default: false
@@ -84,6 +85,10 @@ var ProductSchema = new mongoose.Schema({
         type: Number,
         default: 0
     } ,
+    img: {
+        type: Array,
+        default: []
+    },
     category: {
         type: Array,
         default: []
