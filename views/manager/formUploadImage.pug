@@ -2,19 +2,12 @@ extends layout
 
 block content
   .main.container
-    - var action = ``
-    - var indexGlobal = 0
-
-    
-
-    each img,index in result.img
-      - indexGlobal = index + 1
+    if data.collection != "Product"
+      - var action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}`
       
-    
       .row
-          h3= `Upload ${data.collection} Image, #${index}`
-          p= img
-          - action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${index}`
+          h3= `Upload ${data.collection} Image`
+  
           form.input-group(method='POST' action=action enctype='multipart/form-data')
             .row
               
@@ -23,23 +16,54 @@ block content
                   input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
                   //label.input-group-text(for='inputGroupFile02') Upload
                   button#myFile.input-group-text(for='inputGroupFile01') Upload
+  
+  
 
-    .row
-        h3= `Upload ${data.collection} Image, #${indexGlobal}`
-        p new...
-        - action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${indexGlobal}`
-        form.input-group(method='POST' action=action enctype='multipart/form-data')
-          .row
-            
-            .col-sm
-              .input-group.mb-3
-                input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
-                //label.input-group-text(for='inputGroupFile02') Upload
-                button#myFile.input-group-text(for='inputGroupFile01') Upload
+    - var action = ``
+    - var indexGlobal = 0
 
     
-
+    if data.collection == "Product"
+      each img,index in result.img
+        - indexGlobal = index + 1
+        
+      
+        .row
+            h3= `Upload ${data.collection} Image, #${index}`
+            p= img
+            - action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${index}`
+            form.input-group(method='POST' action=action enctype='multipart/form-data')
+              .row
+                
+                .col-sm
+                  .input-group.mb-3
+                    input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
+                    //label.input-group-text(for='inputGroupFile02') Upload
+                    button#myFile.input-group-text(for='inputGroupFile01') Upload
+  
+      .row
+          h3= `Upload ${data.collection} Image, #${indexGlobal}`
+          p new...
+          - action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${indexGlobal}`
+          form.input-group(method='POST' action=action enctype='multipart/form-data')
+            .row
               
-
-
-
+              .col-sm
+                .input-group.mb-3
+                  input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
+                  //label.input-group-text(for='inputGroupFile02') Upload
+                  button#myFile.input-group-text(for='inputGroupFile01') Upload
+  
+      
+  
+                
+  
+  
+  
+  
+  
+                
+  
+  
+  
+  
