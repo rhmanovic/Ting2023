@@ -14,7 +14,26 @@ block content
             .container.my-3
                 .row.row-cols-1.row-cols-lg-2.flex-row-reverse
                     //div.insta
-                    img.d-block.w-100.p-4.insta(src=productData.img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                    
+
+                    #carouselExampleAutoplaying.carousel.slide.carousel-dark(data-bs-ride='carousel')
+                      .carousel-inner
+                        each img,index in productData.img
+                          if index == 0
+                            .carousel-item.active(data-bs-interval="4000")
+                              img.d-block.w-100.p-4.insta(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                          else
+                            .carousel-item(data-bs-interval="4000")
+                              img.d-block.w-100.p-4.insta(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                        
+                      button.carousel-control-prev(type='button' data-bs-target='#carouselExampleAutoplaying' data-bs-slide='prev')
+                        span.carousel-control-prev-icon(aria-hidden='true')
+                        span.visually-hidden Previous
+                      button.carousel-control-next(type='button' data-bs-target='#carouselExampleAutoplaying' data-bs-slide='next')
+                        span.carousel-control-next-icon(aria-hidden='true')
+                        span.visually-hidden Next
+                    
+                  
                     
                     
       
@@ -31,17 +50,17 @@ block content
                             .text-right.d-flex.bd-highlight.justify-content-between.flex-column.flex-md-row-reverse.align-self-baselin
                                 .col.p-0
                                     span.badge.badge-light.mt-2
-                                        span= "التوافر:  "
+                                        
                                         Span.text-success متوفر
                                 if theMutlaa
                                   .container
                                     .row
-                                      .col-4.p-0.mt-4.mt-md-0
+                                      .col-4.p-0.mt-md-0
                                           h5.mt-2.ltr.text-decoration-line-through.text-end= `${productData.price} K.D`
                                       .col-4.p-0.mt-4.mt-md-0
                                           h5.mt-2.text-danger.ltr.text-end#lprice= `${productData.discountPrice} K.D`
                                 else
-                                  .col.p-0.mt-4.mt-md-0
+                                  .col.p-0.mt-md-0
                                       h5.mt-2.text-danger.ltr#lprice= `${productData.price} K.D`
                             br
 
@@ -249,7 +268,8 @@ block content
                 .card-body.text-center
                   i.fa-regular.fa-circle-check.display-1.pb-4.text-success
                   h3.font-weight-bold.text-success تم اضافة المنتج للعربة
-                  img.mx-auto.d-block.w-50.p-4(src=productData.img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                  each img,index in productData.img
+                    img.mx-auto.d-block.w-50.p-4(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
                   form(method='POST' action='/pay')
                     input#chId(type="hidden" name="" value= "")
                     label#chName2(for='course')= productData.name
