@@ -52,7 +52,10 @@ block content
                 td
                   a(href=`productPage/${product._id}`)
                     div= `${product.productNo}`
-                td= product.name
+                td
+                  a(href=`productPage/${product._id}`)
+                    div= product.name
+                //td= product.name
                 if product.cost
                   td= `${product.cost.toFixed(3)}`
                 else
