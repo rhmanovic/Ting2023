@@ -502,12 +502,20 @@ router.get('/category/:category', function(req, res, next) {
     if (error) {
       return next(error);
     } else {
-      
-      if (productData[0]) { var title = productData[0].categoryName }
-      else { var title = categoryNo }
 
-      return res.render('category', { title: title, productData: productData });
+      Category.findOne({ "URLname": category},  { name: 1} ).exec(function(error, categoryData) {
+        if (error) {
+          return next(error);
+        } else {
+          
+          
 
+
+          console.log(categoryData)
+          
+          return res.render('category', { title: categoryData.name, productData: productData, categoryData:categoryData });
+        }
+      });
     }
   });
 
