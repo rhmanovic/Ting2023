@@ -130,6 +130,7 @@ block content
                         td 
                           a(href=`../editAny/Product/${productData._id}/category//x/${typeof productData.category}/productPage`)
                             span.badge.text-bg-success Edit
+                        td later modify as image array
                     tr
                         th categoryName
                         th :
@@ -149,7 +150,7 @@ block content
                         th :
                         td= `${productData.brand}`
                         td 
-                          a(href=`../editAny/Product/${productData._id}/brand//${productData.brand}/${typeof productData.brand}/productPage`)
+                          a(href=`../editAny/Product/${productData._id}/brand//${productData.brand?productData.brand:"NaN"}/${typeof productData.brand}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
                         th brandName
@@ -183,8 +184,9 @@ block content
                         th Image
                         th :
                         if productData.img
-                          td 
-                            a(href=`${productData.img}`) Image Link
+                          each img,index in productData.img
+                            td 
+                              a(href=`${img}`) Image Link
                         else
                           td -
                         
