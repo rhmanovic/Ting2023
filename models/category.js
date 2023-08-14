@@ -21,7 +21,7 @@ var CategorySchema = new mongoose.Schema({
         type: String,
         default: "/"
     },
-    category: {
+    thisCategory: {
         type: String,
         default: "/"
     },
