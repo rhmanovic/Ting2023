@@ -1,62 +1,26 @@
 extends layout
 
 block content
+  
+  h1= categoryData.name
   .main.container
     .row#cards
-      - var bgIndex = 0
-      - var bg = 0
-      - var bgManagerIndex = 0
-      //- this should be repeated for each course
+      
       each product,index in productData
-        if (product.variant == false && product.group != true )
-          - bgIndex +=1
-          - bgManagerIndex +=1
-          - if (bgIndex==5) {bgIndex = 1}
-          - if (bgManagerIndex==7) {bgManagerIndex = 1}
-          if (managerNow ) 
-            - bg = "a0"+bgManagerIndex 
-          else 
-            - bg = "0"+bgIndex 
+        if (product.variant == false && product.group != true )        
           .col-6.col-lg-4.px-2
             .card.cardShadow.mb-3
-              if kkkk
-              img.insta(src=product.img style=`aspect-ratio: 1 / 1;background-image: url("https://itcstore.net/img/bg/${bg}.png");` alt=product.name,)
+              
+              img.insta(src=product.img[0] style=`aspect-ratio: 1 / 1;`)
               .card-body
-                span.card-title#card-title1.limit-content= `${product.name}`
-                ///i.fas.fa-chalkboard-teacher.text-secondary
+                
+                if product.beforePrice > 0
+                  span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.beforePrice} K.D`
+                span.card-text#card-text1.fw-bolder.fs-3= `${(product.price).toFixed(3)} K.D`
+                span.card-title#card-title1.limit-content.mt-4= `${product.name}`
+                
+                span الماركة
+                span.card-text.m-2#card-text1.badge.bg-dark= `${product.brand}`
 
                 
-                if theMutlaa
-                  span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.price} د.ك`
-                  span.card-text.m-2#card-text1.fw-bold= `${product.discountPrice} د.ك`                 
-                else
-                  if product.beforePrice > 0
-                    span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.beforePrice} د.ك`
-                  span.card-text.m-2#card-text1= `${product.price} د.ك`
-
-                br
-                if theSalesemanNow || managerNow
-                  span.card-text.m-2#card-text1.badge.bg-dark= `${product.brandName}`
-
-                if product.warranty > 0
-                  .container.p-0
-                    .row
-                      .col.text-start.p-0
-                        if product.warranty == 1
-                          span.card-text.m-2#card-text1.badge.bg-warning= ` كفالة ${product.warranty} سنة`
-                        if product.warranty == 2
-                          span.card-text.m-2#card-text1.badge.bg-success= ` كفالة ${product.warranty} سنة`
-                        if product.warranty == 3
-                          span.card-text.m-2#card-text1.badge.bg-primary= ` كفالة ${product.warranty} سنة`
-  
-                
-                if theSalesemanNow || managerNow
-                  
-
-                //if theSalesemanNow || managerNow
-                  br
-                  span.card-text.m-2#card-text1= `Qurain: ${product.qurain} | Naseem: ${product.naseem}`
-                a.stretched-link(href=`/product/${product.productNo}`)
-  
-
     
