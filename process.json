@@ -1,0 +1,10 @@
+
+{
+    "script": "bin/www",
+    "watch": true,
+    "ignore_watch": ["node_modules", "public/img/upload"],
+    "watch_options": {
+        "followSymlinks": false
+    },
+    "name": "YOUR_PM2_PROCESS_NAME"
+}
