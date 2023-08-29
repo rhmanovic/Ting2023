@@ -171,6 +171,8 @@ router.get('/search',async function(req, res, next) {
 router.get('/', async function(req, res, next) {
   // res.send('Hello World!')
 
+  console.log("router //")
+
   var productDataAll = [];
   var categoriesPass = [];
 
