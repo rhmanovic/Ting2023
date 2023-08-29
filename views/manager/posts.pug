@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  .main.container
+    h1 Categories Page
+
+
+    .row
+        h3 Posts Data
+
+       
+
+        table.table
+          thead
+            tr
+              th(scope='col') price
+              th(scope='col') discountPrice
+              th(scope='col') img
+              th(scope='col') ItemNo
+              th(scope='col') name
+              
+          tbody
+            each product,index in productData
+              tr
+                if product.img[0]
+                  - var cx = product.img[0]
+                  
+                  td= product.price+" K.D"
+                  td= product.discountPrice.toFixed(2)+" K.D"
+                  td
+                    a(href=`${product.img[0]}`)
+                      span= "/Users/abdulrahmanaldhuferi/Desktop/ting/img/" + cx.split("/")[3]
+                  td= product.productNo
+                  td
+                    span= product.name
+                    br
+                    if product.discounted
+                      span= "قبل الخصم: " + product.price + " د.ك"
+                      br
+                      span= "بعد الخصم: " + product.discountPrice + " د.ك"
+                    else
+                      span= "السعر: " + product.discountPrice + " د.ك"
+                    br
+                    br
+                    span= product.nameE
+                    br
+                    br
+                    span= "رقم البحث في المتجر: " + product.productNo
+                    br
+                    span= "او حياك خدمه العملاء رسائل الواتساب"
+
+                 
+
+               

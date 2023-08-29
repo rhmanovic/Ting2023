@@ -1,0 +1,41 @@
+extends layout
+
+block content
+  .main.container
+    h1 City Page
+
+
+    .row
+        h3 write your Data in Json
+       
+
+        form(method='POST' action='city')
+          .row
+            .col-sm
+              label(for='data') Data :
+              textarea.form-control(type='text' placeholder='data' name='data' rows="3")
+            
+              br
+              button.btn.btn-primary(type='submit') Submit
+
+        table.table
+          thead
+            tr
+              th(scope='col') ID_CITY
+              th(scope='col') Name
+              th(scope='col') Name
+              th(scope='col') cost
+              th(scope='col') price
+              th(scope='col') Shipping From
+               
+          tbody
+            each cityEnglish,index in cityData[0].cityEnglish
+              tr
+                td= `${cityData[0].ID_CITY[index]}`
+                td= `${cityEnglish}`
+                td= `${cityData[0].cityArabic[index]}`
+                td= `${cityData[0].price[index]}`
+                td= `${cityData[0].cost[index]}`
+                td= `${cityData[0].shippingFrom[index]}`
+                
+        

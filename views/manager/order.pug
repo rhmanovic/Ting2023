@@ -1,0 +1,133 @@
+extends layout
+
+block content
+
+  - var profit = 0
+  - var profit5 = 0
+  - var profit4 = 0
+  - var profit3 = 0
+  - var profit2 = 0
+
+  .main.container
+    h1 صفحة الطلبات
+
+
+    .row
+        h3 انشئ طلب
+        
+  
+        form(method='POST' action='/manager/AddOrder')
+          .row
+            .col-sm
+              label(for='warehouse') المتجر :
+              select.form-select(name='warehouse' type='text')
+                option(value="qurain") القرين
+                option(value="naseem") الجهراء
+
+                
+            .col-sm
+              label.text-white .
+              br
+              button.btn.btn-primary(type='submit') طلب جديد
+
+        
+        .ist-group.my-3
+          .list-group-item
+            a.navbar-brand(href=`/manager/order/2`) رتب حسب رقم الطلب
+          
+          .list-group-item
+            a.navbar-brand(href=`/manager/order/1`) رتب حسب رقم الفاتورة
+          
+        .col.col-lg-6
+            table.table
+                thead
+                        tr.table-secondary
+                            th(scope='col') رقم الطلب
+                            th(scope='col') رقم الفاتورة
+                            //- th(scope='col') Order No
+                                //-   th(scope='col') ID
+                            th(scope='col') رقم الهاتف
+                            th(scope='col') المتجر
+                            th(scope='col') الحالة
+                            th(scope='col') التاريخ
+                            th(scope='col') الاجمالي
+                            if managerNow
+                              th(scope='col') التكلفة
+                              th(scope='col') الهامش
+                tbody
+                        - var previousIndexOrder = 0
+                        each order,index in orderData
+                          if (order.status != "deleted" && order.warehouse)
+                            
+                            tr
+                                th(scope='row')
+                                    a(href=`/manager/orderPage/${order._id}`)
+                                        div= `${order.orderNo}`
+                                        //- div= index+1
+                                //- td= `${order.orderNo}`
+                                //- td= `${order._id}`
+                                if ((previousIndexOrder-1) == order.invoice ||  previousIndexOrder == 0)
+                                  td= order.invoice  
+                                else
+                                  td.bg-danger= order.invoice  
+                                td= order.mobile  
+
+                                - previousIndexOrder = order.invoice
+
+                                if (order.warehouse == "qurain")
+                                    td
+                                        span.badge.text-bg-success= `${order.warehouse}`
+                                else if (order.warehouse == "naseem")
+                                    td
+                                        span.badge.text-bg-primary= `${order.warehouse}`
+                                else
+                                    td
+                                        span.badge.text-bg-warning= `${order.warehouse}`
+
+                                if (order.status == "completed")
+                                    td.text-white.bg-primary مكتمل
+                                else if (order.status == "processing")
+                                    td.text-secondary جديد
+                                else if (order.status == "returned")
+                                    td.text-white.bg-danger مرتجع
+                                else if (order.status == "canceled")
+                                    td.bg-warning ملغي
+                                else
+                                    td= `${order.status}`
+
+
+                                td= `${order.time.toLocaleDateString("en-GB")}`
+                                if (order.status == "returned")
+                                  td= order.totalCost
+                                else
+                                  td= order.totalPrice
+
+                                if managerNow
+                                  if (order.status == "returned")
+                                    td= order.totalPrice
+                                  else
+                                    td= order.totalCost
+                                  if (!isNaN(order.totalPrice - order.totalCost))
+                                    td= (order.totalPrice - order.totalCost).toFixed(3)
+                                    -  profit += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 5)
+                                      -  profit5 += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 4)
+                                      -  profit4 += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 3)
+                                      -  profit3 += (order.totalPrice - order.totalCost)
+                                    if (order.time.getMonth() == 2)
+                                      -  profit2 += (order.totalPrice - order.totalCost)
+                                   
+                        p= profit
+                        p= profit4
+                        
+
+
+
+                                //- td= order.status
+
+
+
+                
+
