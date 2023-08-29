@@ -13,13 +13,7 @@ head
   meta(name='viewport', content='width=device-width')
   meta(http-equiv='x-ua-compatible', content='ie=edge')
   meta(name='google-site-verification' content='FEYB5PhhIGBOaTQmYt7Dd2Gz6pKLMrOU0d1fElsElTg')
-  <link rel="preload" as="font" href="/fonts/Alexandria-Bold.ttf" type="font/ttf" crossorigin="anonymous">
-  <link rel="preload" as="font" href="/fonts/Alexandria-Regular.ttf" type="font/ttf" crossorigin="anonymous">
-  link(rel='icon' href='/img/upload/icon-t.jpg')
-
-
-
-  title= `Ting | ${title}` 
+  title= `ITC | ${title}` 
 
  
   link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD' crossorigin='anonymous')
@@ -37,10 +31,9 @@ head
   
 
   
-  body.d-flex.flex-column.min-vh-100.Alexfontnormal(onload="theAjax();")
+  body.d-flex.flex-column.min-vh-100(onload="theAjax();")
     // load navbar.jade
     include navbar
-    include includes/SearchNav
     
     // content block
     block content
@@ -82,7 +75,6 @@ head
         console.log('modal closed stop iframe');
         document.getElementById("divIdVid").src = '';
       })
-
     script(src='/lazy-load.js')
     script(src='/input-change.js')
     script.

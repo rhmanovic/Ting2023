@@ -3,17 +3,16 @@ extends layout
 block content
     - var totalPrice = 0
     - var shippingPrice = 1002
-    - var shippingFee = 1.5
-    
+    // Page Container
     if cartData.length > 0
         .container.text-right.my-3
             .row.row-cols-1.row-cols-md-2.m-2.m-md-0
-                
+                // List Col
                 .col.col-md-8.p-0
                     h3.mb-4 عربة التسوق
-                    
+                    // Product Container
                     .card.cardShadow
-                        
+                        p= `${JSON.stringify(cartData2)}`
                         each product,index in cartData
                             each product2,index in cartData2
                               if product2.ID == product._id
@@ -22,15 +21,11 @@ block content
                             div(id=`div${product._id}`)
                                 .container-fluid.p-0.border
                                     .row.row-cols-2.m-0
-                                        
+                                        // Product image
                                         .col-3.pt-3.pt-md-0
-                                            
                                             span.image-wrap
-                                                - var productImage = ""
-                                                - if (product.img.length > 0) { productImage = product.img[0]} else {productImage = product.img}
-                                                
-                                                img.p-md-3.card-img-top.lazyload(data-src=productImage || "images/fff.png" onerror="this.onerror=null; this.src='images/fff.png'")
-                                        
+                                                img.p-md-3.card-img-top.lazyload(data-src=product.img || "images/fff.png" onerror="this.onerror=null; this.src='images/fff.png'")
+                                        // Product name & Price
                                         .col-9.p-0
                                             .container-fluid.p-0.pt-2
                                                 .row.row-cols-1.m-0
@@ -44,7 +39,17 @@ block content
                                                                     i.ml-1.fa.fa-trash(aria-hidden='true')
                                                                     | إزاله
                                                     .col-md-4.d-flex.flex-column.p-0
-                                                        
+                                                        //- .bd-highlight
+                                                        //-     h6.ltr= `${product.price} K.D`
+                                                        //- .bd-highlight.mt-auto.m-0
+                                                        //-     span= `الكمية ${cartData2[index].Quantity}`
+                                                        //- .bd-highlight
+                                                        //-     span
+                                                        //-         small= `الاجمالي ${product.price* cartData2[index].Quantity} K.D`
+                                                        //- .bd-highlight.mt-auto.m-0.hideMAX
+                                                        //-     span.text-right
+                                                        //-         i.ml-1.fa.fa-trash(aria-hidden='true')
+                                                        //-         | إزاله
                                                         .container
                                                             .d-flex.flex-column.bd-highlight.mb-3
                                                                 .p-2.bd-highlight
@@ -62,21 +67,19 @@ block content
                                                                             .input-group-prepend
                                                                                 button.btn.btn-danger.btn-number.tomato(type='button', data-type='plus', data-field=`quantity${index}`)
                                                                                   span#basic-addon1.h3 +
-                                                                                  
+                                                                                  //i.fa.fa-plus(aria-hidden='true')
                                                                     
                                                                 .p-2.bd-highlight
                                                                     if cartData2[index].isUpSell
                                                                       - product.price = cartData2[index].upsell
-                                                                    if product.discounted
-                                                                      - productprice = product.discountPrice
-                                                                      span.small-font.text-decoration-line-through.text-secondary= `قبل الخصم : ${product.price} K.D`
-                                                                    br
-                                                                    span.fs-6.small-font= `سعر الحبة: ${productprice} K.D`
+                                                                    if theMutlaa
+                                                                      - product.price = product.discountPrice
+                                                                    h6.small-font= `سعر الحبة: ${product.price} K.D`
                                                                 .p-2.bd-highlight
-                                                                    span.fs-6.small-font= `الاجمالي:`
-                                                                    span.fs-6.small-font= ` K.D `
-                                                                    span.fs-6.small-font(id =`R${product._id}`)= ((productprice*1000) * cartData2[index].Quantity)/1000
-                                                                    - totalPrice += ((productprice*1000) * cartData2[index].Quantity)/1000
+                                                                    span.small-font= `الاجمالي:`
+                                                                    span.small-font= ` K.D `
+                                                                    span.small-font(id =`R${product._id}`)= ((product.price*1000) * cartData2[index].Quantity)/1000
+                                                                    - totalPrice += ((product.price*1000) * cartData2[index].Quantity)/1000
                                                                 .p-2.bd-highlight.hideMAX.text-muted.small2-font
                                                                     button.btn.btn-light.btn-sm(value=`${product._id}`, class="remove")
                                                                         i.ml-1.fa.fa-trash(aria-hidden='true')
@@ -96,22 +99,21 @@ block content
                             .row
                                 .col الشحن
                                 .col.text-left.ltr
-                                    span#shipping= shippingFee
-                                    span#shipping1= " K.D"
+                                    span#shipping اختر توصيل/استلام
+                                    span#shipping1
                                 
                             hr.mx-3
                             .row
                               .col الاجمالي الكلي
                               .col.text-left.ltr
-                                  span#finalPrice= (totalPrice + shippingFee).toFixed(3)
+                                  span#finalPrice= totalPrice
                                   span= " K.D"
 
                             form#addorder(method='POST' action='/AddOrder')
                                 .d-flex.flex-column.bd-highlight.mb-3
-                                    div(hidden)
-                                      .pt-2.bd-highlight اختر المنطقة:
-                                      input.p-1.bd-highlight(value=`cdccd#${shippingFee}#ddd` name='city')
-                                    //select.form-select#city(name='city' type='text')
+
+                                    .pt-2.bd-highlight اختر المنطقة:
+                                    select.form-select#city(name='city' type='text')
                                       option(value="1001") المناطق
                                       each cityEnglish,index in citytData.cityEnglish
                                         option(value=`${citytData.ID_CITY[index]}#${citytData.price[index]}#${citytData.cityEnglish[index]}`)= `${citytData.cityArabic[index]}`
@@ -132,7 +134,8 @@ block content
                                     .pt-2.bd-highlight رقم الهاتف:
 
                                     input.p-1.bd-highlight.input-number(placeholder="رقم الهاتف" type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
-                                    
+                                    //.pt-2.bd-highlight الايميل (اختياري):
+                                    //input.p-1.bd-highlight(placeholder="example@example.com" type='text' id='email' name='email')
                                     .pt-2.bd-highlight العنوان:
                                     textarea.p-1.bd-highlight(placeholder="العنوان الكامل" type='text' id='address' name='address' required="required" oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
 

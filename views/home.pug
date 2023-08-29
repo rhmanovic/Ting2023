@@ -2,13 +2,21 @@ extends layout
 
 block content
   
-  .main
-    .container
-      .row.row-cols-3.row-cols-md-6
-        each TheCategory,index in categoriesPass
-          include ./includes/CategoryCard.pug
-          
-    
-    - var counter = 0
-    each productData,index in productDataAll      
-      include ./includes/productsScroll.pug
+  .main.container
+    h2.text-center التصنيفات
+    .row#cards
+
+      //- this should be repeated for each course
+      each category,index in categoryData
+        if category.parent == "/"
+          .col-6.col-lg-4
+            //- a#card-link1(href="https://coursepage.playcode.io/?course=Mechanical Design")
+            .card.cardShadow.mb-3
+              img(src= `${category.img}` style="aspect-ratio: 1 / 1;" alt=category.name,)
+              .card-body
+                h5.card-title.text-center#card-title1= `${category.name}`
+                ///i.fas.fa-chalkboard-teacher.text-secondary
+                //span.card-text.text-secondary.m-2#card-text1= `${category.price}`
+                a.stretched-link(href=`/category/${category.URLname}`) 
+  
+  
