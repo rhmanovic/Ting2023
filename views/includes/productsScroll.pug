@@ -1,0 +1,105 @@
+if counter == 0
+  .div.bghome
+    h1.text-white.p-3.Alexfontbold= categoriesPass[index].name
+    br
+    a(href=`/category/${categoriesPass[index].URLname}`)
+      button.btn.bgnav.btn-lg.mx-3.text-white(type='button' ) تسوق المزيد
+    br    
+    br
+    .d-flex.flex-row.flex-nowrap.overflow-auto(style="scroll-behavior: smooth;" id=`container${index}`)
+      
+      each product,index in productData
+        .col-5.col-lg-4.p-1(id=`scrollspyHeading${index}`)
+          include card.pug
+  
+
+else if counter == 1
+  .div
+    h1.p-3.Alexfontbold.text-center= categoriesPass[index].name
+    br
+    a(href=`/category/${categoriesPass[index].URLname}`)
+      button.btn.bgnav.btn-lg.mx-3.text-white(type='button' ) تسوق المزيد
+    br    
+    br
+    .d-flex.flex-row.flex-nowrap.overflow-auto(style="scroll-behavior: smooth;" id=`container${index}`)
+      
+      each product,index in productData
+        .col-5.col-lg-4.p-1(id=`scrollspyHeading${index}`)
+          include card.pug
+  
+
+
+else if counter == 2
+  
+  .div.bghome2
+    h1.p-3.Alexfontbold= categoriesPass[index].name
+    br
+    a(href=`/category/${categoriesPass[index].URLname}`)
+      button.btn.bgnav.btn-lg.mx-3.text-white(type='button' ) تسوق المزيد
+    br    
+    br
+    .d-flex.flex-row.flex-nowrap.overflow-auto(style="scroll-behavior: smooth;" id=`container${index}`)
+      
+      each product,index in productData
+        .col-5.col-lg-4.p-1(id=`scrollspyHeading${index}`)
+          include card.pug
+  
+
+- counter += 1
+if counter == 3
+  - counter = 0
+
+
+
+
+
+  //.d-flex.justify-content-between.ontainer-fluid.theSlide
+    button.scrollbutotn.btn.fw-bolder.fs-3(type='button' id=`slide${index}`) <
+    button.scrollbutotn.btn.fw-bolder.fs-3(type='button' id=`left${index}`) >
+
+script.
+  const button#{index} = document.getElementById("slide#{index}");
+  const buttonLift#{index} = document.getElementById("left#{index}");
+
+  button#{index}.onclick = () => {
+    document.getElementById("container#{index}").scrollLeft += 380;
+  };
+  buttonLift#{index}.onclick = () => {
+    document.getElementById("container#{index}").scrollLeft -= 380;
+  };
+
+
+
+    
+    
+  
+
+//Use this later for Barnds, looks good
+//.container.my-3
+  .row.row-cols-1.row-cols-lg-2.flex-row-reverse
+    #carouselExampleAutoplaying.carousel.slide.carousel-dark(data-bs-ride='carousel')
+      .carousel-inner
+        
+        each product,index in productData
+          if index == 0
+            .carousel-item.active(data-bs-interval="4000")
+              .row
+                .col-6.col-lg-4.p-1
+                  include card.pug
+                .col-6.col-lg-4.p-1
+                  include card.pug
+          else
+            .carousel-item(data-bs-interval="4000")
+              .row
+                .col-6.col-lg-4.p-1
+                  include card.pug
+                .col-6.col-lg-4.p-1
+                  include card.pug
+  
+  //each product,index in productData
+    if index == 0
+      .carousel-item.active(data-bs-interval="4000")
+        img.d-block.w-100.p-4.insta(src=img, alt=product.name, style="aspect-ratio: 1 / 1;")
+    else
+      .carousel-item(data-bs-interval="4000")
+        img.d-block.w-100.p-4.insta(src=img, alt=product.name, style="aspect-ratio: 1 / 1;")
