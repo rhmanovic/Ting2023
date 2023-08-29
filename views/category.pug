@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  
+  h1= categoryData.name
+  .main.container
+    .row#cards
+      
+      each product,index in productData
+        if (product.variant == false && product.group != true )        
+          .col-6.col-lg-4.px-2
+            .card.cardShadow.mb-3
+              
+              img.insta(src=product.img[0] style=`aspect-ratio: 1 / 1;`)
+              .card-body
+                
+                if product.beforePrice > 0
+                  span.card-text.m-2#card-text1.text-decoration-line-through.fw-light= `${product.beforePrice} K.D`
+                span.card-text#card-text1.fw-bolder.fs-3= `${(product.price).toFixed(3)} K.D`
+                span.card-title#card-title1.limit-content.mt-4= `${product.name}`
+                
+                span الماركة
+                span.card-text.m-2#card-text1.badge.bg-dark= `${product.brand}`
+
+                
+    

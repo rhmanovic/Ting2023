@@ -1,0 +1,103 @@
+extends layoutInvoice
+
+block content
+  - var total = 0;
+  main.container.px-0.fw-bold
+    if orderData.invoice > 0
+      p.fs-1.text-center.mt-5 فاتورة
+    else
+      p.fs-1.text-center.mt-5 طلب
+    p.fs-4.mx-2 شركة اي تي سي لتجارة الادوات الكهربائية
+    
+    table.table-responsive.mb-2
+      tbody.fw-bold.fs-4
+        tr 
+          th التاريخ
+          th.px-2 :
+          td= `${orderData.time.toLocaleDateString("en-GB")}`
+        
+        tr 
+          th رقم الطلب
+          th.px-2 :
+          td= `${orderData.orderNo}`
+        if orderData.invoice > 0
+          tr 
+            th رقم الفاتورة
+            th.px-2 :
+            td= `${orderData.orderNo}`
+
+
+
+
+        tr
+          th اسم العميل
+          th.px-2 :
+          td= `${orderData.customerName}`
+        tr 
+          th العنوان
+          th.px-2 :
+          td= `${orderData.address}`
+        tr 
+          th هاتف
+          th.px-2 :
+          td.ltr.d-flex.flex-row-reverse= `${orderData.mobile}`
+
+    table.table
+      thead.table-secondary
+        tr
+          //th #
+          th 
+            span اسم المنتج
+            br
+            span (الكفالة)
+          //th الكفاله
+          //- th ID
+          th الكمية
+          th 
+            span السعر
+            br
+            span د.ك
+          th 
+            span الاجمالي
+            br
+            span د.ك
+          
+      tbody.fw-bold.fs-4
+        each product,index in orderData.productIDs
+          tr
+            td
+              span= orderData.productNames[index]
+              br
+              span= `(الكفالة: ${orderData.warranty[index]} سنة)`
+
+            td= orderData.quantity[index]
+            td= orderData.price[index]
+            td= (orderData.price[index] * orderData.quantity[index]).toFixed(3)
+            - total += orderData.price[index] * orderData.quantity[index]
+      tbody.fw-bold.fs-4    
+        tr
+          td
+          td
+          th.table-secondary الشحن          
+          th= orderData.shippingCost
+        tr
+          td
+          td
+          th.table-secondary الاجمالي  
+          - total += orderData.shippingCost
+          th= total.toFixed(3)
+
+
+
+    ul
+      li البضاعة المباعة ترد وتستبدل خلال 14 يوم.
+      li الاسلاك والمخفيات بعد القص لا تعتبر في حالتها الاصلية فلا ترد ولا تستبدل.
+      li الكفالة لا تشمل الكسر او سوء الاستخدام.
+
+    span العنوان: اسوق القرين - شارع سوق السرحان - كهرباء مول - محل رقم 2
+    br
+    span هاتف: 90903115
+    br
+    span انستجرام: itcstorekw
+            
+    

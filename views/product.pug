@@ -1,0 +1,325 @@
+extends layout
+
+block content
+
+   
+    // Button trigger modal
+    button.btn.btn-primary#modalButton(hidden type='button' data-bs-toggle='modal' data-bs-target='#exampleModalCenter')
+
+
+
+
+    .col
+        .card.container.mt-4.cardShadow.border-3
+            .container.my-3
+                .row.row-cols-1.row-cols-lg-2.flex-row-reverse
+                    //div.insta
+                    
+
+                    #carouselExampleAutoplaying.carousel.slide.carousel-dark(data-bs-ride='carousel')
+                      .carousel-inner
+                        each img,index in productData.img
+                          if index == 0
+                            .carousel-item.active(data-bs-interval="4000")
+                              img.d-block.w-100.p-4.insta(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                          else
+                            .carousel-item(data-bs-interval="4000")
+                              img.d-block.w-100.p-4.insta(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                        
+                      button.carousel-control-prev(type='button' data-bs-target='#carouselExampleAutoplaying' data-bs-slide='prev')
+                        span.carousel-control-prev-icon(aria-hidden='true')
+                        span.visually-hidden Previous
+                      button.carousel-control-next(type='button' data-bs-target='#carouselExampleAutoplaying' data-bs-slide='next')
+                        span.carousel-control-next-icon(aria-hidden='true')
+                        span.visually-hidden Next
+                    
+                  
+                    
+                    
+      
+
+                    
+                    form#cart(method='POST' action='/cart')
+                        
+                        div.px-lg-3.text-right
+                            h3.my-4= productData.name
+                            if managerNow
+                              a(href=`../manager/editAny/Product/${productData._id}/name//${productData.name?productData.name:"NaN"}/${typeof productData.name}/productshop`)
+                                span تعديل الاسم
+
+                            .text-right.d-flex.bd-highlight.justify-content-between.flex-column.flex-md-row-reverse.align-self-baselin
+                                .col.p-0
+                                    span.badge.badge-light.mt-2
+                                        
+                                        Span.text-success متوفر
+                                if theMutlaa
+                                  .container
+                                    .row
+                                      .col-4.p-0.mt-md-0
+                                          h5.mt-2.ltr.text-decoration-line-through.text-end= `${productData.price} K.D`
+                                      .col-4.p-0.mt-4.mt-md-0
+                                          h5.mt-2.text-danger.ltr.text-end#lprice= `${productData.discountPrice} K.D`
+                                else
+                                  .col.p-0.mt-md-0
+                                      h5.mt-2.text-danger.ltr#lprice= `${productData.price} K.D`
+                            br
+
+                            p.my-0 الكمية
+                            div.my-1
+                                label.sr-only(for='inlineFormInputGroup')
+                                .input-group.my-2
+                                    .input-group-prepend
+                                    button.btn.btn-light.btn-number.border(type='button', data-type='minus', data-field='quantity')
+                                        i.fa.fa-minus(aria-hidden='true')
+                                    if Q
+                                      input.form-control.col-3(type='text', id="intTextBox", name='quantity', value=Q , min='1', max='1000')
+                                    else
+                                      input.form-control.col-3(type='text', id="intTextBox", name='quantity', value='1', min='1', max='1000')
+
+                                    .input-group-prepend
+                                    button.btn.btn-number.tomato.text-white(type='button', data-type='plus', data-field='quantity')
+                                        i.fa.fa-plus(aria-hidden='true')
+
+
+                    
+                            -  var productDataid = productData._id;
+                            if productSub.length > 0
+                              - productDataid = 0
+
+                            div(hidden)
+                              input#pid(type="" name="productId" value= productDataid)
+                              span= productSub.length
+  
+                              input#pname(type="" name="name" value= productData.name)
+                              
+                              input#pproductNo(type="" name="productNo" value= productData.productNo)
+                              input#pproductNo(type="" name="parentNo" value= productData.productNo)
+                              input#pwarranty(type="" name="warranty" value= productData.warranty)
+
+
+
+                              if theMutlaa
+                                input#pprice(type="" name="price" value= productData.discountPrice)
+                              else
+                                input#pprice(type="" name="price" value= productData.price)
+
+
+                            if productSub.length > 0
+                              .my-0.mb-1.mt-4 اختر من القائمة:
+                              select.form-select#variant(name='variant' type='text')
+                                option(value  = "0#0") الخيارات
+
+                                if theMutlaa
+                                  each sub,index in productSub
+                                    option(value=`${sub._id}#${sub.discountPrice}#${sub.productNo}#${sub.qurain}`)= sub.variantName
+                                else
+                                  each sub,index in productSub
+                                    option(value=`${sub._id}#${sub.price}#${sub.productNo}#${sub.qurain}`)= sub.variantName
+
+                            h3.mx-1#errorProduct.text-danger.mt-2 
+
+
+                            
+
+                            button.col.btn.tomato.mt-3.text-white(type='submit')
+                                | اضف للعربة
+                                i.mx-2.fa.fa-cart-plus(aria-hidden='true')
+
+
+
+                            if managerNow || theSalesemanNow
+                              div.mt-5
+                                
+
+                                a(href=`../manager/editAny/Product/${productData._id}/googleSheet//${productData.googleSheet?productData.googleSheet:"NaN"}/${typeof productData.googleSheet}/productshop`)
+                                 p= `عرض في قوقل =  ${productData.googleSheet} `
+
+                                a(href=`../manager/uploadImage/Product/${productData._id}/productshop`)
+                                 span.badge.text-bg-success تعدل صوره العرض
+
+                                a(href=`../manager/productPage/${productData._id}`)
+                                 span.badge.text-bg-success صفحة ادارة المنتج
+
+
+
+                                if managerNow  
+                                  a(href=`../manager/editAny/Product/${productData._id}/cost//${productData.cost?productData.cost:"NaN"}/${typeof productData.cost}/productshop`)
+                                    p.text-danger= `التكلفه    ${productData.name} =  ${productData.cost} `
+                                  a(href=`../manager/editAny/Product/${productData._id}/price//${productData.price?productData.price:"NaN"}/${typeof productData.price}/productshop`)
+                                    p= `سعر  ${productData.name} =  ${productData.price} `
+                                  a(href=`../manager/editAny/Product/${productData._id}/discountPrice//${productData.discountPrice?productData.discountPrice:"NaN"}/${typeof productData.discountPrice}/productshop`)
+                                    p.text-primary= `خصم المطلاع   ${productData.name} =  ${productData.discountPrice} `
+
+                                if productSub.length > 0
+                                  each sub,index in productSub
+                                    a(href=`../manager/editAny/Product/${sub._id}/qurain//${sub.qurain?sub.qurain:"NaN"}/${typeof sub.qurain}/productshop`)
+                                      p= `المخزون في القرين لـ  ${sub.variantName} =  ${sub.qurain} `
+                                    a(href=`../manager/editAny/Product/${sub._id}/naseem//${sub.naseem?sub.naseem:"NaN"}/${typeof sub.naseem}/productshop`)
+                                      p= `المخزون في الجهراء لـ  ${sub.variantName} =  ${sub.naseem} `
+
+                                  
+                                  if managerNow
+                                    each sub,index in productSub
+                                      a(href=`../manager/editAny/Product/${sub._id}/price//${sub.price?sub.price:"NaN"}/${typeof sub.price}/productshop`)
+                                        p= `سعر  ${sub.variantName} =  ${sub.price} K.D`
+                                      a(href=`../manager/editAny/Product/${sub._id}/discountPrice//${sub.discountPrice?sub.discountPrice:"NaN"}/${typeof sub.discountPrice}/productshop`)
+                                        p.text-primary= `خصم المطلاع  ${sub.variantName} =  ${sub.discountPrice} K.D`
+  
+  
+  
+                                      
+                                else
+                                  a(href=`../manager/editAny/Product/${productData._id}/qurain//${productData.qurain?productData.qurain:"NaN"}/${typeof productData.qurain}/productshop`)
+                                    p= `المخزون في القرين لـ  ${productData.name} =  ${productData.qurain} `
+                              
+                                  a(href=`../manager/editAny/Product/${productData._id}/naseem//${productData.naseem?productData.naseem:"NaN"}/${typeof productData.naseem}/productshop`)
+                                    p= `المخزون في الجهراء لـ  ${productData.name} =  ${productData.naseem} `
+  
+                                a(href=`../manager/uploadImage/Product/${productData._id}/productshop`)
+                                 span.badge.text-bg-success تعدل صوره العرض
+
+
+                              
+
+                            if managerNow
+                              if productSub.length > 0
+                                
+                          
+                            
+                    
+                    
+        
+        .card.container.p-0.mb-4.border-0.mt-2
+            .card-header.bg-white.border-0
+                ul.nav.nav-tabs.card-header-tabs
+                    li.nav-item
+                        a.nav-link.active.px-4.bg-light(href='#') المواصفات
+            .card-body.border-bottom.cardShadow.text-right.border-3
+                //- h5.card-title Special title treatment
+                if managerNow
+                  a(href=`../manager/editAny/Product/${productData._id}/description//${productData.description?productData.description:"NaN"}/${typeof productData.description}/productshop`)
+                    p.card-text.mr-4.pr-2(style="text-align: justify;")= productData.description || "..."
+                else
+                  p.card-text.mr-4.pr-2(style="text-align: justify;")= productData.description || "..."
+
+                table.table.table-striped
+                  thead
+                    tr
+                      th(scope='col') تفاصيل المنتج
+                      th(scope='col')
+                     
+                  tbody
+                    tr
+                      th الكفالة
+                      td= `${productData.warranty} سنة`
+                    tr
+                      th مقاس قاعدة التركيب
+                      
+                      if managerNow
+                        td
+                          a(href=`../manager/editAny/Product/${productData._id}/Size//${productData.Size?productData.Size:"NaN"}/${typeof productData.Size}/productshop`)
+                            span= `${productData.Size}`
+                      else
+                        td= `${productData.Size}`
+
+
+                    tr
+                      th ابعاد المنتج
+                      
+                      if managerNow
+                        td
+                          a(href=`../manager/editAny/Product/${productData._id}/Dim//${productData.Dim?productData.Dim:"NaN"}/${typeof productData.Dim}/productshop`)
+                            span= `${productData.Dim}`
+                      else
+                        td= `${productData.Dim}`
+                      
+            
+                    tr
+                      th ضد الماء
+                      
+                      if managerNow
+                        td
+                          a(href=`../manager/editAny/Product/${productData._id}/Water//${productData.Water?productData.Water:"NaN"}/${typeof productData.Water}/productshop`)
+                            span= `${productData.Water}`
+                      else
+                        td= `${productData.Water}`
+                      
+            
+                   
+                      
+            
+
+    // Modal
+    #exampleModalCenter.modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalCenterTitle', aria-hidden='show')
+      .modal-dialog.modal-dialog-centered(role='document')
+        .modal-content
+          //.modal-header.bg-info.text-white
+            h5#exampleModalLabel.modal-title /// modify, delet, or keep
+            button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+
+          .modal-body.signing-buttons.text-center
+            //nav
+              ol.breadcrumb
+                li.breadcrumb-item= xxx
+                li.breadcrumb-item#chName= productData.name
+                  
+            .card
+                .card-body.text-center
+                  i.fa-regular.fa-circle-check.display-1.pb-4.text-success
+                  h3.font-weight-bold.text-success تم اضافة المنتج للعربة
+                  each img,index in productData.img
+                    img.mx-auto.d-block.w-50.p-4(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
+                  form(method='POST' action='/pay')
+                    input#chId(type="hidden" name="" value= "")
+                    label#chName2(for='course')= productData.name
+                    br
+                    label#chPrice(for='course')= `الكمية :${Q}`
+                    br
+                    
+          .modal-footer
+            .mx-auto
+              button.btn.btn-secondary.mx-3(type='button', data-dismiss='modal') اكمال التسوق
+              a(href="../cart")
+                button.btn.btn-primary.mx-3.bg-success(type='button') مشاهدة العربة
+
+
+    script.
+            // Restricts input for the given textbox to the given inputFilter.
+        function setInputFilter(textbox, inputFilter) {
+        ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+            textbox.addEventListener(event, function() {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            } else {
+                this.value = "";
+            }
+            });
+        });
+        }
+
+
+        // Install input filters.
+        setInputFilter(document.getElementById("intTextBox"), function(value) {
+        return /^-?\d*$/.test(value); });
+
+
+
+    if ShowModal == "yes"
+      script.
+        window.onload = function () {
+          document.getElementById("modalButton").click()
+        };
+  
+
+      
+      
+                    
+
+    
+    
