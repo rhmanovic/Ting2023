@@ -57,7 +57,9 @@ block content
     .row.ltr
       each category,index in categoryData
         if category.parent == "/"
-          p= category.thisCategory
+          a(href=`categoryPage/${category._id}`)
+            p= category.thisCategory
           each subCategory,index in categoryData
             if category.thisCategory == subCategory.parent
-              p.px-5= `${subCategory.thisCategory}`
+              a(href=`categoryPage/${subCategory._id}`)
+                p.px-5= `${subCategory.thisCategory}`

@@ -3,6 +3,11 @@ extends layout
 block content
   .main.container
     h1 Order Detailed Page
+    p= orderData
+    each product,index in orderData.productIDs
+      p= orderData.productNames[index]
+      p= orderData.quantity[index]
+    
 
 
     .row

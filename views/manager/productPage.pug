@@ -54,6 +54,13 @@ block content
                           a(href=`../editAny/Product/${productData._id}/nameE//${productData.nameE?productData.nameE:"NaN"}/${typeof productData.nameE}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
+                        th URL
+                        th :
+                        td= `${productData.url}`
+                        td 
+                          a(href=`../editAny/Product/${productData._id}/url//${productData.url?productData.url:"NaN"}/${typeof productData.url}/productPage`)
+                            span.badge.text-bg-success Edit
+                    tr
                         th status
                         th :
                         td= `${productData.status}`
@@ -81,6 +88,18 @@ block content
                         td 
                           a(href=`../editAny/Product/${productData._id}/discountPrice//${productData.discountPrice}/${typeof productData.discountPrice}/productPage`)
                             span.badge.text-bg-success Edit
+
+
+                    tr      
+                      th discounted
+                      th :
+                      td= `${productData.discounted}`
+                      td 
+                        a(href=`../editAny/Product/${productData._id}/discounted//${productData.discounted}/${typeof productData.discounted}/productPage`)
+                          span.badge.text-bg-success Edit
+
+
+
                     tr
                         th beforePrice
                         th :
@@ -255,6 +274,13 @@ block content
                       td= `${productData.color}`
                       td 
                         a(href=`../editAny/Product/${productData._id}/color//${productData.color?productData.color:"NaN"}/${typeof productData.color}/productPage`)
+                          span.badge.text-bg-success Edit
+                    tr      
+                      th note
+                      th :
+                      td= `${productData.note}`
+                      td 
+                        a(href=`../editAny/Product/${productData._id}/note//${productData.note?productData.note:"NaN"}/${typeof productData.note}/productPage`)
                           span.badge.text-bg-success Edit
                
         
