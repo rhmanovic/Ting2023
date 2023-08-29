@@ -1,10 +1,14 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var CategorySchema = new mongoose.Schema({
-    categoryNo: Number,
+    
     categoryNo: String,
     img: String,
 
+    categoryNo: {
+        type: String,
+        default: ""
+    },
     name: {
         type: String,
         default: ""
