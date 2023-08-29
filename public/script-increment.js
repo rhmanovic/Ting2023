@@ -75,3 +75,20 @@ $(".input-number").keydown(function(e) {
     e.preventDefault();
   }
 });
+
+
+
+$("#textBoxEl").keyup(function(event) {
+  if (event.keyCode === 13) {
+      $("#WFF").click();
+  }
+});
+
+
+$('#WFF').on('click', function () {
+    console.log("2222");
+  var searchInput = $('#textBoxEl').val();
+    var url = "/search?text=" + searchInput;
+    window.open(url,"_self");
+});
+
