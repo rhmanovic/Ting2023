@@ -1,0 +1,78 @@
+extends layout
+
+block content
+  .main.container
+    h1 Transfer Request Page
+
+
+    .row
+
+        table.table
+          thead
+            tr
+              th(scope='col') Request No
+              th(scope='col') Product No
+              th(scope='col') Product Name
+              th(scope='col') from
+              th(scope='col') To
+              th(scope='col') Quantity
+              //- th(scope='col') ID
+              th(scope='col') Status
+              
+              th(scope='col') senderApprove
+              th(scope='col') receiverApprove
+              //- th(scope='col') ID
+              th(scope='col') 
+          tbody
+            each request,index in requestData
+              tr
+                th(scope='row')= request.requestNo
+                td= request.productNo
+                td= request.productName
+                td= request.fromName
+                td= request.toName
+                td= request.quantity
+                td= request.status
+                td
+                  if (request.senderApprove == false)
+                    div NO
+                      a(href=`/manager/transferSenderApprove/${request._id}/${request.fromName}`)
+                        .badge.text-bg-success.mx-1
+                          | OK
+                  else if (request.senderApprove == true)
+                    div YES
+
+                td
+                  if (request.receiverApprove == false)
+                    div NO
+                      a(href=`/manager/transferReceiverApprove/${request._id}/${request.toName}/${request.fromName}/${request.productID}/${request.quantity}`)
+                        .badge.text-bg-success.mx-1
+                          | OK
+                  else if (request.receiverApprove == true)
+                    div YES
+
+                 
+
+
+
+
+
+                td
+                  if (request.managerApprove == "no")
+                    div= request.managerApprove
+                      a(href=`/manager/transferManagerApprove/${request._id}`)
+                          .badge.text-bg-success.mx-1
+                            | OK
+                  else if (request.managerApprove == "yes")
+                    div= request.managerApprove
+                td
+                  if (request.status == "processing" && request.managerApprove == "yes")
+                    a(href=`/manager/deletRequest/${request._id}`)
+                        .badge.text-bg-danger.ms-1
+                            i.bi.bi-check-square.m-2
+                //- td= request
+
+                    
+
+                
+

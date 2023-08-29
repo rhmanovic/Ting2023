@@ -1,0 +1,275 @@
+extends layout
+
+block content
+  .main.container
+    h1 Order Detailed Page
+
+
+    .row
+        h1.display-4.m-b-2 ITC Store
+        
+        .col.col-lg-2
+            table.table.table-sm 
+                //- thead
+                    tr
+                    th(scope='col') Proparty
+                    th(scope='col') Value
+                tbody
+                    //- tr
+                        td ID
+                        td= `${orderData._id}`
+                    tr
+                        th رقم الطلب
+                        th :
+                        td= `${orderData.orderNo}`
+                    tr
+                        th رقم الفاتورة
+                        th :
+                        td= `${orderData.invoice}`
+                        td  
+                          //if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                          a(href=`../editAny/Order/${orderData._id}/invoice//${orderData.invoice?orderData.invoice:"NaN"}/${typeof orderData.invoice}/orderPage`)
+                              span.badge.text-bg-success تعديل
+                    tr
+                        th المتجر
+                        th :
+                        td= `${orderData.warehouse}`
+                        td
+                          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                            a(href=`../editAny/Order/${orderData._id}/warehouse//${orderData.warehouse?orderData.warehouse:"NaN"}/${typeof orderData.warehouse}/orderPage`)
+                              span.badge.text-bg-success تعديل
+                    tr
+                        th الحالة
+                        th :
+                        td= `${orderData.status}`
+                        td
+                          if (orderData.status != "completed" && orderData.status != "returned")
+                            a(href=`../editAny/Order/${orderData._id}/status//${orderData.status?orderData.status:"NaN"}/${typeof orderData.status}/orderPage`)
+                              span.badge.text-bg-success تعديل
+
+                    tr
+                        th الهاتف
+                        th :
+                        td= `${orderData.mobile}`
+                        td  
+                          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                            a(href=`../editAny/Order/${orderData._id}/mobile//${orderData.mobile?orderData.mobile:"NaN"}/${typeof orderData.mobile}/orderPage`)
+                              span.badge.text-bg-success تعديل
+                    
+                    tr
+                        th اسم العميل
+                        th :
+                        td= `${orderData.customerName}`
+                        td  
+                          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                            a(href=`../editAny/Order/${orderData._id}/customerName//${orderData.customerName?orderData.customerName:"NaN"}/${typeof orderData.customerName}/orderPage`)
+                              span.badge.text-bg-success تعديل
+
+                    tr
+                        th صورة الفاتورة
+                        th :
+                        if orderData.img
+                          td 
+                            a(href=`${orderData.img}`) رابط الصورة
+                        else
+                          td -
+                        //td  
+                          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                        td 
+                            a(href=`../uploadImage/Order/${orderData._id}/orderPage`)
+                              span.badge.text-bg-success ارفع صورة الفاتورة 
+
+                        
+
+
+                    //tr 
+                        th Customer Email
+                        th :
+                        td= `${orderData.email}`
+                    
+                    tr
+                        th العنوان
+                        th :
+                        td= `${orderData.address}`
+                        td  
+                          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                            a(href=`../editAny/Order/${orderData._id}/address//${orderData.address?orderData.address:"NaN"}/${typeof orderData.address}/orderPage`)
+                              span.badge.text-bg-success تعديل
+                    //tr
+                        th ID_CITY
+                        th :
+                        td= `${orderData.ID_CITY}`
+                    //tr
+                        th Shipping Cost
+                        th :
+                        td= `${orderData.shippingCost}`
+                        //td       
+                          a(href=`../editAny/Order/${orderData._id}/shippingCost//${orderData.shippingCost?orderData.shippingCost:"NaN"}/${typeof orderData.shippingCost}/orderPage`)
+                            span.badge.text-bg-success Edit
+                    //tr
+                        th Discount
+                        th :
+                        td= `${orderData.discount}`
+                        //td       
+                          a(href=`../editAny/Order/${orderData._id}/discount//${orderData.discount?orderData.discount:"NaN"}/${typeof orderData.discount}/orderPage`)
+                            span.badge.text-bg-success Edit
+                    //tr
+                        th City
+                        th :
+                        td= `${orderData.city}`
+                    //tr
+                        th userID
+                        th :
+                        td= `${orderData.userID}`
+
+
+        a(href=`/invoicePrint/${orderData.orderNo}`)
+          .btn.btn-success.bg-warning.mb-2 اطبع الفاتورة
+
+        
+
+
+
+        if (orderData.status != "canceled")      
+          table.table
+              thead.table-secondary
+                  tr
+                  th #
+                  th اسم المنتج
+                  th الكفاله
+                  //- th ID
+                  th الكمية
+                  th السعر
+                  th الاجمالي
+              tbody
+                  - var x = 0 , total = 0
+                  each product,index in orderData.productIDs
+                      - x = x + 1
+                      tr 
+                          td= `${index+1}`
+                          td= orderData.productNames[index]
+                          td= orderData.warranty[index]
+                          //- td= orderData.productIDs[index]
+                          //td= orderData.quantity[index]
+                          td
+                            form(method='POST' action='/manager/editOrder')
+                              input(value=`${orderData.quantity[index]}` name='Value')
+                              input.form-control(value=`${index}` name='index' type='hidden')
+                              input.form-control(value=`quantity` name='field' type='hidden')
+                              input.form-control(value=`${orderData._id}` name='orderID' type='hidden')
+                              if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                                button.btn.badge.text-bg-success.mx-2.my-1 تعديل
+  
+                          td
+                            form(method='POST' action='/manager/editOrder')
+                              input(value=`${orderData.price[index]}` name='Value')
+                              input.form-control(value=`${index}` name='index' type='hidden')
+                              input.form-control(value=`price` name='field' type='hidden')
+                              input.form-control(value=`${orderData._id}` name='orderID' type='hidden')
+                              if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                                button.btn.badge.text-bg-success.mx-2.my-1 تعديل
+  
+                          td= (orderData.quantity[index] * orderData.price[index]).toFixed(3)
+                          - total = total + orderData.price[index] * orderData.quantity[index] 
+              
+              tbody
+                  td
+                  td
+                  td
+                  th.table-secondary الخصم 
+                    if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                     a(href=`../editAny/Order/${orderData._id}/discount//${orderData.discount?orderData.discount:"NaN"}/${typeof orderData.discount}/orderPage`)
+                       span.badge.text-bg-success تعديل
+                  th.table-secondary
+                    input.form-control(value=`${orderData.discount}` type='number' name='quantity' disabled)
+              tbody
+                  td
+                  td
+                  td
+                  th.table-secondary الشحن 
+                    if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                      a(href=`../editAny/Order/${orderData._id}/shippingCost//${orderData.shippingCost?orderData.shippingCost:"NaN"}/${typeof orderData.shippingCost}/orderPage`)
+                        span.badge.text-bg-success تعديل
+                    
+  
+                  th.table-secondary
+                    input.form-control(value=`${orderData.shippingCost}` type='number' name='quantity' disabled)
+                    
+              tbody
+                  td
+                  td
+                  td
+                  th.table-secondary Total 
+                  th.table-secondary= (total - orderData.discount + orderData.shippingCost).toFixed(3)
+          
+  
+          if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+            form(method='POST' action='/manager/AddProductToOrder')
+              .row
+                .col-sm
+                    label(for='productID') product ID :
+                    //- input.form-control(type='text' name='productID')
+                    input.form-control(value=`${orderData._id}` type='hidden' name='orderID')
+  
+                 
+                    
+  
+                     
+  
+  
+  
+                    select.form-select#orderProduct(name='productID' type='text')
+                        each theProduct,index in productsData
+                            option( value=`${theProduct._id}#${theProduct.qurain}#${theProduct.naseem}#${theProduct.price}`)= ` ${theProduct.SubProductId.length}  ${(theProduct.variant ) ? '' : '_______' } ${theProduct.productNo}: ${theProduct.name} || ${theProduct.brandName}  `
+                .col-sm
+                    label(for='quantity') Qurain :
+                    input.form-control#qurainProductOrder(value=qurain disabled)
+                .col-sm
+                    label(for='quantity') Naseem :
+                    input.form-control#naseemProductOrder(value=naseem disabled)
+                .col-sm
+                    label(for='quantity') Quantity :
+                    input.form-control(value='1' type='number' name='quantity')
+                .col-sm
+                    label(for='quantity') Price :
+                    input.form-control#PriceO(Value="0" type='number' step=".001" placeholder='0.000 KD' name='PriceO')
+  
+  
+                
+              
+  
+                //- .col-sm
+                  label(for='status') Status :
+                  select.form-select(name='status' type='text')
+                    option(value='A') A
+                    option(value='NA') NA
+  
+                .col-sm
+                  label.text-white .
+                  br
+                  button.btn.btn-primary(type='submit') أضف
+          .row.mb-5
+            
+            if (orderData.status != "completed" && x !=0 && orderData.status != "returned" && orderData.status != "canceled")
+                .col.mt-4
+                    a(href=`../completeOrder/${orderData._id}`)
+                        button.btn.btn-danger أكمل الطلب
+  
+          
+            if (orderData.status != "completed" && x !=0 && orderData.status != "returned" && orderData.status != "canceled")
+                .col.mt-4.ltr
+                    a(href=`../returnOrder/${orderData._id}`)
+                        .btn.btn-success ارجاع الطلب
+
+
+
+        - var mobile = 0
+        - mobile = (orderData.mobile).slice(-8)
+
+        a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${mobile}/?text=تم%20استلام%20طلبك%20من%20شركة%20ITC%0aرقم%20الطلب: %20${orderData.orderNo}%0aالاجمالي:${(total - orderData.discount + orderData.shippingCost).toFixed(3)}د.ك%0aللاطلاع على تفاصيل الطلب:%0ahttps://itcstore.net/invoicePrint/${orderData.orderNo}`)
+          .btn.btn-success.bg-warning.mb-2 واتساب تم استلام الطلب
+
+        
+        
+        a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${mobile}`)
+          .btn.btn-success.bg-warning.mb-2 واتساب فارغ
