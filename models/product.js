@@ -5,16 +5,25 @@ var ProductSchema = new mongoose.Schema({
     productNo: {
       type: String,
       default: "",
-      unique: true,
+      text: true 
+      // unique: true,
     },
     
     group: {
       type: Boolean,
-      default: false
+      default: false,      
     },
-    group: {
+    discounted: {
       type: Boolean,
-      default: false
+      default: false,      
+    },
+    name: {
+      type: String,
+      efault: ""
+    },
+    url: {
+      type: String,
+      unique: true
     },
     googleSheet: {
       type: Boolean,
@@ -26,11 +35,13 @@ var ProductSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        default: ""
+        default: "",
+      text: false 
+        
     },
     variantName: {
         type: String,
-        default: ""
+        default: "",
     },
     nameE: {
         type: String,
