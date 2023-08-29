@@ -94,6 +94,41 @@ router.get('/', mid.requiresSaleseman, function(req, res, next) {
   return res.render('manager/index', { title: 'Home' });
 });
 
+router.get('/posts', mid.requiresSaleseman, function(req, res, next) {
+  const referer = req.headers.referer;
+  const host = req.headers.host;
+
+  console.log(referer);
+  console.log(host);
+  
+  Product.find({}).exec(function(error, productData) {
+    if (error) {
+      return next(error);
+    } else {
+      var cv = "/img/upload/myFile-1691806589904.jpg"
+      var cx = productData[0].img[0]
+      
+      console.log(productData[0].img[0])
+      
+      console.log("cv: " + cv)
+      console.log("cx: " + cx)
+
+      
+      console.log("cv.split: " + cv.split("/")[3])
+      console.log("cx.split: " + cx.split("/")[3])
+
+      
+      
+      return res.render('manager/posts', { title: 'Posts', productData: productData, host:host });
+      
+    }
+
+    
+  })
+})
+
+
+
 router.get('/products', mid.requiresSaleseman, function(req, res, next) {
   Product.find({}).exec(function(error, productData) {
     if (error) {
@@ -133,7 +168,7 @@ router.get('/products', mid.requiresSaleseman, function(req, res, next) {
 });
 
 router.get('/category', mid.requiresSaleseman, function(req, res, next) {
-  Category.find({}).exec(function(error, categoryData) {
+  Category.find({}).sort({ categoryNo: 1 }).exec(function(error, categoryData) {
     if (error) {
       return next(error);
     } else {
@@ -694,7 +729,7 @@ function addDataToAny(collection, id, value, index,dataFiled, res) {
   // else if (collection == "Product" && returnTo == "productshop") { var x = Product; var returnLink = '../product/' + id; z = 1 }
   // else if (collection == "Category") { var x = Category;; var returnLink = '/manager/category/'; z = 1 }
   // else if (collection == "Order") { var x = Order;; var returnLink = '/manager/orderPage/' + id; z = 1 }
-
+  
   if (z == 1) {
 
     
@@ -1396,11 +1431,11 @@ router.get('/send', function(req, res) {
 
 var mailOptions = {
   from: 'eng.dugaim@gmail.com',
-  to: 'eng.dugaim@gmail.com, ITC-Amjad@outlook.com',
-  subject: `${massege} رقم الطلب: ${orderID}`,
+  to: 'eng.dugaim@gmail.com, ting.storee@gmail.com',
+  subject: `${massege} Ting رقم الطلب: ${orderID}`,
   text: `mobile: ${mobile},
   orderID: ${orderID}. 
-  https://itcstore.net/manager/orderPage/${orderID}, 
+  https://www.tingstorekw.com/manager/orderPage/${orderID}, 
   color: ${color},
   source: ${req.session.source}`
 };
