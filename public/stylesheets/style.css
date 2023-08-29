@@ -1,6 +1,125 @@
 @import './~bootstrap-icons/font/bootstrap-icons.css';
 /* @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"); */
 
+@font-face {
+  font-family: 'Alexfontbold';
+  src: url('/fonts/Alexandria-Bold.ttf') format('truetype'); 
+  font-weight: bold;
+  font-style: normal;
+}  
+
+@font-face {
+  font-family: 'Alexfontnormal';
+  src: url('/fonts/Alexandria-Regular.ttf') format('truetype'); 
+  font-weight: normal;
+  font-style: normal;
+}  
+
+.Alexfontnormal{
+  font-family: 'Alexfontnormal';
+}
+.Alexfontbold{
+  font-family: 'Alexfontbold';
+}
+
+html {
+  height: 100%;
+  
+  
+}
+
+body {
+  height: 100%;
+  
+  /* font-weight: bold; */
+} 
+
+
+.bghome {
+      background-image: url(/img/backgrounds/bg002.png);
+    /* font-weight: bold; */
+    background-position: right;
+    background-size: cover;
+}
+
+.bghome2 {
+      background-image: url(/img/backgrounds/bg003.png);
+    font-weight: normal;
+    background-position: right;
+    background-size: cover;
+}
+
+.minCardLineHeight{
+  min-height: 3em
+}
+
+.bgnav {
+  background-color: #0046BE;
+}
+.bgnav2 {
+  background-color: #003DA6;
+}
+
+
+
+#menu {
+  position: relative;
+}
+
+
+
+#nav {
+  position: absolute;
+  top: 0;
+  width: 300px;
+}
+
+#prev {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  background-color: #ceaaaa;
+  padding: 5px;
+  cursor: pointer;
+  top: 10px;
+  font-weight: bold;
+}
+
+#next {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+  background-color: #ceaaaa;
+  padding: 5px;
+  cursor: pointer;
+  top: 10px;
+  font-weight: bold;
+}
+
+.theSlide{
+  position:relative;  top:-250px; border:0;
+  z-index:6;
+ 
+
+}
+
+.scrollbutotn {
+  border-radius: 50px;
+  width: 50px;
+  height: 50px;
+  background: white;
+   box-shadow: 0 0px 6px 3px rgba(0,0,0,0.5);
+}
+
+.scrollbutotn:focus {     
+    background: white;
+}
+.scrollbutotn:hover {     
+    background: white;
+}
+
+
+
 
 
 
@@ -474,14 +593,6 @@ body {
 }
 
 
-html {
-  height: 100%;
-  font-family: 'Open Sans',sans-serif;
-}
-
-body {
-  height: 100%;
-} 
 
 .menu {
 	font-weight: 600;
@@ -501,7 +612,7 @@ body {
 	border-left: 0;
 	border-radius: 0%;
 	border-width:3px !important;
-	border-color: tomato !important;
+	border-color: #ffe400 !important;
 }
 
  /* add shadow under navbar */
