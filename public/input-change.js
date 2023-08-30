@@ -1,4 +1,29 @@
+$('#addToCartButton').click(function() {
+  var pid = document.getElementById(`pid`).value;
+  var Quantity = document.getElementById(`intTextBox`).value;
+  var Price = document.getElementById(`pprice`).value;
+  var Total = (Quantity * Price * 3.25 ).toFixed(3);
+  console.log("Cart Value: " + Total +" "+ pid);
+  
+  fbq('track', 'Purchase',
+    {
+      value: Total,
+      currency: 'USD',
+      contents: [
+        {
+          id: pid,
+          quantity: Quantity
+        }],
+      content_type: 'product'
+    }
+  );
+  
+});
 
+
+
+
+  
 function Pricechange(productID, index) {
 
     console.log("index:  " + index)
