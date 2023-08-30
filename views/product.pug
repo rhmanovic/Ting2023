@@ -118,7 +118,7 @@ block content
 
                             
 
-                            button.col.btn.tomato.mt-3.text-white(type='submit')
+                            button.col.btn.tomato.mt-3.text-white#addToCartButton(type='submit')
                                 | اضف للعربة
                                 i.mx-2.fa.fa-cart-plus(aria-hidden='true')
 
@@ -226,6 +226,10 @@ block content
 
 
     script.
+
+
+
+
             // Restricts input for the given textbox to the given inputFilter.
         function setInputFilter(textbox, inputFilter) {
         ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
