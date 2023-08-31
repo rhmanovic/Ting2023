@@ -47,6 +47,10 @@ var ProductSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    googleCategory: {
+        type: String,
+        default: ""
+    },
     SKU: String,
     color: {
         type: String,
