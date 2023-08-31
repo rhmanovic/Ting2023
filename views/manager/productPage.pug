@@ -61,6 +61,13 @@ block content
                           a(href=`../editAny/Product/${productData._id}/url//${productData.url?productData.url:"NaN"}/${typeof productData.url}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
+                        th Google Category
+                        th :
+                        td= `${productData.googleCategory}`
+                        td 
+                          a(href=`../editAny/Product/${productData._id}/googleCategory//${productData.googleCategory?productData.googleCategory:"NaN"}/${typeof productData.googleCategory}/productPage`)
+                            span.badge.text-bg-success Edit
+                    tr
                         th status
                         th :
                         td= `${productData.status}`
