@@ -32,10 +32,13 @@ nav.navbar-expand-lg.bgnav.text-white
     if !currentUser
       .p-2.bd-highlight.border-bottom
         a(aria-current='page' href='/login') تسجيل الدخول
-    
 
     .p-2.bd-highlight.border-bottom
-      a(aria-current='page' href='/emptyCart') افرغ العربة
+      a(aria-current='page' href='/contact') تواصل معنا
+    
+    if managerNow || theSalesemanNow
+      .p-2.bd-highlight.border-bottom
+        a(aria-current='page' href='/emptyCart') افرغ العربة
 
     if currentUser
       .p-2.bd-highlight.border-bottom
