@@ -42,7 +42,7 @@ block content
                     form#cart(method='POST' action='/cart')
                         
                         div.px-lg-3.text-right
-                            h3.my-4= productData.name
+                            h3.my-4#product_name= productData.name
                             if managerNow
                               a(href=`../manager/editAny/Product/${productData._id}/name//${productData.name?productData.name:"NaN"}/${typeof productData.name}/productshop`)
                                 span تعديل الاسم
