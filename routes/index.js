@@ -21,7 +21,9 @@ var mid = require('../middleware');
 var nodemailer = require('nodemailer');
 const url = require('url');
 
-
+router.get('/sitemap2.xml', function(req, res) {
+res.sendFile('/sitemap.xml');
+});
 
 
 router.get('/invoicePrint/:orderNo', function(req, res, next) {
@@ -170,6 +172,8 @@ router.get('/search',async function(req, res, next) {
 
 router.get('/', async function(req, res, next) {
   // res.send('Hello World!')
+
+  console.log("router //")
 
   var productDataAll = [];
   var categoriesPass = [];
