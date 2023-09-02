@@ -1,3 +1,19 @@
+$('#whatsappLink').click(function() {
+  console.log("whatsappLink");
+  fbq('track', 'Contact');
+})
+$('#whatsappLink2').click(function() {
+  console.log("whatsappLink");
+  fbq('track', 'Contact');
+})
+
+$('#WFF').click(function() {
+  console.log("Search");
+  fbq('track', 'Search');
+})
+
+
+
 $('#purchaseB').click(function() {
   var finalPrice = document.getElementById(`finalPrice`).innerHTML * 3.25;
   console.log("Purchase Value: " + finalPrice);
@@ -8,6 +24,8 @@ $('#purchaseB').click(function() {
     }
   );
 })
+
+
 
 
 
