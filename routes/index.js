@@ -1698,6 +1698,11 @@ router.get('/contact', function(req, res, next) {
   return res.render('contact', { title: 'Contact' });
 });
 
+// GET /contact /safe
+router.get('/tree', function(req, res, next) {
+  return res.render('tree', { title: 'Links' });
+});
+
 
 
 // GET /login
