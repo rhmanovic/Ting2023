@@ -1703,6 +1703,16 @@ router.get('/tree', function(req, res, next) {
   return res.render('tree', { title: 'Links' });
 });
 
+// GET /contact /safe
+router.get('/return-and-refund', function(req, res, next) {
+  return res.render('return-and-refund', { title: 'return-and-refund' });
+});
+
+// GET /contact /safe
+router.get('/privacy', function(req, res, next) {
+  return res.render('privacy', { title: 'privacy' });
+});
+
 
 
 // GET /login
