@@ -1,32 +1,47 @@
 
-.container.float1
+.float1
   .row
     .col-2
-      a(href='https://wa.me/96599501036' style="z-index: 5;")
+      a#whatsappLink2(href='https://wa.me/96599501036' style="z-index: 5;")
   
         .float
       
           i.fa-brands.fa-whatsapp.display-1.my-float
     
-    .col-2.px-1
-      a(href='https://wa.me/96599501036' style="z-index: 5;")
+    //.col-2.px-1
+      a#whatsappLink(href='https://wa.me/96599501036' style="z-index: 5;")
         h1.badge.rounded-pill.mt-4(style="font-size:1rem; background-color:#25D366;") كلمنا واتساب
 
 
-footer.mt-auto.d-flex.bd-highlight.bgnav.text-white.justify-content-md-between.flex-column.flex-md-row-reverse.align-self-baselin
-  .p-2.bd-highlight.text-center جميع الحقوق محفوظة لشركة اي تي سي لتجارة الادوات الكهربائية  © 2023
-  .p-2.bd-highlight.text-center
-    a.mr-1(href='#')
-      img(src='/images/knet.png', alt='')
-    a.mr-1(href='#')
-      img(src='/images/vesa.jpg', alt='')
-    a.mr-1(href='#')
-      img(src='/images/mastercard.png', alt='')
-    a.mr-1(href='#')
-      img(src='/images/cash.png', alt='')
 
-// Buttonizer
-  script(type='text/javascript').
-    (function(n,t,c,d){if (t.getElementById(d)){return;};var o=t.createElement("script");o.id=d;o.async=!0,o.src="https://cdn.buttonizer.io/embed.js",o.onload=function(){window.Buttonizer.init(c)},t.head.appendChild(o)})(window,document,"b3334c5f-aff9-4854-b884-b4c914cb8770", "buttonizer_script");
-  // End Buttonizer
-  
+
+
+
+footer.bd-highlight.bgnav.text-white.align-self-baselin
+
+  .d-flex.flex-row.justify-content-evenly.flex-column.flex-md-row-reverse
+   
+
+    .p-2.text-center
+      p
+        strong
+          span(style='font-size:19px;') Important Links
+      a(href=`/return-and-refund`)
+        p.mb-0 Return and Refund Policy
+      a(href=`/privacy`)
+        p.mb-0 Privacy Policy
+         
+    .p-2.text-center
+      p
+        strong
+          span(style='font-size:19px;') روابط مهمة
+      a(href=`/return-and-refund`)
+        p.mb-0 سياسة الإرجاع والاسترداد
+      a(href=`/privacy`)
+        p.mb-0 سياسة الخصوصية
+         
+
+  .span.bd-highlight.text-center جميع الحقوق محفوظة لشركة اي تي سي لتجارة الادوات الكهربائية  © 2023
+
+
+ 
