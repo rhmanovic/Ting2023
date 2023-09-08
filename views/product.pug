@@ -3,10 +3,8 @@ extends layout
 block content
 
    
-    // Button trigger modal
-    button.btn.btn-primary#modalButton(hidden type='button' data-bs-toggle='modal' data-bs-target='#exampleModalCenter')
 
-
+    
 
 
     .col
@@ -185,51 +183,10 @@ block content
             
                     
                       
-            
-                   
-                      
-            
-
-    // Modal
-    #exampleModalCenter.modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalCenterTitle', aria-hidden='show')
-      .modal-dialog.modal-dialog-centered(role='document')
-        .modal-content
-          //.modal-header.bg-info.text-white
-            h5#exampleModalLabel.modal-title /// modify, delet, or keep
-            button.close(type='button', data-dismiss='modal', aria-label='Close')
-            span(aria-hidden='true') ×
-
-          .modal-body.signing-buttons.text-center
-            //nav
-              ol.breadcrumb
-                li.breadcrumb-item= xxx
-                li.breadcrumb-item#chName= productData.name
-                  
-            .card
-                .card-body.text-center
-                  i.fa-regular.fa-circle-check.display-1.pb-4.text-success
-                  h3.font-weight-bold.text-success تم اضافة المنتج للعربة
-                  each img,index in productData.img
-                    img.mx-auto.d-block.w-50.p-4(src=img, alt=productData.name, style="aspect-ratio: 1 / 1;")
-                  form(method='POST' action='/pay')
-                    input#chId(type="hidden" name="" value= "")
-                    label#chName2(for='course')= productData.name
-                    br
-                    label#chPrice(for='course')= `الكمية :${Q}`
-                    br
-                    
-          .modal-footer
-            .mx-auto
-              button.btn.btn-secondary.mx-3(type='button', data-dismiss='modal') اكمال التسوق
-              a(href="../cart")
-                button.btn.btn-primary.mx-3.bg-success(type='button') مشاهدة العربة
-
+    
+                                           
 
     script.
-
-
-
-
             // Restricts input for the given textbox to the given inputFilter.
         function setInputFilter(textbox, inputFilter) {
         ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
@@ -256,10 +213,10 @@ block content
 
 
     if ShowModal == "yes"
-      script.
-        window.onload = function () {
-          document.getElementById("modalButton").click()
-        };
+    script.
+      window.onload = function () {
+        document.getElementById("modalButton").click()
+      };
   
 
       
