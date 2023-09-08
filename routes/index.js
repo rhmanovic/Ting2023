@@ -21,6 +21,13 @@ var mid = require('../middleware');
 var nodemailer = require('nodemailer');
 const url = require('url');
 
+//Get // editCoureName
+router.get('/modal', function(req, res){
+  console.log("modal modal");
+  return res.render('includes/modal', { title: 'here we are'});
+})
+
+
 router.get('/sitemap2.xml', function(req, res) {
 res.sendFile('/sitemap.xml');
 });
@@ -599,7 +606,12 @@ router.get('/product/:url', function(req, res, next) {
         if(productData){
           title = productData.name
         }
-       return res.render('product', { title: title, productData: productData});
+        if (ShowModal == "yes")  {
+          return res.render('product2', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
+        } else {
+          return res.render('product', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
+        }
+       
   
       }
     });
@@ -1176,7 +1188,7 @@ router.post('/cart', function(req, res, next) {
     req.session.cartData0 = old;
     req.session.save(function(err) {
       // session saved
-      return res.redirect(referer);
+      return res.redirect(`${referer}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   } else {
     console.log("Now the product is not in the cart we will make push + update session + redirect + cartCount")
@@ -1186,7 +1198,7 @@ router.post('/cart', function(req, res, next) {
     
     req.session.save(function(err) {
       // session saved
-      return res.redirect(referer);
+      return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   }
 
