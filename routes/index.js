@@ -1198,7 +1198,7 @@ router.post('/cart', function(req, res, next) {
     
     req.session.save(function(err) {
       // session saved
-      return res.redirect(`https://${hostNew}/product/${newProduct.parentNo}?ShowModal=yes&Q=${newProduct.Quantity}`);
+      return res.redirect(`${referer}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   }
 
