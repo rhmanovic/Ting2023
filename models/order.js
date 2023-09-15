@@ -3,6 +3,10 @@ var bcrypt = require('bcryptjs');
 var OrderSchema = new mongoose.Schema({
   orderNo: Number,
   img: String,
+  payment_method: String,
+  KentStatus: String,
+  KentStatusBackEnd: String,
+  paymentLog: Object,
   warehouse: String,
   customerName: {
     type: String,
