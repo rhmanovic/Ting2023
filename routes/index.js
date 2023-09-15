@@ -14,6 +14,74 @@ var Order = require('../models/order');
 var TransferRequest = require('../models/transferRequest');
 var User = require('../models/user');
 var City = require('../models/city');
+const keys = require('../config/keys');
+var nodemailer = require('nodemailer');
+
+router.get('/send', function(req, res) {
+
+  const { user } = req.query;
+  const { orderID } = req.query;
+  const { mobile } = req.query;
+  const { massege } = req.query;
+  const { color } = req.query;
+  const { KentStatus } = req.query;
+  const { orderNo } = req.query;
+
+  console.log("orderID:" + orderID)
+
+ 
+
+   const output = 'Email Body';
+  // get it from here https://myaccount.google.com/apppasswords
+  var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eng.dugaim@gmail.com',
+    pass: 'kioxedtstdtierbv'
+  }
+    
+});
+
+var mailOptions = {
+  from: 'eng.dugaim@gmail.com',
+  to: 'eng.dugaim@gmail.com, ting.storee@gmail.com',
+  subject: `${massege} رقم الطلب: ${orderID}`,
+  text: `mobile: ${mobile},
+  orderID: ${orderID}. 
+  https://www.tingstorekw.com/manager/orderPage/${orderID}, 
+  color: ${color},
+  KentStatus: ${KentStatus},
+  source: ${req.session.source}`
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+
+    if (KentStatus == "CAPTURED") {
+      req.session.cartData0 = null;
+      req.session.orderID = null;
+      req.session.cartCount = null;
+    
+      req.session.save(function(err) {
+        // session saved
+        return res.render('redirectAfterPaymentSucsses', { title: 'Order' , KentStatus:KentStatus, orderNo:orderNo});
+      })
+      
+    } else if (KentStatus == "CANCELLED") {
+      return res.render('redirectAfterPayment', { title: 'Order' , KentStatus:KentStatus, orderNo:orderNo});
+    } else if (KentStatus == "FAILED") {
+      return res.render('redirectAfterPayment', { title: 'Order' , KentStatus:KentStatus, orderNo:orderNo});
+    }else {
+      res.redirect('emptyCart')
+    }
+    
+  }
+}); 
+  
+})
 
 
 var mid = require('../middleware');
@@ -100,7 +168,7 @@ router.get('/sheet', function(req, res, next) {
 
 router.get('/orderReceived', function(req, res, next) {
 
-  return res.render('redirect', { title: 'ITC Discount' });
+  return res.render('redirect', { title: 'Order' });
 
 
 });
@@ -557,7 +625,23 @@ router.get('/upSell/:productNo/:source', function(req, res, next) {
 
 
 router.get('/test', function(req, res, next) {
-  return res.render('test')
+
+  arr_update_dict = { "$set": {} };
+  arr_update_dict["$set"]["KentStatusBackEnd"] = "yyy";
+
+  Order.findOneAndUpdate({ _id: "6502b878222dfa25640b0666" }, arr_update_dict).then(function() {
+    req.session.cartData0 = null;
+    req.session.orderID = null;
+    req.session.cartCount = null;
+  
+    req.session.save(function(err) {
+      // session saved
+      return res.render('test')
+    })
+    
+  })
+  
+  
 });
 
 
@@ -1006,19 +1090,21 @@ router.post('/AddOrder2', function(req, res, next) {
 })
 
 // POST /AddOrder 
-router.post('/AddOrder', function(req, res, next) {
+router.post('/AddOrder', function(req, res1, next) {
 
  
 
   var cartIDs = [];
   var cartData = req.session.cartData0;
   var orderID = req.session.orderID;
-  
+
+  console.log(orderID);
 
   if (cartData == null) { res.redirect('/cart') }
 
   var orderData = {
     'userID': req.body.userID,
+    'payment_method': req.body.payment_method,
     'customerName': req.body.customerName,
     'mobile': req.body.mobile,
     'email': req.body.email,
@@ -1026,9 +1112,10 @@ router.post('/AddOrder', function(req, res, next) {
     'ID_CITY': req.body.city.split("#")[0],
     'shippingCost': req.body.city.split("#")[1],
     'city': req.body.city.split("#")[2],
-
   };
+  
 
+  //console.log("orderData.payment_method: " + orderData.payment_method);
   
   var IDs = []; var Names = []; var Prices = []; var Quantities = [];
 
@@ -1057,62 +1144,218 @@ router.post('/AddOrder', function(req, res, next) {
       
     });
 
+    var totalPayed = 0;
 
-    arr_update_dict = { "$set": {} };
-    arr_update_dict["$set"]["productIDs"] = IDs;
-    arr_update_dict["$set"]["quantity"] = Quantities;
-    arr_update_dict["$set"]["productNames"] = Names;
-    arr_update_dict["$set"]["price"] = Prices;
-
-    arr_update_dict["$set"]["warehouse"] = "qurain";
-    arr_update_dict["$set"]["userID"] = orderData.userID;
-    arr_update_dict["$set"]["customerName"] = orderData.customerName;
-    arr_update_dict["$set"]["mobile"] = orderData.mobile;
-    arr_update_dict["$set"]["email"] = orderData.email;
-    arr_update_dict["$set"]["address"] = orderData.address;
-    arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;
-    arr_update_dict["$set"]["shippingCost"] = orderData.shippingCost;
-    arr_update_dict["$set"]["city"] = orderData.city;
-
-
-    console.log("cartData...cartData..cartData")
-    console.log(cartData)
-    
-    console.log("Product...Product..Product")
-    console.log(Product)
-    
-    console.log("Names...Names..Names")
-    console.log(Names)
-
-    console.log("Quantities...Quantities..Quantities")
-    console.log(Quantities)
-
-    console.log("arr_update_dict...arr_update_dict..arr_update_dict")
-    console.log(arr_update_dict)
-
-
-    Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(function() {
-      // res.redirect('/send')
-
-      res.redirect(url.format({
-        pathname: "manager/send",
-        query: {
-          "user": "customer",
-          "orderID": orderID,
-          "mobile": orderData.mobile,
-          "massege": "تم استلام طلب جديد"
-        }
-      }));
-      //res.redirect('/emptyCart')
+    Quantities.forEach(function(product, index, array) {
+      totalPayed += Quantities[index] * Prices[index]
     })
 
+    //console.log(" totalPayed: " + totalPayed)
 
-    // res.redirect('/cart')
+    
+    
+
+    setOrder ()
+    
+
+    function setOrder () {
+      arr_update_dict = { "$set": {} };
+      arr_update_dict["$set"]["productIDs"] = IDs;
+      arr_update_dict["$set"]["payment_method"] = orderData.payment_method;
+      arr_update_dict["$set"]["quantity"] = Quantities;
+      arr_update_dict["$set"]["productNames"] = Names;
+      arr_update_dict["$set"]["price"] = Prices;
+  
+      arr_update_dict["$set"]["warehouse"] = "qurain";
+      arr_update_dict["$set"]["userID"] = orderData.userID;
+      arr_update_dict["$set"]["customerName"] = orderData.customerName;
+      arr_update_dict["$set"]["mobile"] = orderData.mobile;
+      arr_update_dict["$set"]["email"] = orderData.email;
+      arr_update_dict["$set"]["address"] = orderData.address;
+      arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;
+      arr_update_dict["$set"]["shippingCost"] = orderData.shippingCost;
+      arr_update_dict["$set"]["city"] = orderData.city;
+  
+
+      function Sendmail() {
+        res1.redirect(url.format({
+          pathname: "manager/send",
+          query: {
+            "user": "customer",
+            "orderID": orderID,
+            "mobile": orderData.mobile,
+            "massege": "تم استلام طلب جديد"
+          }
+        }));
+      }
+      
+      Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(function() {
+      // res.redirect('/send')
+
+        if (orderData.payment_method == "knet") {
+          payforThis()
+        } else if (orderData.payment_method == "cash") {
+          Sendmail()
+        }  
+        
+      })    
+    }
+
+
+    function payforThis() {
+      var myWbsite = keys.internal.host;
+      var postURL =  myWbsite + '/getPay';
+      //console.log("myWbsite: " + myWbsite)
+      //console.log("keys: " + keys.tapPayment.authorization)
+      var amount = totalPayed
+      var request = require("request");
+      console.log("postURL: " + postURL)
+      //console.log("keys.tapPayment.authorization: " + keys.tapPayment.authorization)
+
+      var http = require("https");
+      var options = {
+        "method": "POST",
+        "hostname": "api.tap.company",
+        "port": null,
+        "path": "/v2/charges",
+        "headers": {
+          "authorization": keys.tapPayment.authorization,
+          "content-type": "application/json"
+        }
+      };
+
+      var req = http.request(options, function(res) {
+        var chunks = [];
+  
+        res.on("data", function(chunk) {
+          chunks.push(chunk);
+        });
+  
+        res.on("end", function() {
+          var body = Buffer.concat(chunks);
+          //console.log("body.toString(): " + body.toString());
+          var profile = JSON.parse(body);
+          transactionUrl = profile.transaction.url;
+          console.log("transactionUrl: " + transactionUrl)
+          return res1.redirect(transactionUrl);
+  
+        });
+      });
+
+      req.write(JSON.stringify({
+        amount: amount,
+        currency: 'KWD',
+        threeDSecure: true,
+        save_card: false,
+        description: 'Test Description',
+        statement_descriptor: 'Sample',
+        metadata: { udf1: orderID, udf2: 'test 2' },
+        reference: { transaction: 'txn_0001', order: 'ord_0001' },
+        receipt: { email: false, sms: true },
+        customer:
+        {
+          first_name: orderData.customerName,
+          middle_name: 'test',
+          last_name: 'test',
+          email: 'test@test.com',
+          phone: { country_code: '965', number: orderData.mobile }
+        },
+        merchant: { id: '' },
+        source: { id: 'src_kw.knet' },
+        post: { url:postURL },
+        redirect: { url:myWbsite + '/tapRedirect' }
+      }));
+      req.end();
+
+  };
+
+    
   });
-
-
-
 })
+
+
+
+
+router.get('/tapRedirect', async function(req, res1, next) {
+  
+
+  const { tap_id } = req.query;
+
+  // console.log('tapRedirect')
+  // console.log(tap_id)
+  // console.log(req.body)
+
+  retrieveCharge();
+  
+  function retrieveCharge() {
+    var http = require("https");
+
+    var options = {
+      "method": "GET",
+      "hostname": "api.tap.company",
+      "port": null,
+      "path": `/v2/charges/${tap_id}`,
+      "headers": {
+        "authorization": keys.tapPayment.authorization,
+      }
+    };
+    
+    var req = http.request(options, function (res) {
+      var chunks = [];
+    
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+    
+      res.on("end", async function () {
+        var body = Buffer.concat(chunks);
+        var profile = JSON.parse(body);
+        var KentStatus = profile.status;
+        var OrderId = profile.metadata.udf1
+
+        
+
+        const orderData = await Order.findOne({ _id: OrderId})
+
+       
+        
+        
+        arr_update_dict = { "$set": {} };
+        arr_update_dict["$set"]["KentStatus"] = KentStatus
+        
+      
+        Order.findOneAndUpdate({ _id: OrderId }, arr_update_dict).then(function() {
+    
+          // CANCELLED | FAILED | CAPTURED xxx
+          
+
+          res1.redirect(url.format({
+            pathname: "/send",
+            query: {
+              "user": "customer",
+              "orderID": (OrderId).toString(),
+              "massege": "Ting طلب جديد دفع كينت",
+              "KentStatus": KentStatus,
+              "orderNo": orderData.orderNo
+            }
+          }));
+          
+
+          
+          
+        })
+        
+        
+      });
+    });
+    
+    req.write("{}");
+    req.end();
+  }
+
+  
+});
+
 
 
 
@@ -1175,12 +1418,15 @@ router.post('/cart', function(req, res, next) {
     
   }
   
+  console.log("referrer.split('/')[2]: " + referer.split('/')[2])
   console.log(hostNew)
   console.log(newProduct)
   console.log(req.headers.referer)
-
+  var productName = referer.split('/')[4]
+  console.log("productName: " + productName)
   // constrer = req.headers.referer host = req.headers.host;
   // const refe;
+
   
 
   if (productExistInCart) {
@@ -1188,7 +1434,7 @@ router.post('/cart', function(req, res, next) {
     req.session.cartData0 = old;
     req.session.save(function(err) {
       // session saved
-      return res.redirect(`${referer}?ShowModal=yes&Q=${newProduct.Quantity}`);
+      return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   } else {
     console.log("Now the product is not in the cart we will make push + update session + redirect + cartCount")
@@ -1198,7 +1444,7 @@ router.post('/cart', function(req, res, next) {
     
     req.session.save(function(err) {
       // session saved
-      return res.redirect(`${referer}?ShowModal=yes&Q=${newProduct.Quantity}`);
+      return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
     })
   }
 
@@ -1678,21 +1924,18 @@ router.post('/getPay', function(req, res, next) {
   // 
 
 
-  var chargeData = {
-    ChargeID: req.body.metadata.ChargeID,
-    InternalChgId: req.body.metadata.InternalChgId,
-  }
+  var OrderId = req.body.metadata.udf1;
+  
+ 
 
-
-
+  
   arr_update_dict = { "$set": {} };
-  arr_update_dict["$set"]["status"] = req.body.status.toLowerCase();
-  Charge.findOneAndUpdate({ _id: chargeData.ChargeID }, arr_update_dict).then(function() {
-    if (error) {
-      console.log(error.code);
-    } else {
-      return res.send('getPay has been called -1');
-    }
+  arr_update_dict["$set"]["KentStatusBackEnd"] = req.body.status
+  //arr_update_dict["$set"]["paymentLog"] = req.body
+
+  Order.findOneAndUpdate({ _id: OrderId }, arr_update_dict).then(function() {
+    // xxx
+    
   })
 
   
