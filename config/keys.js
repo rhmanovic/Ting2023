@@ -17,7 +17,7 @@ module.exports = {
     cookieKey: 'abdulrahmanawesomeiguess'
   },
   internal: {
-    host: 'https://ting.abdulrahmanald1.repl.co'
+    host: 'https://www.tingstorekw.com'
   },
   tapPayment: {    
     authorization: "Bearer sk_live_F7zrQZfAd816O0DTpoean9YM"
