@@ -67,7 +67,7 @@ transporter.sendMail(mailOptions, function(error, info){
     
       req.session.save(function(err) {
         // session saved
-        return res.render('redirectAfterPaymentSucsses', { title: 'Order' , KentStatus:KentStatus, orderNo:orderNo});
+        return res.render('redirectAfterPayment', { title: 'Order' , KentStatus:KentStatus, orderNo:orderNo});
       })
       
     } else if (KentStatus == "CANCELLED") {
