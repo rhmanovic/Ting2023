@@ -1931,10 +1931,10 @@ router.post('/getPay', function(req, res, next) {
   
   arr_update_dict = { "$set": {} };
   arr_update_dict["$set"]["KentStatusBackEnd"] = req.body.status
-  //arr_update_dict["$set"]["paymentLog"] = req.body
+  arr_update_dict["$set"]["paymentLog"] = req.body
 
   Order.findOneAndUpdate({ _id: OrderId }, arr_update_dict).then(function() {
-    // xxx
+    return res.send('getPay has been called -1');
     
   })
 
