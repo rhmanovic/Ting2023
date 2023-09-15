@@ -10,7 +10,7 @@ var Purchase = require('../../models/purchase');
 var TransferRequest = require('../../models/transferRequest');
 var User = require('../../models/user');
 var City = require('../../models/city');
-var mid = require('../../middleware');
+var mid = require('../../middleware'); 
 
 
 var nodemailer = require('nodemailer');
@@ -281,7 +281,7 @@ router.get('/purchase', mid.requiresSaleseman, function(req, res, next) {
 
 router.get('/order/:sortTo', mid.requiresSaleseman, function(req, res, next) {
   var { sortTo } = req.params;
-
+ 
   if (sortTo == 1) {
     sortTo = "invoice"
   } else if (sortTo == 2) {
@@ -1413,6 +1413,8 @@ router.get('/send', function(req, res) {
   const { mobile } = req.query;
   const { massege } = req.query;
   const { color } = req.query;
+  const { KentStatus } = req.query;
+  const { orderData } = req.query;
 
   console.log("orderID:" + orderID)
 
@@ -1432,11 +1434,12 @@ router.get('/send', function(req, res) {
 var mailOptions = {
   from: 'eng.dugaim@gmail.com',
   to: 'eng.dugaim@gmail.com, ting.storee@gmail.com',
-  subject: `${massege} Ting رقم الطلب: ${orderID}`,
+  subject: `${massege} رقم الطلب: ${orderID}`,
   text: `mobile: ${mobile},
   orderID: ${orderID}. 
   https://www.tingstorekw.com/manager/orderPage/${orderID}, 
   color: ${color},
+  KentStatus: ${KentStatus},
   source: ${req.session.source}`
 };
 
@@ -1445,7 +1448,17 @@ transporter.sendMail(mailOptions, function(error, info){
     console.log(error);
   } else {
     console.log('Email sent: ' + info.response);
-    res.redirect('/emptyCart')
+
+    if (KentStatus == "CAPTURED") {
+      return res.render('/redirectAfterPaymentSucsses', { title: 'Order' , KentStatus:KentStatus, orderData:orderData});
+    } else if (KentStatus == "CANCELLED") {
+      return res.render('/redirectAfterPayment', { title: 'Order' , KentStatus:KentStatus, orderData:orderData});
+    } else if (KentStatus == "FAILED") {
+      return res.render('/redirectAfterPayment', { title: 'Order' , KentStatus:KentStatus, orderData:orderData});
+    }else {
+      res.redirect('/emptyCart')
+    }
+    
   }
 }); 
   
