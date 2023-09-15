@@ -138,13 +138,13 @@ block content
 
                                     .row.mt-3
                                       .col            
-                                        input(type='radio' checked="checked")      
-                                        label.mx-2 دفع عند الاستلام
+                                        input(type='radio' checked="checked" name="payment_method" value="knet")      
+                                        label.mx-2 كي-نت  
                                     .row
                                       .col            
-                                        input(type='radio' disabled )      
-                                        s.text-secondary.mx-2 كي-نت
-
+                                        input(type='radio'  name="payment_method" value="cash")      
+                                        label.mx-2 دفع عند الاستلام
+                                    
                                     .row            
                                         span#errorCart.text-danger.mt-2 
                                            
