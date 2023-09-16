@@ -130,6 +130,14 @@ block content
                                  p= `عرض في قوقل =  ${productData.googleSheet} `
 
                                
+                                a(href=`../manager/editAny/Product/${productData._id}/warehouseAvialable//${productData.warehouseAvialable?productData.warehouseAvialable:"NaN"}/${typeof productData.warehouseAvialable}/productshop`)
+                                 p= `متوفر في المخزن =  ${productData.warehouseAvialable} `
+
+                               
+                                a(href=`../manager/editAny/Product/${productData._id}/qurain//${productData.qurain?productData.qurain:"NaN"}/${typeof productData.qurain}/productshop`)
+                                 p= `الكمية في المخزن =  ${productData.qurain} `
+
+                               
 
                                 a(href=`../manager/productPage/${productData._id}`)
                                  span.badge.text-bg-success صفحة ادارة المنتج
@@ -217,11 +225,3 @@ block content
       window.onload = function () {
         document.getElementById("modalButton").click()
       };
-  
-
-      
-      
-                    
-
-    
-    
