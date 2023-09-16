@@ -35,6 +35,10 @@ var ProductSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
+    warehouseAvialable: {
+      type: Boolean,
+      default: false
+    },
     variant: {
       type: Boolean,
       default: false
