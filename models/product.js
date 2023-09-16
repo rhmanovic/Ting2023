@@ -8,6 +8,12 @@ var ProductSchema = new mongoose.Schema({
       text: true 
       // unique: true,
     },
+    warehouseNo: {
+      type: String,
+      default: "",
+      text: true 
+      // unique: true,
+    },
     
     group: {
       type: Boolean,
