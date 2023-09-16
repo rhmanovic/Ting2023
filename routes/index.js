@@ -1207,7 +1207,7 @@ router.post('/AddOrder', function(req, res1, next) {
       var postURL =  myWbsite + '/getPay';
       //console.log("myWbsite: " + myWbsite)
       //console.log("keys: " + keys.tapPayment.authorization)
-      var amount = totalPayed
+      var amount = totalPayed + orderData.shippingCost
       var request = require("request");
       console.log("postURL: " + postURL)
       //console.log("keys.tapPayment.authorization: " + keys.tapPayment.authorization)
