@@ -70,6 +70,9 @@ block content
                                                                     if product.discounted
                                                                       - productprice = product.discountPrice
                                                                       span.small-font.text-decoration-line-through.text-secondary= `قبل الخصم : ${product.price} K.D`
+                                                                    else
+                                                                      - productprice = product.price
+                                                                      
                                                                     br
                                                                     span.fs-6.small-font= `سعر الحبة: ${productprice} K.D`
                                                                 .p-2.bd-highlight
@@ -160,8 +163,3 @@ block content
             .col.p-0
                 .card.cardShadow
                     h3.text-center.my-auto عربة التسوق فارغة
-    
-   
-        
-           
-
