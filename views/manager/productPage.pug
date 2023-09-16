@@ -29,6 +29,13 @@ block content
                           a(href=`../editAny/Product/${productData._id}/productNo//${productData.productNo?productData.productNo:"NaN"}/${typeof productData.productNo}/productPage`)
                             span.badge.text-bg-success Edit
                     tr
+                        th Warehouse No
+                        th :
+                        td= `${productData.warehouseNo}`
+                        td 
+                          a(href=`../editAny/Product/${productData._id}/warehouseNo//${productData.warehouseNo?productData.warehouseNo:"NaN"}/${typeof productData.warehouseNo}/productPage`)
+                            span.badge.text-bg-success Edit
+                    tr
                         th Name
                         th :
                         td= `${productData.name}`
