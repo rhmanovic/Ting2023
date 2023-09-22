@@ -1,10 +1,8 @@
 var express = require('express');
 var router = express.Router();
-
 var Charge = require('../models/charge');
 var Chapter = require('../models/chapter');
 var Course = require('../models/course');
-
 var Product = require('../models/product');
 var Category = require('../models/category');
 var Vendor = require('../models/vendor');
@@ -16,6 +14,9 @@ var User = require('../models/user');
 var City = require('../models/city');
 const keys = require('../config/keys');
 var nodemailer = require('nodemailer');
+
+
+
 
 router.get('/send', function(req, res) {
 
@@ -101,15 +102,21 @@ res.sendFile('/sitemap.xml');
 });
 
 
-router.get('/invoicePrint/:orderNo', function(req, res, next) {
+router.get('/invoicePrint/:id', function(req, res, next) {
 
-  const { orderNo } = req.params;
+  const { id } = req.params;
+  
+  const googleAPI = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl="
+  const ourLink = `${keys.internal.host}/orderStatus/${id}`
+  const payLink = googleAPI + ourLink
 
-  Order.findOne({ orderNo: orderNo }).exec(function(error, orderData) {
+  
+
+  Order.findOne({ _id: id }).exec(function(error, orderData) {
     if (error) {
       return next(error);
     } else {
-      return res.render('invoicePrint', { title: 'invoicePrint' , orderData: orderData});
+      return res.render('invoicePrint', { title: `invoice no: ${orderData.orderNo}` , orderData: orderData, payLink:payLink });
     }
   })
 
@@ -194,7 +201,7 @@ router.get('/category/:category',async function(req, res, next) {
 
   try {
 
-    const productDataAll = await Product.find({ "category": category}).sort({ productNo: 1 })
+    const productDataAll = await Product.find({ "category": category, showInWebsite: true}).sort({ productNo: 1 })
     const categoryData = await Category.findOne({ "URLname": category})
     const subCategoryData = await Category.find({ "parent": categoryData.thisCategory })
 
@@ -263,7 +270,7 @@ router.get('/', async function(req, res, next) {
     for (let i = 0; i < categoryData.length; i++) {
       if ( categoryData[i].parent == "/") {        
         categoriesPass.push(categoryData[i])
-        var prouct = await Product.find({ "category": categoryData[i].URLname})
+        var prouct = await Product.find({ "category": categoryData[i].URLname, showInWebsite: true})
         productDataAll.push(prouct)
       }
     }
@@ -649,7 +656,7 @@ router.get('/test', function(req, res, next) {
 router.get('/category/:category', function(req, res, next) {
   const { category } = req.params;
   //, status: "A" 
-  Product.find({ "category": category}).sort({ productNo: 1 }).exec(function(error, productData) {
+  Product.find({ "category": category, showInWebsite: true}).sort({ productNo: 1 }).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
@@ -978,9 +985,6 @@ router.get('/cart', function(req, res, next) {
         if (error) {
           return next(error);
         } else {
-
-
-
           // return res.render('product', { title: 'Product]', productData: productData, ShowModal:ShowModal, Q:Q });
           return res.render(renderCart, { title: 'Cart', cartData: productData, cartData2: cartData, citytData: citytData });
 
@@ -992,6 +996,27 @@ router.get('/cart', function(req, res, next) {
   }
 
 })
+
+router.get('/orderStatus/:id', async function(req, res, next) {
+  const { id } = req.params;
+  const orderData = await Order.findOne({ _id: id})
+
+  var shippingCost = Number(orderData.shippingCost)
+
+  var totalPayed = 0;
+
+  orderData.quantity.forEach(function(q, index, array) {
+    totalPayed += orderData.quantity[index] * orderData.price[index]
+  })
+
+  console.log("totalPayed: " + totalPayed)
+  var amount = totalPayed + shippingCost
+  
+  return res.render("orderStatus", { title: 'Order Status', orderData:orderData, amount:amount});
+});
+
+
+
 
 
 
@@ -1090,10 +1115,8 @@ router.post('/AddOrder2', function(req, res, next) {
 })
 
 // POST /AddOrder 
+
 router.post('/AddOrder', function(req, res1, next) {
-
- 
-
   var cartIDs = [];
   var cartData = req.session.cartData0;
   var orderID = req.session.orderID;
@@ -1113,11 +1136,13 @@ router.post('/AddOrder', function(req, res1, next) {
     'shippingCost': req.body.city.split("#")[1],
     'city': req.body.city.split("#")[2],
   };
+
+  console.log("orderData.shippingCost orderData.shippingCost orderData.shippingCost: " + orderData.shippingCost)
   
 
   //console.log("orderData.payment_method: " + orderData.payment_method);
   
-  var IDs = []; var Names = []; var Prices = []; var Quantities = [];
+  var IDs = []; var Names = []; var Prices = []; var Quantities = [];  var warehouseNos = []
 
   cartData.forEach(function(product, index, array) {
     cartIDs.push(product.ID);
@@ -1125,12 +1150,16 @@ router.post('/AddOrder', function(req, res1, next) {
 
 
 
-  Product.find({ _id: { $in: cartIDs } }, { name: 1, price: 1, discountPrice: 1, discounted: 1}).exec(function(error, productData) {
+
+
+  
+  Product.find({ _id: { $in: cartIDs } }, { name: 1, price: 1, discountPrice: 1, discounted: 1, warehouseNo:1 }).exec(function(error, productData) {
 
     productData.forEach(function(product, index) {
       IDs[index] = product._id
       Names[index] = product.name
       Prices[index] = product.price
+      warehouseNos[index] = product.warehouseNo
       if (product.discounted) { Prices[index] = product.discountPrice }
       
       if (req.session.mutlaa) { Prices[index] = product.discountPrice };
@@ -1165,7 +1194,8 @@ router.post('/AddOrder', function(req, res1, next) {
       arr_update_dict["$set"]["quantity"] = Quantities;
       arr_update_dict["$set"]["productNames"] = Names;
       arr_update_dict["$set"]["price"] = Prices;
-  
+      arr_update_dict["$set"]["warehouseNo"] = warehouseNos;
+      
       arr_update_dict["$set"]["warehouse"] = "qurain";
       arr_update_dict["$set"]["userID"] = orderData.userID;
       arr_update_dict["$set"]["customerName"] = orderData.customerName;
@@ -1191,14 +1221,13 @@ router.post('/AddOrder', function(req, res1, next) {
       
       Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(function() {
       // res.redirect('/send')
-
         if (orderData.payment_method == "knet") {
           payforThis()
         } else if (orderData.payment_method == "cash") {
           Sendmail()
-        }  
-        
-      })    
+        }
+      })
+      
     }
 
 
@@ -1207,7 +1236,8 @@ router.post('/AddOrder', function(req, res1, next) {
       var postURL =  myWbsite + '/getPay';
       //console.log("myWbsite: " + myWbsite)
       //console.log("keys: " + keys.tapPayment.authorization)
-      var amount = totalPayed + orderData.shippingCost
+      var shippingCost = Number(orderData.shippingCost)
+      var amount = totalPayed + shippingCost
       var request = require("request");
       console.log("postURL: " + postURL)
       //console.log("keys.tapPayment.authorization: " + keys.tapPayment.authorization)
@@ -1233,13 +1263,16 @@ router.post('/AddOrder', function(req, res1, next) {
   
         res.on("end", function() {
           var body = Buffer.concat(chunks);
-          //console.log("body.toString(): " + body.toString());
+          console.log("body.toString(): " + body.toString());
           var profile = JSON.parse(body);
-          transactionUrl = profile.transaction.url;
+          console.log("_______________________________________profile.transaction_______________________________________" + body.transaction)
+          var transactionUrl = profile.transaction.url;
           console.log("transactionUrl: " + transactionUrl)
           return res1.redirect(transactionUrl);
   
         });
+
+        
       });
 
       req.write(JSON.stringify({
@@ -1250,7 +1283,7 @@ router.post('/AddOrder', function(req, res1, next) {
         description: 'Test Description',
         statement_descriptor: 'Sample',
         metadata: { udf1: orderID, udf2: 'test 2' },
-        reference: { transaction: 'txn_0001', order: 'ord_0001' },
+        reference: { transaction: 'txn_0001', order: 'tng' },
         receipt: { email: false, sms: true },
         customer:
         {
@@ -1271,6 +1304,77 @@ router.post('/AddOrder', function(req, res1, next) {
 
     
   });
+})
+
+router.get('/payforThis/:id', async function(req, res1, next) {
+  const { id } = req.params;
+  const orderData = await Order.findOne({ _id: id})
+  var totalPayed = 0
+  orderData.quantity.forEach(function(q, index, array) {
+    totalPayed += orderData.quantity[index] * orderData.price[index]
+  })
+  
+  var shippingCost = Number(orderData.shippingCost)
+  var myWbsite = keys.internal.host;
+  var postURL =  myWbsite + '/getPay';
+  
+  var amount = totalPayed + shippingCost
+  var request = require("request");
+   
+    
+
+  var http = require("https");
+  var options = {
+    "method": "POST",
+    "hostname": "api.tap.company",
+    "port": null,
+    "path": "/v2/charges",
+    "headers": {
+      "authorization": keys.tapPayment.authorization,
+      "content-type": "application/json"
+    }
+  };
+
+  var req = http.request(options, function(res) {
+    var chunks = [];
+
+    res.on("data", function(chunk) {
+      chunks.push(chunk);
+    });
+
+    res.on("end", function() {
+      var body = Buffer.concat(chunks);
+      var profile = JSON.parse(body);
+      var transactionUrl = profile.transaction.url;
+      console.log("transactionUrl: " + transactionUrl)
+      return res1.redirect(transactionUrl);
+    });    
+  });
+
+  req.write(JSON.stringify({
+    amount: amount,
+    currency: 'KWD',
+    threeDSecure: true,
+    save_card: false,
+    description: 'Test Description',
+    statement_descriptor: 'Sample',
+    metadata: { udf1: id, udf2: 'test 2' },
+    reference: { transaction: 'txn_0001', order: 'tng' },
+    receipt: { email: false, sms: true },
+    customer:
+    {
+      first_name: orderData.customerName,
+      middle_name: 'test',
+      last_name: 'test',
+      email: 'test@test.com',
+      phone: { country_code: '965', number: orderData.mobile }
+    },
+    merchant: { id: '' },
+    source: { id: 'src_kw.knet' },
+    post: { url:postURL },
+    redirect: { url:myWbsite + '/tapRedirect2' }
+  }));
+  req.end();
 })
 
 
@@ -1339,6 +1443,76 @@ router.get('/tapRedirect', async function(req, res1, next) {
               "orderNo": orderData.orderNo
             }
           }));
+          
+
+          
+          
+        })
+        
+        
+      });
+    });
+    
+    req.write("{}");
+    req.end();
+  }
+
+  
+});
+
+
+router.get('/tapRedirect2', async function(req, res1, next) {
+  
+
+  const { tap_id } = req.query;
+
+  retrieveCharge();
+  
+  function retrieveCharge() {
+    var http = require("https");
+
+    var options = {
+      "method": "GET",
+      "hostname": "api.tap.company",
+      "port": null,
+      "path": `/v2/charges/${tap_id}`,
+      "headers": {
+        "authorization": keys.tapPayment.authorization,
+      }
+    };
+    
+    var req = http.request(options, function (res) {
+      var chunks = [];
+    
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+    
+      res.on("end", async function () {
+        var body = Buffer.concat(chunks);
+        var profile = JSON.parse(body);
+        var KentStatus = profile.status;
+        var OrderId = profile.metadata.udf1
+
+        
+
+        const orderData = await Order.findOne({ _id: OrderId})
+
+       
+        
+        
+        arr_update_dict = { "$set": {} };
+        arr_update_dict["$set"]["KentStatus"] = KentStatus
+        
+      
+        Order.findOneAndUpdate({ _id: OrderId }, arr_update_dict).then(function() {
+    
+          // CANCELLED | FAILED | CAPTURED xxx
+          
+
+          
+
+          return res1.render('redirectAfterPayment', { title: 'Order' , KentStatus:KentStatus, orderNo:orderData.orderNo});
           
 
           
@@ -1893,7 +2067,7 @@ router.post('/pay', async function(req, res1, next) {
         InternalChgId: ChargeResult.InternalChgId
       },
 
-      reference: { transaction: 'txn_0001', order: 'ord_0001' },
+      reference: { transaction: 'txn_0001', order: 'tng' },
       receipt: { email: false, sms: true },
       customer:
       {
