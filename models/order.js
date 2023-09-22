@@ -22,6 +22,7 @@ var OrderSchema = new mongoose.Schema({
   productIDs: Array,
   quantity: Array,
   warranty: Array,
+  warehouseNo: Array,
   price: Array,
   cost: Array,
   productNames: Array,
