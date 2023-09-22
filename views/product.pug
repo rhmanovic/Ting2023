@@ -48,8 +48,8 @@ block content
                             .text-right.d-flex.bd-highlight.justify-content-between.flex-column.flex-md-row-reverse.align-self-baselin
                                 .col.p-0
                                     span.badge.badge-light.mt-2
-                                        
-                                        Span.text-success متوفر
+                                        if productData.canBeOrdered
+                                          Span.text-success متوفر
                                 
                                 .col.p-0.mt-md-0
                                     
@@ -63,22 +63,22 @@ block content
 
 
                             br
-
-                            p.my-0 الكمية
-                            div.my-1
-                                label.sr-only(for='inlineFormInputGroup')
-                                .input-group.my-2
-                                    .input-group-prepend
-                                    button.btn.btn-light.btn-number.border(type='button', data-type='minus', data-field='quantity')
-                                        i.fa.fa-minus(aria-hidden='true')
-                                    if Q
-                                      input.form-control.col-3(type='text', id="intTextBox", name='quantity', value=Q , min='1', max='1000')
-                                    else
-                                      input.form-control.col-3(type='text', id="intTextBox", name='quantity', value='1', min='1', max='1000')
-
-                                    .input-group-prepend
-                                    button.btn.btn-number.tomato.text-white.rounded-0(type='button', data-type='plus', data-field='quantity')
-                                        i.fa.fa-plus(aria-hidden='true')
+                            if productData.canBeOrdered
+                              p.my-0 الكمية
+                              div.my-1
+                                  label.sr-only(for='inlineFormInputGroup')
+                                  .input-group.my-2
+                                      .input-group-prepend
+                                      button.btn.btn-light.btn-number.border(type='button', data-type='minus', data-field='quantity')
+                                          i.fa.fa-minus(aria-hidden='true')
+                                      if Q
+                                        input.form-control.col-3(type='text', id="intTextBox", name='quantity', value=Q , min='1', max='1000')
+                                      else
+                                        input.form-control.col-3(type='text', id="intTextBox", name='quantity', value='1', min='1', max='1000')
+  
+                                      .input-group-prepend
+                                      button.btn.btn-number.tomato.text-white.rounded-0(type='button', data-type='plus', data-field='quantity')
+                                          i.fa.fa-plus(aria-hidden='true')
 
 
                     
@@ -115,10 +115,14 @@ block content
 
 
                             
+                            if productData.canBeOrdered
+                              button.col.btn.tomato.mt-3.text-white#addToCartButton(type='submit')
+                                  | اضف للعربة
+                                  i.mx-2.fa.fa-cart-plus(aria-hidden='true')
+                            else
+                              .alert.alert-danger(role='alert')
+                                | غير متوفر !
 
-                            button.col.btn.tomato.mt-3.text-white#addToCartButton(type='submit')
-                                | اضف للعربة
-                                i.mx-2.fa.fa-cart-plus(aria-hidden='true')
 
 
 
@@ -128,6 +132,12 @@ block content
 
                                 a(href=`../manager/editAny/Product/${productData._id}/googleSheet//${productData.googleSheet?productData.googleSheet:"NaN"}/${typeof productData.googleSheet}/productshop`)
                                  p= `عرض في قوقل =  ${productData.googleSheet} `
+                                a(href=`../manager/editAny/Product/${productData._id}/showInWebsite//${productData.showInWebsite?productData.showInWebsite:"NaN"}/${typeof productData.showInWebsite}/productshop`)
+                                 p= `عرض في الموقع =  ${productData.showInWebsite} `
+
+                               
+                                a(href=`../manager/editAny/Product/${productData._id}/canBeOrdered//${productData.canBeOrdered?productData.canBeOrdered:"NaN"}/${typeof productData.canBeOrdered}/productshop`)
+                                 p= `يمكن الطلب =  ${productData.canBeOrdered} `
 
                                
                                 a(href=`../manager/editAny/Product/${productData._id}/warehouseAvialable//${productData.warehouseAvialable?productData.warehouseAvialable:"NaN"}/${typeof productData.warehouseAvialable}/productshop`)
@@ -136,6 +146,9 @@ block content
                                
                                 a(href=`../manager/editAny/Product/${productData._id}/qurain//${productData.qurain?productData.qurain:"NaN"}/${typeof productData.qurain}/productshop`)
                                  p= `الكمية في المخزن =  ${productData.qurain} `
+
+                                a(href=`../manager/editAny/Product/${productData._id}/warehouseNo//${productData.warehouseNo?productData.warehouseNo:"NaN"}/${typeof productData.warehouseNo}/productshop`)
+                                 p= `رقم المخزن =  ${productData.warehouseNo} `
 
                                
 
@@ -225,3 +238,11 @@ block content
       window.onload = function () {
         document.getElementById("modalButton").click()
       };
+  
+
+      
+      
+                    
+
+    
+    
