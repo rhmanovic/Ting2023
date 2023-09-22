@@ -3,55 +3,72 @@ extends layoutInvoice
 block content
   - var total = 0;
   main.container.px-0.fw-bold
-    if orderData.invoice > 0
-      p.fs-1.text-center.mt-5 فاتورة
-    else
-      p.fs-1.text-center.mt-5 طلب
-    p.fs-4.mx-2 شركة اي تي سي لتجارة الادوات الكهربائية
     
-    table.table-responsive.mb-2
-      tbody.fw-bold.fs-4
-        tr 
-          th التاريخ
-          th.px-2 :
-          td= `${orderData.time.toLocaleDateString("en-GB")}`
+    p.fs-1.text-center.mt-5 فاتورة
+    
+    .row
+
+      .col
+        table.table-responsive.mb-2
+          tbody.fw-bold.fs-4
+            tr 
+              th التاريخ
+              th.px-2 :
+              td= `${orderData.time.toLocaleDateString("en-GB")}`
+            
+            tr 
+              th رقم الفاتورة
+              th.px-2 :
+              td= `${orderData.orderNo}`
+            if orderData.invoice > 0
+              tr 
+                th رقم الفاتورة
+                th.px-2 :
+                td= `${orderData.orderNo}`
+    
+    
+    
+    
+            tr
+              th اسم العميل
+              th.px-2 :
+              td= `${orderData.customerName}`
+            tr 
+              th العنوان
+              th.px-2 :
+              td= `${orderData.address}`
+            tr 
+              th هاتف
+              th.px-2 :
+              td.ltr.d-flex.flex-row-reverse= `${orderData.mobile}`
+            if orderData.KentStatus == "CAPTURED"
+              tr 
+                th حالة الدفع
+                th.px-2 :
+                td.ltr.d-flex.flex-row-reverse مدفوع كي-نت
+            else
+              tr 
+                th حالة الدفع
+                th.px-2 :
+                td.ltr.d-flex.flex-row-reverse الدفع عند الاستلام
+
+      
         
-        tr 
-          th رقم الطلب
-          th.px-2 :
-          td= `${orderData.orderNo}`
-        if orderData.invoice > 0
-          tr 
-            th رقم الفاتورة
-            th.px-2 :
-            td= `${orderData.orderNo}`
-
-
-
-
-        tr
-          th اسم العميل
-          th.px-2 :
-          td= `${orderData.customerName}`
-        tr 
-          th العنوان
-          th.px-2 :
-          td= `${orderData.address}`
-        tr 
-          th هاتف
-          th.px-2 :
-          td.ltr.d-flex.flex-row-reverse= `${orderData.mobile}`
-
+        
+      .col.ltr
+        img(src='/img/upload/logo-square.jpg', alt='Mawadi', data-purpose='mawadi-brand-logo', height='100')
+        p.mt-1 شركة اي تي ستور للتجارة العامة
+    
     table.table
       thead.table-secondary
         tr
           //th #
           th 
             span اسم المنتج
-            br
-            span (الكفالة)
-          //th الكفاله
+            
+          
           //- th ID
+          th SKU
           th الكمية
           th 
             span السعر
@@ -67,9 +84,12 @@ block content
           tr
             td
               span= orderData.productNames[index]
-              br
-              span= `(الكفالة: ${orderData.warranty[index]} سنة)`
-
+              
+            if orderData.warehouseNo[index]
+              td= orderData.warehouseNo[index]
+            else
+              td -
+            
             td= orderData.quantity[index]
             td= orderData.price[index]
             td= (orderData.price[index] * orderData.quantity[index]).toFixed(3)
@@ -91,13 +111,17 @@ block content
 
     ul
       li البضاعة المباعة ترد وتستبدل خلال 14 يوم.
-      li الاسلاك والمخفيات بعد القص لا تعتبر في حالتها الاصلية فلا ترد ولا تستبدل.
-      li الكفالة لا تشمل الكسر او سوء الاستخدام.
+     
 
     span العنوان: اسوق القرين - شارع سوق السرحان - كهرباء مول - محل رقم 2
     br
-    span هاتف: 90903115
+    span هاتف: 99501036
     br
     span انستجرام: itcstorekw
-            
+    br
+    br
+    br
+    img.p-0.m-0(src=payLink, alt='Mawadi', data-purpose='mawadi-brand-logo', height='200')
+    br
+    span.mx-4 امسح للدفع والتحقق من الدفع
     
