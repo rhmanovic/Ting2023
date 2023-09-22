@@ -39,6 +39,14 @@ var ProductSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
+    showInWebsite: {
+      type: Boolean,
+      default: true
+    },
+    canBeOrdered: {
+      type: Boolean,
+      default: true
+    },
     variant: {
       type: Boolean,
       default: false
