@@ -53,7 +53,7 @@ block content
                             th(scope='col') الاجمالي
                             if managerNow
                               th(scope='col') التكلفة
-                              th(scope='col') الهامش
+                              th(scope='col') حالة الدفع
                 tbody
                         - var previousIndexOrder = 0
                         each order,index in orderData
@@ -118,6 +118,7 @@ block content
                                       -  profit3 += (order.totalPrice - order.totalCost)
                                     if (order.time.getMonth() == 2)
                                       -  profit2 += (order.totalPrice - order.totalCost)
+                                  td= order.KentStatus
                                    
                         p= profit
                         p= profit4
