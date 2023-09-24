@@ -1,45 +1,45 @@
 extends layout
 
 block content
+
+  
   .main.container
-    h1 Warehouse Page
+    h1 Products Page
+    - var sr = 1
 
 
     .row
-        //- .col-md-8.col-md-offset-2
-        h1.display-4.m-b-2 ITC Store
-        h3 Create Warehouse
-
-        form(method='POST' action='/AddWarehouse')
-          .row
-            .col-sm
-              label(for='name') Name :
-              input.form-control(type='text' placeholder='Name' name='name')
-            .col-sm
-              label.text-white .
-              br
-              button.btn.btn-primary(type='submit') Submit
+        h3 المخزن
 
         table.table
           thead
             tr
-              th(scope='col') #
+              th(scope='col') Sr
+              th(scope='col') No
               th(scope='col') Name
-              //- th(scope='col') ID
-              th(scope='col') 
+              th(scope='col') Quantity
+              th(scope='col') img
+              th(scope='col') SKU
           tbody
-            each warehouse,index in warehouseData
-              tr
-                th(scope='row')
-                  a(href=`warehousePage/${warehouse._id}`)
-                    div(scope='row')= index+1
-
-                td= `${warehouse.name}`
-                //- td= `${warehouse._id}`
-                td
-                    a(href=`/deletWarehouse/${warehouse._id}`)
-                        .badge.text-bg-danger.ms-1
-                            i.bi.bi-trash.m-2
-
+            each product,index in productData
+              if product.qurain > 0
+               
+                tr
+                  //- th(scope='row')= index+1
+                  td= sr
+                  - sr += 1
+                  td
+                    a(href=`../product/${product.url}`)
+                      if product.googleSheet
+                        span.text-danger= `${product.productNo}`
+                      else
+                        span= `${product.productNo}`
                 
-
+                  td
+                    a(href=`productPage/${product._id}`)
+                      div= product.name
+                 
+                  
+                  td= product.qurain
+                  td
+                    img.d-block.w-50(src=product.img[0], style="aspect-ratio: 1 / 1;",  height='80')
