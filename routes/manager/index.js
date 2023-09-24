@@ -247,11 +247,11 @@ router.get('/warehousePage/:warehouseID', mid.requiresSaleseman, function(req, r
 });
 
 router.get('/warehouse', mid.requiresSaleseman, function(req, res, next) {
-  Warehouse.find({}).exec(function(error, warehouseData) {
+  Product.find({}).exec(function(error, productData) {
     if (error) {
       return next(error);
     } else {
-      return res.render('manager/warehouse', { title: 'Warehouse', warehouseData: warehouseData });
+      return res.render('manager/warehouse', { title: 'Warehouse', productData: productData });
     }
   });
 });
