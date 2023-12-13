@@ -15,8 +15,9 @@ each product,index in productData
   br
   span= `<g:price>${product.price} KWD</g:price>` 
   br
-  span= `<g:sale_price>${product.discountPrice} KWD</g:sale_price>` 
-  br
+  if product.discounted
+    span= `<g:sale_price>${product.discountPrice} KWD</g:sale_price>` 
+    br
   span= `<g:availability>in_stock</g:availability>`
   br
   span= `<g:brand>${product.brandName}</g:brand>` 
