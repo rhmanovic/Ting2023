@@ -2142,6 +2142,10 @@ router.get('/privacy', function(req, res, next) {
   return res.render('privacy', { title: 'privacy' });
 });
 
+router.get('/FAQ', function(req, res, next) {
+  return res.render('FAQ', { title: 'FAQ' });
+});
+
 
 
 // GET /login
