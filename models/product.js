@@ -126,6 +126,11 @@ var ProductSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    variation: {
+        type: String,
+        default: ""
+    },
+    
     categoryName: {
         type: String,
         default: ""
