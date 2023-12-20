@@ -500,6 +500,9 @@ router.get('/productPage/:productId/', mid.requiresSaleseman, function(req, res,
 });
 
 
+
+
+
 router.get('/editAny/:collection/:id/:field/:value/:type/:returnTo', mid.requiresSaleseman, function(req, res, next) {
 
   const data = {
@@ -511,6 +514,7 @@ router.get('/editAny/:collection/:id/:field/:value/:type/:returnTo', mid.require
     'returnTo': req.params.returnTo,
     'referer': req.headers.referer,
   }
+  
 
   if ( (data.field == "category" && data.collection == "Product")  || data.field == "brand") {
     console.log("__________")
