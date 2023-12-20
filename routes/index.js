@@ -227,7 +227,7 @@ router.get('/search',async function(req, res, next) {
       [
         {
           $search: {
-            index: "theSearchTing",
+            index: "TheITCSearch",
             text: {
               query: text,
               path: {
@@ -1027,7 +1027,7 @@ router.post('/AddOrder2', function(req, res, next) {
   var cartIDs = [];
   var cartData = req.session.cartData0;
   var orderID = req.session.orderID;
-  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Costs = []; var Warranties = [];
+  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Variations = []; var Costs = []; var Warranties = [];
 
   var orderData = {
     'mobile': req.body.mobile,
@@ -1043,6 +1043,8 @@ router.post('/AddOrder2', function(req, res, next) {
     // 'city': req.body.city.split("#")[2],
   };
 
+  
+
 
  
 
@@ -1051,6 +1053,7 @@ router.post('/AddOrder2', function(req, res, next) {
     cartIDs.push(product.ID);
     Prices.push(product.Price);
     Quantities.push(product.Quantity);
+    Variations.push(product.variation);
     Warranties.push(product.warranty);
   });
 
@@ -1081,6 +1084,7 @@ router.post('/AddOrder2', function(req, res, next) {
     arr_update_dict["$set"]["productNames"] = Names
     arr_update_dict["$set"]["productIDs"] = cartIDs;
     arr_update_dict["$set"]["quantity"] = Quantities;
+    arr_update_dict["$set"]["variation"] = Variations;
     arr_update_dict["$set"]["warranty"] = Warranties;
 
 
@@ -1142,7 +1146,7 @@ router.post('/AddOrder', function(req, res1, next) {
 
   //console.log("orderData.payment_method: " + orderData.payment_method);
   
-  var IDs = []; var Names = []; var Prices = []; var Quantities = [];  var warehouseNos = []
+  var IDs = []; var Names = []; var Prices = []; var Quantities = []; var Variations = [];  var warehouseNos = []
 
   cartData.forEach(function(product, index, array) {
     cartIDs.push(product.ID);
@@ -1167,6 +1171,7 @@ router.post('/AddOrder', function(req, res1, next) {
       cartData.forEach(function(cartProduct, index2) {
         if (cartProduct.ID == product._id) {
           Quantities[index] = cartProduct.Quantity
+          Variations[index] = cartProduct.variation
         }
       })
   
@@ -1192,6 +1197,7 @@ router.post('/AddOrder', function(req, res1, next) {
       arr_update_dict["$set"]["productIDs"] = IDs;
       arr_update_dict["$set"]["payment_method"] = orderData.payment_method;
       arr_update_dict["$set"]["quantity"] = Quantities;
+      arr_update_dict["$set"]["variation"] = Variations;
       arr_update_dict["$set"]["productNames"] = Names;
       arr_update_dict["$set"]["price"] = Prices;
       arr_update_dict["$set"]["warehouseNo"] = warehouseNos;
@@ -1558,6 +1564,8 @@ router.post('/cart', function(req, res, next) {
   var productExistInCart = false;
   const host = req.headers.host;
   const referer = req.headers.referer;
+
+  
   
   var newProduct = {
     ID: req.body.productId,
@@ -1567,6 +1575,7 @@ router.post('/cart', function(req, res, next) {
     productNo: parseFloat(req.body.productNo),
     parentNo: parseFloat(req.body.parentNo),
     warranty: parseFloat(req.body.warranty),
+    variation: req.body.variation,
   }
 
   hostNew = host;
@@ -1579,16 +1588,18 @@ router.post('/cart', function(req, res, next) {
 
     var old = req.session.cartData0;
     console.log("We Already have a cart")
-    console.log("Now we will check if productExistInCart")
-    old.forEach(function(product, index, array) {
-      console.log("If Yes will update quantity ")
-      if (product.ID == newProduct.ID) {
-        array[index].Quantity = newProduct.Quantity;
-        productExistInCart = true;
-        console.log("One of products Exist on the cart and we updated Quantity")
-      }
-    });
-    console.log("productExistInCart: " + productExistInCart)
+    // console.log("Now we will check if productExistInCart")
+    // old.forEach(function(product, index, array) {
+    //   console.log("If Yes will update quantity ")
+    //   if (product.ID == newProduct.ID) {
+    //     array[index].Quantity = newProduct.Quantity;
+    //     productExistInCart = true;
+    //     console.log("One of products Exist on the cart and we updated Quantity")
+    //   }
+    // });
+    // console.log("productExistInCart: " + productExistInCart)
+
+   
     
   }
   
@@ -1601,26 +1612,38 @@ router.post('/cart', function(req, res, next) {
   // constrer = req.headers.referer host = req.headers.host;
   // const refe;
 
+  console.log("Now the product is not in the cart we will make push + update session + redirect + cartCount")
+  old.push(newProduct);
+  req.session.cartData0 = old;
+  req.session.cartCount = req.session.cartData0.length;
+
+  req.session.save(function(err) {
+    // session saved
+    return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
+  })
+
   
 
-  if (productExistInCart) {
-    console.log("Now the product is in the cart we will update session and redirect")
-    req.session.cartData0 = old;
-    req.session.save(function(err) {
-      // session saved
-      return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
-    })
-  } else {
-    console.log("Now the product is not in the cart we will make push + update session + redirect + cartCount")
-    old.push(newProduct);
-    req.session.cartData0 = old;
-    req.session.cartCount = req.session.cartData0.length;
+  
+
+  // if (productExistInCart) {
+  //   console.log("Now the product is in the cart we will update session and redirect")
+  //   req.session.cartData0 = old;
+  //   req.session.save(function(err) {
+  //     // session saved
+  //     return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
+  //   })
+  // } else {
+  //   console.log("Now the product is not in the cart we will make push + update session + redirect + cartCount")
+  //   old.push(newProduct);
+  //   req.session.cartData0 = old;
+  //   req.session.cartCount = req.session.cartData0.length;
     
-    req.session.save(function(err) {
-      // session saved
-      return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
-    })
-  }
+  //   req.session.save(function(err) {
+  //     // session saved
+  //     return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
+  //   })
+  // }
 
 
   
