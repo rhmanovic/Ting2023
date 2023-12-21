@@ -173,6 +173,14 @@ block content
                             span.badge.text-bg-success Edit
                         td later modify as image array
                     tr
+                        th variation
+                        th :
+                        td= `${productData.variation}`
+                        td 
+                          a(href=`../editAny/Product/${productData._id}/variation//${productData.variation?productData.variation:"NaN"}/${typeof productData.variation}/productPage`)
+                            span.badge.text-bg-success Edit
+                        td later modify as image array
+                    tr
                         th categoryName
                         th :
                         td= `${productData.categoryName}`
