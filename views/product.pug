@@ -64,6 +64,14 @@ block content
 
                             br
                             if productData.canBeOrdered
+                              
+                              - var variation = productData.variation
+                              p اختر اللون
+                              .input-group.my-2
+                                select.form-select.col-3(name='variation' type='string')
+                                  each letter in variation.split("-")
+                                    option(value=letter)= letter
+
                               p.my-0 الكمية
                               div.my-1
                                   label.sr-only(for='inlineFormInputGroup')
