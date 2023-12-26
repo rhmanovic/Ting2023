@@ -12,12 +12,9 @@ block content
                 
                 .col.col-md-8.p-0
                     h3.mb-4 عربة التسوق
-                    p= cartData
-                    p= JSON.stringify(cartData2)
+                    
                     .card.cardShadow
-                        p cartData
-                        p= cartData
-                        br
+                        
                         each product,index in cartData
                             each product2,index in cartData2
                               if product2.ID == product._id
