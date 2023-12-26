@@ -161,7 +161,9 @@ block content
                   tr
                   th #
                   th اسم المنتج
+                  th اللون
                   th الكفاله
+                  
                   //- th ID
                   th الكمية
                   th السعر
@@ -173,7 +175,9 @@ block content
                       tr 
                           td= `${index+1}`
                           td= orderData.productNames[index]
+                          td= orderData.variation[index]
                           td= orderData.warranty[index]
+                          
                           //- td= orderData.productIDs[index]
                           //td= orderData.quantity[index]
                           td
