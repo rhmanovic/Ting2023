@@ -18,7 +18,7 @@ head
   link(rel='icon' href='/img/upload/icon-t.jpg')
 
   if productData
-    meta(property='og:image' content=productData.img)
+    meta(property='og:image' content=productData.img[0])
     meta(property='og:title' content=productData.name)
     meta(property='og:description' content=`السعر: ${(productData.price).toFixed(3)} K.D`)
 
