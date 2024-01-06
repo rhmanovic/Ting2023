@@ -561,6 +561,7 @@ router.get('/uploadImage/:collection/:id/:returnTo', mid.requiresSaleseman, func
 
   if (data.collection == "Product") { var x = Product } // is there somesing more todo
   else if (data.collection == "Category") { var x = Category }
+  else if (data.collection == "Order") { var x = Order }
 
   
   
