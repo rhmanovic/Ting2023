@@ -17,7 +17,9 @@ block content
               th(scope='col') discountPrice
               th(scope='col') img
               th(scope='col') ItemNo
+              th(scope='col') warranty
               th(scope='col') name
+              th(scope='col') disc
               
           tbody
             each product,index in productData
@@ -29,8 +31,14 @@ block content
                   td= product.discountPrice.toFixed(2)+" K.D"
                   td
                     a(href=`${product.img[0]}`)
-                      span= "/Users/abdulrahmanaldhuferi/Desktop/ting/img/" + cx.split("/")[3]
+                      span= "/Users/abdulrahmanaldhuferi/Desktop/ITC/posts/img/" + cx.split("/")[3]
                   td= product.productNo
+                  if product.warranty > 0
+                    td= "الكفالة: " + product.warranty + " سنة"
+                  else
+                    td -
+                  td
+                    span= product.name
                   td
                     span= product.name
                     br
@@ -39,7 +47,7 @@ block content
                       br
                       span= "بعد الخصم: " + product.discountPrice + " د.ك"
                     else
-                      span= "السعر: " + product.discountPrice + " د.ك"
+                      span= "السعر: " + product.price + " د.ك"
                     br
                     br
                     span= product.nameE
