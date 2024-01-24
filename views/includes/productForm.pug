@@ -3,7 +3,8 @@ form#cart(method='POST' action='/cart')
     div.px-lg-3.text-right
         h3.my-4#product_name= productData.name
 
-        include ./timer.pug
+        if productData.discounted
+          include ./timer.pug
           
 
         .text-right.d-flex.bd-highlight.justify-content-between.flex-column.flex-md-row-reverse.align-self-baselin
@@ -15,7 +16,7 @@ form#cart(method='POST' action='/cart')
             .col.p-0.mt-md-0
                 
                 if productData.discounted
-                  .container.px-1
+                  .container.fs-1
                     span= " السعر "
                     span.text-danger.fw-bold= productData.discountPrice.toFixed(3)
                     span.text-danger.fw-bold= " د.ك "
