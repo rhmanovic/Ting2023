@@ -8,24 +8,24 @@ form#cart(method='POST' action='/cart')
           
 
         .text-right.d-flex.bd-highlight.justify-content-between.flex-column.flex-md-row-reverse.align-self-baselin
-            .col.p-0
-                span.badge.badge-light.mt-2
-                    if productData.canBeOrdered
-                      Span.text-success متوفر
+        .col.p-0
+            span.badge.badge-light.mt-2
+                if productData.canBeOrdered
+                  Span.text-success متوفر
+        
+        
             
-            .col.p-0.mt-md-0
-                
-                if productData.discounted
-                  .container.fs-2
-                    span= " السعر "
-                    span.text-danger.fw-bold= productData.discountPrice.toFixed(3)
-                    span.text-danger.fw-bold= " د.ك "
-                    span.text-decoration-line-through.fs-3=` ${productData.price.toFixed(3)} د.ك`
-                else
-                  .container.fs-1
-                    span= " السعر "
-                    span.fw-bold= productData.price.toFixed(3)
-                    span.fw-bold= " د.ك "
+        if productData.discounted
+          .fs-2
+            span= " السعر "
+            span.text-danger.fw-bold= productData.discountPrice.toFixed(3)
+            span.text-danger.fw-bold= " د.ك "
+            span.text-decoration-line-through.fs-3=` ${productData.price.toFixed(3)} د.ك`
+        else
+          .container.fs-1
+            span= " السعر "
+            span.fw-bold= productData.price.toFixed(3)
+            span.fw-bold= " د.ك "
                     
 
 
