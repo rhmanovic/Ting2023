@@ -2,8 +2,9 @@ extends layout
 
 block content
   .col
-    include ./includes/productCard.pug                                                  
-    include ./includes/advantages.pug                                         
+    include ./includes/productCard.pug
+    if productData.discounted
+      include ./includes/advantages.pug                                         
     include ./includes/description.pug
     include ./includes/productManager.pug
     include ./includes/productScript.pug
