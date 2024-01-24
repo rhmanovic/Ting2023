@@ -4,8 +4,13 @@ if managerNow || theSalesemanNow
     a(href=`../manager/editAny/Product/${productData._id}/name//${productData.name?productData.name:"NaN"}/${typeof productData.name}/productshop`)
       span تعديل الاسم
 
+    a(href=`../manager/editAny/Product/${productData._id}/discounted//${productData.discounted?productData.discounted:"NaN"}/${typeof productData.discounted}/productshop`)
+     p= `خصم =  ${productData.discounted} `
+     
     a(href=`../manager/editAny/Product/${productData._id}/googleSheet//${productData.googleSheet?productData.googleSheet:"NaN"}/${typeof productData.googleSheet}/productshop`)
      p= `عرض في قوقل =  ${productData.googleSheet} `
+
+     
     a(href=`../manager/editAny/Product/${productData._id}/showInWebsite//${productData.showInWebsite?productData.showInWebsite:"NaN"}/${typeof productData.showInWebsite}/productshop`)
      p= `عرض في الموقع =  ${productData.showInWebsite} `
 
