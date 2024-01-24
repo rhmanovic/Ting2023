@@ -16,7 +16,7 @@ form#cart(method='POST' action='/cart')
             .col.p-0.mt-md-0
                 
                 if productData.discounted
-                  .container.fs-1
+                  .container.fs-2
                     span= " السعر "
                     span.text-danger.fw-bold= productData.discountPrice.toFixed(3)
                     span.text-danger.fw-bold= " د.ك "
