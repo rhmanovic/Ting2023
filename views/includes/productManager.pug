@@ -7,6 +7,10 @@ if managerNow || theSalesemanNow
     a(href=`../manager/editAny/Product/${productData._id}/discounted//${productData.discounted?productData.discounted:"NaN"}/${typeof productData.discounted}/productshop`)
      p= `خصم =  ${productData.discounted} `
      
+
+    a(href=`../manager/editAny/Product/${productData._id}/buyknow//${productData.buyknow?productData.buyknow:"NaN"}/${typeof productData.buyknow}/productshop`)
+     p= `زر اشتر الان =  ${productData.buyknow} `
+     
     a(href=`../manager/editAny/Product/${productData._id}/googleSheet//${productData.googleSheet?productData.googleSheet:"NaN"}/${typeof productData.googleSheet}/productshop`)
      p= `عرض في قوقل =  ${productData.googleSheet} `
 
