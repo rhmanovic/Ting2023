@@ -101,7 +101,7 @@ block content
                         td= `${productData.discountPrice}`
                         td 
                           a(href=`../editAny/Product/${productData._id}/discountPrice//${productData.discountPrice}/${typeof productData.discountPrice}/productPage`)
-                            span.badge.text-bg-success Edit
+                            span.badge.text-bg-success Edit 
 
 
                     tr      
@@ -118,6 +118,13 @@ block content
                       td= `${productData.showInWebsite}`
                       td 
                         a(href=`../editAny/Product/${productData._id}/showInWebsite//${productData.showInWebsite}/${typeof productData.showInWebsite}/productPage`)
+                          span.badge.text-bg-success Edit
+                    tr      
+                      th Buy Know
+                      th :
+                      td= `${productData.buyknow}`
+                      td 
+                        a(href=`../editAny/Product/${productData._id}/buyknow//${productData.buyknow}/${typeof productData.buyknow}/productPage`)
                           span.badge.text-bg-success Edit
 
 
