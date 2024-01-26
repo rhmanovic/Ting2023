@@ -697,11 +697,13 @@ router.get('/product/:url', function(req, res, next) {
         if(productData){
           title = productData.name
         }
-        if (ShowModal == "yes")  {
-          return res.render('product2', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
-        } else {
-          return res.render('product', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
-        }
+
+        return res.render('product', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
+        // if (ShowModal == "yes")  {
+        //   return res.render('product2', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
+        // } else {
+        //   return res.render('product', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
+        // }
        
   
       }
@@ -1564,7 +1566,7 @@ router.post('/cart', function(req, res, next) {
   var productExistInCart = false;
   const host = req.headers.host;
   const referer = req.headers.referer;
-
+  const buyknow = req.body.buyknow;
   
   
   var newProduct = {
@@ -1619,7 +1621,12 @@ router.post('/cart', function(req, res, next) {
 
   req.session.save(function(err) {
     // session saved
-    return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
+    if (buyknow) {
+      return res.redirect("cart")
+    } else {
+      return res.redirect(`https://${referer.split('/')[2]}/product/${productName}?ShowModal=yes&Q=${newProduct.Quantity}`);
+    }
+    
   })
 
   
