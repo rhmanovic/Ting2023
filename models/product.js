@@ -23,6 +23,10 @@ var ProductSchema = new mongoose.Schema({
       type: Boolean,
       default: false,      
     },
+    buyknow: {
+      type: Boolean,
+      default: false,      
+    },
     name: {
       type: String,
       efault: ""
