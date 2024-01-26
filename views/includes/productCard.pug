@@ -5,4 +5,10 @@
       
 
       include ./productCarousel.pug
-      include ./productForm.pug
+
+      if productData.buyknow
+        form#cart(method='POST' action='/cart')
+          include ./productForm.pug
+      else
+        form#cart(method='POST' action='/cart') 
+          include ./productForm.pug
