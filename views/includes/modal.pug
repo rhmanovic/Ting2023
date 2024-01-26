@@ -1,6 +1,7 @@
 // Button trigger modal
 button.btn.btn-primary#modalButton(hidden type='button' data-bs-toggle='modal' data-bs-target='#exampleModalCenter')
 
+
 // Modal
 #exampleModalCenter.modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalCenterTitle', aria-hidden='show')
   .modal-dialog.modal-dialog-centered(role='document')
@@ -30,6 +31,6 @@ button.btn.btn-primary#modalButton(hidden type='button' data-bs-toggle='modal' d
                 
       .modal-footer
         .mx-auto
-          button.btn.btn-secondary.mx-3(type='button', data-dismiss='modal') اكمال التسوق
+          button.btn.btn-secondary.mx-3(type='button', data-bs-dismiss='modal') اكمال التسوق
           a(href="../cart")
             button.btn.btn-primary.mx-3.bg-success(type='button') مشاهدة العربة
