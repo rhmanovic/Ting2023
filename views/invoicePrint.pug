@@ -84,11 +84,12 @@ block content
           tr
             td
               span= orderData.productNames[index]
-              
-            if orderData.warehouseNo[index]
-              td= orderData.warehouseNo[index]
-            else
-              td -
+
+            //
+              if orderData.warehouseNo[index]
+                td= orderData.warehouseNo[index]
+              else
+                td -
             td= orderData.warranty[index]
             td= orderData.quantity[index]
             td= orderData.price[index]
