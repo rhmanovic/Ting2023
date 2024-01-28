@@ -20,6 +20,15 @@
 
       tbody
         tr
+          th الكفالة (سنة)
+
+          if managerNow
+            td
+              a(href=`../manager/editAny/Product/${productData._id}/warranty//${productData.warranty?productData.warranty:"NaN"}/${typeof productData.warranty}/productshop`)
+                span= `${productData.warranty}`
+          else
+            td= `${productData.warranty}`
+        tr
           th ابعاد المنتج
 
           if managerNow
