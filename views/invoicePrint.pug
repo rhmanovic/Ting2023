@@ -68,7 +68,7 @@ block content
             
           
           //- th ID
-          th SKU
+          th الكفالة
           th الكمية
           th 
             span السعر
@@ -89,7 +89,7 @@ block content
               td= orderData.warehouseNo[index]
             else
               td -
-            
+            td= orderData.warranty[index]
             td= orderData.quantity[index]
             td= orderData.price[index]
             td= (orderData.price[index] * orderData.quantity[index]).toFixed(3)
