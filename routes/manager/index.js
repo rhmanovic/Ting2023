@@ -11,6 +11,7 @@ var TransferRequest = require('../../models/transferRequest');
 var User = require('../../models/user');
 var City = require('../../models/city');
 var mid = require('../../middleware'); 
+const keys = require("../../config/keys");
 
 
 var nodemailer = require('nodemailer');
@@ -1438,11 +1439,11 @@ router.get('/send', function(req, res) {
 
 var mailOptions = {
   from: 'eng.dugaim@gmail.com',
-  to: 'eng.dugaim@gmail.com, ting.storee@gmail.com',
+  to:  keys.internal.EmailsForOrders,
   subject: `${massege} رقم الطلب: ${orderID}`,
   text: `mobile: ${mobile},
   orderID: ${orderID}. 
-  https://www.tingstorekw.com/manager/orderPage/${orderID}, 
+  ${keys.internal.host}/manager/orderPage/${orderID},
   color: ${color},
   KentStatus: ${KentStatus},
   source: ${req.session.source}`
