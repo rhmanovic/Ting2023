@@ -996,6 +996,7 @@ router.post("/AddOrder", function (req, res1, next) {
   var Prices = [];
   var Quantities = [];
   var Variations = [];
+  var Warranties = [];
   var warehouseNos = [];
 
   cartData.forEach(function (product, index, array) {
@@ -1004,12 +1005,13 @@ router.post("/AddOrder", function (req, res1, next) {
 
   Product.find(
     { _id: { $in: cartIDs } },
-    { name: 1, price: 1, discountPrice: 1, discounted: 1, warehouseNo: 1 },
+    { name: 1, price: 1, discountPrice: 1, discounted: 1, warehouseNo: 1, warranty: 1 },
   ).exec(function (error, productData) {
     productData.forEach(function (product, index) {
       IDs[index] = product._id;
       Names[index] = product.name;
       Prices[index] = product.price;
+      Warranties[index] = product.warranty;
       warehouseNos[index] = product.warehouseNo;
       if (product.discounted) {
         Prices[index] = product.discountPrice;
@@ -1043,6 +1045,7 @@ router.post("/AddOrder", function (req, res1, next) {
       arr_update_dict["$set"]["payment_method"] = orderData.payment_method;
       arr_update_dict["$set"]["quantity"] = Quantities;
       arr_update_dict["$set"]["variation"] = Variations;
+      arr_update_dict["$set"]["warranty"] = Warranties;
       arr_update_dict["$set"]["productNames"] = Names;
       arr_update_dict["$set"]["price"] = Prices;
       arr_update_dict["$set"]["warehouseNo"] = warehouseNos;
