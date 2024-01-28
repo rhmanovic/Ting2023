@@ -17,7 +17,8 @@ module.exports = {
     cookieKey: 'abdulrahmanawesomeiguess'
   },
   internal: {
-    host: 'https://tingstorekw.com'
+    host: 'https://itcstore.net',
+    EmailsForOrders: "eng.dugaim@gmail.com, itc-amjad@outlook.com"
   },
   tapPayment: {    
     authorization: "Bearer sk_live_F7zrQZfAd816O0DTpoean9YM"
