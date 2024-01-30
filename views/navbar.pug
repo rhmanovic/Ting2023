@@ -1,21 +1,20 @@
 nav.navbar-expand-lg.bgnav.text-white
 
-
-
-  dev.d-flex.flex-column.bd-highlight
-    .d-flex.justify-content-between.pt-2.px-2
-      dev
+  
+  div.d-flex.flex-column.bd-highlight
+    div.d-flex.justify-content-between.pt-2.px-2
+      div
         a.navbar-toggler.border-0
-          i.fa.fa-user.mt-3.mx-3.h4(aria-hidden='true')       
+          i.material-icons.mt-3.mx-3.h4(aria-hidden='true') language
 
         a.navbar-toggler.border-0(href='/cart')
-          span          
+          span
             i.fas.fa-shopping-cart.mt-2.h4
-            span#lblCartCount.badge.badge-warning= cartCountNow 
+            span#lblCartCount.badge.badge-warning= cartCountNow
       
       div
         a.navbar-brand.m-0.p-0(href="/")
-          img.mx-2.hideMAX(src='/img/upload/logo.png', alt='Mawadi', data-purpose='mawadi-brand-logo', height='45')
+          img.mx-2.hideMAX(src='/img/upload/logoting.png', alt='ITC', data-purpose='ITC-brand-logo', height='45')
 
         button.navbar-toggler.border-0.px-2(type='button', data-bs-toggle="collapse", data-bs-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
           i.fa.fa-bars(aria-hidden='true').h4.mt-3
@@ -32,6 +31,7 @@ nav.navbar-expand-lg.bgnav.text-white
     if !currentUser
       .p-2.bd-highlight.border-bottom
         a(aria-current='page' href='/login') تسجيل الدخول
+  
 
     .p-2.bd-highlight.border-bottom
       a(aria-current='page' href='/contact') تواصل معنا
@@ -60,7 +60,7 @@ nav.navbar-expand-lg.bgnav.text-white
         
 
         a.navbar-brand.nav-item.m-0.p-0.col-auto(href="/")
-          img.udemy-logo.mx-2.hideMIN(src='/img/upload/logo.png', alt='Mawadi', data-purpose='udemy-brand-logo', height='45')
+          img.udemy-logo.mx-2.hideMIN(src='/img/upload/logoting.png', alt='ITC', data-purpose='udemy-brand-logo', height='45')
 
         //- ul.navbar-nav.mr-auto
         .col
