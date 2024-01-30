@@ -3,8 +3,9 @@ extends layout
 
 block content
     - var totalPrice = 0
+    - var minOrder = Number(minimumOrder)
     - var shippingPrice = 1002
-    - var shippingFee = 1.5
+    - var shippingFee = Number(shipping)
     
     if cartData.length > 0
         .container.text-right.my-3
@@ -132,7 +133,7 @@ block content
                                     // User ID
                                     input.p-1.bd-highlight(value= currentUser hidden  name='userID')
                                         
-                                    if theMutlaa 
+                                    
 
                                     .pt-2.bd-highlight الاسم:
                                     input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' required="required" oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
@@ -156,10 +157,29 @@ block content
                                         span#errorCart.text-danger.mt-2 
                                            
                                     
-                
-
-                                    button.btn.btn-primary.mt-4.mb-2.bg-success#purchaseB(type='submit')
-                                      h4.mt-2.font-weight-bold اكمل الطلب
+                                    
+                                    
+                                    button.btn.btn-primary.mt-4.mb-2.bg-success#purchaseB(type='submit' disabled=totalPrice < minOrder)
+                                      h4.mt-2.font-weight-bold
+                                        | اكمل الطلب
+                                        if totalPrice < minOrder
+                                          span.text-danger.font-weight-bold (الحد الأدنى للطلب #{minOrder} K.D)
+                                        script.
+                                          var purchaseButton = document.getElementById('purchaseB');
+                                          var subTotalPrice = document.getElementById('subTotalPrice');
+                                          var checkMinOrder = function() {
+                                            var updatedTotalPrice = parseFloat(subTotalPrice.textContent);
+                                            if (updatedTotalPrice < #{minOrder}) {
+                                              purchaseButton.disabled = true;
+                                              purchaseButton.querySelector('h4').textContent = 'اكمل الطلب (الحد الأدنى للطلب ' + #{minOrder} + ' K.D)';
+                                            } else {
+                                              purchaseButton.disabled = false;
+                                              purchaseButton.querySelector('h4').textContent = 'اكمل الطلب';
+                                            }
+                                          };
+                                          subTotalPrice.addEventListener('DOMSubtreeModified', checkMinOrder);
+                                          checkMinOrder();
+                                    
 
 
     else
