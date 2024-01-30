@@ -14,6 +14,8 @@ var User = require("../models/user");
 var City = require("../models/city");
 const keys = require("../config/keys");
 var nodemailer = require("nodemailer");
+const fs = require('fs');
+const SiteData = JSON.parse(fs.readFileSync('data/data.json', 'utf8'));
 
 router.get("/send", function (req, res) {
   const { user } = req.query;
@@ -525,24 +527,33 @@ router.get("/upSell/:productNo/:source", function (req, res, next) {
   });
 });
 
-router.get("/test", function (req, res, next) {
-  arr_update_dict = { $set: {} };
-  arr_update_dict["$set"]["KentStatusBackEnd"] = "yyy";
+router.get("/SiteData", function (req, res, next) {
 
-  Order.findOneAndUpdate(
-    { _id: "6502b878222dfa25640b0666" },
-    arr_update_dict,
-  ).then(function () {
-    req.session.cartData0 = null;
-    req.session.orderID = null;
-    req.session.cartCount = null;
+  try {
+    fs.writeFileSync('data/data.json', JSON.stringify(SiteData), 'utf8');
+    return res.render("SiteData", { SiteData: SiteData });
+  } catch (error) {
+    return next(error);
+  }
 
-    req.session.save(function (err) {
-      // session saved
-      return res.render("test");
-    });
-  });
 });
+
+
+router.post("/SiteData", function (req, res, next) {
+  const { toedit } = req.query;
+  const userInput = req.body.userInput;
+
+  // Update the SiteData object with the user input
+  SiteData[toedit] = userInput;
+  
+  // Write the updated SiteData object to the data.json file
+  try {
+    fs.writeFileSync('data/data.json', JSON.stringify(SiteData), 'utf8');
+    res.redirect("sitedata");
+  } catch (error) {
+    next(error);
+  }
+})
 
 router.get("/category/:category", function (req, res, next) {
   const { category } = req.params;
@@ -794,6 +805,8 @@ router.get("/cart", function (req, res, next) {
       title: "Cart",
       cartData: productData,
       cartData2: cartData,
+      shipping: SiteData.ship,
+      minimumOrder: SiteData.minOrder
     });
   } else if (req.session.orderID == null && req.session.cartData0 != null) {
     // The User have added product to Cart and we SHOULD make for him orderID here
@@ -845,6 +858,8 @@ router.get("/cart", function (req, res, next) {
               cartData: productData,
               cartData2: cartData,
               citytData: citytData,
+              shipping: SiteData.ship,
+              minimumOrder: SiteData.minOrder
             });
           }
         },
