@@ -93,6 +93,7 @@ app.use(function(req, res, next) {
   res.locals.currentUserName = req.session.userName;
   res.locals.theMutlaa = req.session.mutlaa;
   res.locals.source = req.session.source;
+  res.locals.choosedLangaue = req.session.choosedLangaue;
 
   next();
 });
@@ -148,5 +149,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500)
   // .json(response.error(err.status || 500));
 });
+
+
+
+// Make language.json available in layout.pug
+global.language = require('./data/language.json');
+
+
 
 module.exports = app;
