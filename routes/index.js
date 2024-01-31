@@ -17,6 +17,27 @@ var nodemailer = require("nodemailer");
 const fs = require('fs');
 const SiteData = JSON.parse(fs.readFileSync('data/data.json', 'utf8'));
 
+router.get("/changeLanguage", function (req, res) {
+
+  
+  if (req.session.choosedLangaue == "en") {
+    req.session.choosedLangaue = "ar";
+  } else if (req.session.choosedLangaue == "ar") {
+    req.session.choosedLangaue = "en";
+  } else {
+    req.session.choosedLangaue = "en";
+  }
+  
+  req.session.save(function (err) {
+    // session saved
+    res.redirect('back')
+  });
+  
+})
+           
+
+
+
 router.get("/send", function (req, res) {
   const { user } = req.query;
   const { orderID } = req.query;
