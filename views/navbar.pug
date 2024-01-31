@@ -4,7 +4,7 @@ nav.navbar-expand-lg.bgnav.text-white
   div.d-flex.flex-column.bd-highlight
     div.d-flex.justify-content-between.pt-2.px-2
       div
-        a.navbar-toggler.border-0
+        a.navbar-toggler.border-0(href='/changeLanguage')
           i.material-icons.mt-3.mx-3.h4(aria-hidden='true') language
 
         a.navbar-toggler.border-0(href='/cart')
@@ -14,7 +14,7 @@ nav.navbar-expand-lg.bgnav.text-white
       
       div
         a.navbar-brand.m-0.p-0(href="/")
-          img.mx-2.hideMAX(src='/img/upload/logoting.png', alt='ITC', data-purpose='ITC-brand-logo', height='45')
+          img.mx-2.hideMAX(src='/img/upload/myFile-1706093299954.png', alt='ITC', data-purpose='ITC-brand-logo', height='45')
 
         button.navbar-toggler.border-0.px-2(type='button', data-bs-toggle="collapse", data-bs-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
           i.fa.fa-bars(aria-hidden='true').h4.mt-3
@@ -27,24 +27,24 @@ nav.navbar-expand-lg.bgnav.text-white
 
     if currentUser
       .p-2.bd-highlight.border-bottom
-        span= `مرحبا ${currentUserName}`
+        span #{theLanguage.welcome} #{currentUserName}
     if !currentUser
       .p-2.bd-highlight.border-bottom
-        a(aria-current='page' href='/login') تسجيل الدخول
+        a(aria-current='page' href='/login')= theLanguage.login
   
 
     .p-2.bd-highlight.border-bottom
-      a(aria-current='page' href='/contact') تواصل معنا
+      a(aria-current='page' href='/contact')= theLanguage.contactus
     
     if managerNow || theSalesemanNow
       .p-2.bd-highlight.border-bottom
-        a(aria-current='page' href='/emptyCart') افرغ العربة
+        a(aria-current='page' href='/emptyCart')= theLanguage.emptyCart
 
     if currentUser
       .p-2.bd-highlight.border-bottom
-        a(aria-current='page' href='/manager/order/1') الطلبات
+        a(aria-current='page' href='/manager/order/1')= theLanguage.orders
       .p-2.bd-highlight.border-bottom
-        a(aria-current='page' href='/logout') تسجيل الخروج
+        a(aria-current='page' href='/logout')= theLanguage.logout
 
    
 
@@ -60,7 +60,7 @@ nav.navbar-expand-lg.bgnav.text-white
         
 
         a.navbar-brand.nav-item.m-0.p-0.col-auto(href="/")
-          img.udemy-logo.mx-2.hideMIN(src='/img/upload/logoting.png', alt='ITC', data-purpose='udemy-brand-logo', height='45')
+          img.udemy-logo.mx-2.hideMIN(src='/img/upload/myFile-1706093299954.png', alt='ITC', data-purpose='udemy-brand-logo', height='45')
 
         //- ul.navbar-nav.mr-auto
         .col
@@ -75,8 +75,8 @@ nav.navbar-expand-lg.bgnav.text-white
             if currentUser
               div
                 img.avatar.img-circle.hidden-xs-downborder.border.collapse(src='/images/avatar.png', alt='avatar')
-                a.btn.pull-md-left.btn-secondary(href='/logout') Log out
+                a.btn.pull-md-left.btn-secondary(href='/logout')= theLanguage.logout
             else  
               a.btn.btn-info.pull-md-left.mr-md-2.collapse(href='/login')
                 i.fa.fa-user.ml-2(aria-hidden='true')
-                span تسجيل دخول
+                span= theLanguage.login
