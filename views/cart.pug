@@ -6,13 +6,14 @@ block content
     - var minOrder = Number(minimumOrder)
     - var shippingPrice = 1002
     - var shippingFee = Number(shipping)
+    - var completeOrder = theLanguage.completeOrder
     
     if cartData.length > 0
         .container.text-right.my-3
             .row.row-cols-1.row-cols-md-2.m-2.m-md-0
                 
                 .col.col-md-8.p-0
-                    h3.mb-4 عربة التسوق
+                    h3.mb-4= theLanguage.cart
                     
                     .card.cardShadow
                         
@@ -47,13 +48,13 @@ block content
                                                             p.hideMIN.small2-font.text-muted
                                                                 button.btn.btn-light.btn-sm.small2-font.text-black-50(value=`${product._id}`, class="remove")
                                                                     i.ml-1.fa.fa-trash(aria-hidden='true')
-                                                                    | إزاله
+                                                                    span= ` ${theLanguage.romove} `
                                                     .col-md-4.d-flex.flex-column.p-0
                                                         
                                                         .container
                                                             .d-flex.flex-column.bd-highlight.mb-3
                                                                 .p-2.bd-highlight
-                                                                    span.small-font= `الكمية:`
+                                                                    span.small-font= `${theLanguage.quantity} :`
                                                                     div
                                                                         label.sr-only(for='inlineFormInputGroup')
                                                                         .input-group.my-2
@@ -79,37 +80,37 @@ block content
                                                                       - productprice = product.price
                                                                       
                                                                     br
-                                                                    span.fs-6.small-font= `سعر الحبة: ${productprice} K.D`
+                                                                    span.fs-6.small-font= `${theLanguage.piecePrice}: ${productprice} K.D`
                                                                 .p-2.bd-highlight
-                                                                    span.fs-6.small-font= `الاجمالي:`
+                                                                    span.fs-6.small-font= theLanguage.total
                                                                     span.fs-6.small-font= ` K.D `
                                                                     span.fs-6.small-font(id =`R${product._id}`)= ((productprice*1000) * cartData2[index].Quantity)/1000
                                                                     - totalPrice += ((productprice*1000) * cartData2[index].Quantity)/1000
                                                                 .p-2.bd-highlight.hideMAX.text-muted.small2-font
                                                                     button.btn.btn-light.btn-sm(value=`${product._id}`, class="remove")
                                                                         i.ml-1.fa.fa-trash(aria-hidden='true')
-                                                                        | إزاله
+                                                                        span= ` ${theLanguage.romove} `
 
                                             
                 .col.col-md-4.p-0
                     .card.cardShadow.mr-md-2.mt-2.mt-md-0
-                        h4.mx-3.mt-2 ملخص الطلبية
+                        h4.mx-3.mt-2= theLanguage.orderSummary
                         hr.mx-3
                         .container
                             .row
-                                .col الاجمالي
+                                .col= theLanguage.total
                                 .col.text-left.ltr
                                     span(id="subTotalPrice")= totalPrice
                                     span= " K.D"
                             .row
-                                .col الشحن
+                                .col= theLanguage.shipping
                                 .col.text-left.ltr
                                     span#shipping= shippingFee
                                     span#shipping1= " K.D"
                                 
                             hr.mx-3
                             .row
-                              .col الاجمالي الكلي
+                              .col= theLanguage.grandTotal
                               .col.text-left.ltr
                                   span#finalPrice= (totalPrice + shippingFee).toFixed(3)
                                   span= " K.D"
@@ -135,23 +136,23 @@ block content
                                         
                                     
 
-                                    .pt-2.bd-highlight الاسم:
-                                    input.p-1.bd-highlight(placeholder="الاسم الكامل" type='text' id='name' name='customerName' required="required" oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
-                                    .pt-2.bd-highlight رقم الهاتف:
+                                    .pt-2.bd-highlight= theLanguage.name
+                                    input.p-1.bd-highlight(placeholder=theLanguage.fullName type='text' id='name' name='customerName' required="required" oninvalid="this.setCustomValidity('ضع اسم صحيح')" oninput="setCustomValidity('')")
+                                    .pt-2.bd-highlight= theLanguage.mobileNumber
 
-                                    input.p-1.bd-highlight.input-number(placeholder="رقم الهاتف" type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
+                                    input.p-1.bd-highlight.input-number(placeholder=theLanguage.mobileNumber type='tel' id='mobile' name='mobile' required="required" oninvalid="this.setCustomValidity('ضع هاتف صحيح')" oninput="setCustomValidity('')")
                                     
-                                    .pt-2.bd-highlight العنوان:
-                                    textarea.p-1.bd-highlight(placeholder="العنوان الكامل" type='text' id='address' name='address' required="required" oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
+                                    .pt-2.bd-highlight= theLanguage.address
+                                    textarea.p-1.bd-highlight(placeholder=theLanguage.fullAddress type='text' id='address' name='address' required="required" oninvalid="this.setCustomValidity('ضع عنوان صحيح')" oninput="setCustomValidity('')")
 
                                     //.row.mt-3
                                       .col            
                                         input(type='radio'  name="payment_method" value="knet")      
-                                        label.mx-2 كي-نت  
+                                        label.mx-2= theLanguage.knet  
                                     .row
                                       .col            
                                         input(type='radio' checked="checked" name="payment_method" value="cash")      
-                                        label.mx-2 دفع عند الاستلام
+                                        label.mx-2= theLanguage.cashOnDelivery
                                     
                                     .row            
                                         span#errorCart.text-danger.mt-2 
@@ -161,9 +162,9 @@ block content
                                     
                                     button.btn.btn-primary.mt-4.mb-2.bg-success#purchaseB(type='submit' disabled=totalPrice < minOrder)
                                       h4.mt-2.font-weight-bold
-                                        | اكمل الطلب
+                                        span= theLanguage.completeOrder
                                         if totalPrice < minOrder
-                                          span.text-danger.font-weight-bold (الحد الأدنى للطلب #{minOrder} K.D)
+                                          span.text-danger.font-weight-bold (#{theLanguage.MOQ} #{minOrder} K.D)
                                         script.
                                           var purchaseButton = document.getElementById('purchaseB');
                                           var subTotalPrice = document.getElementById('subTotalPrice');
@@ -171,10 +172,10 @@ block content
                                             var updatedTotalPrice = parseFloat(subTotalPrice.textContent);
                                             if (updatedTotalPrice < #{minOrder}) {
                                               purchaseButton.disabled = true;
-                                              purchaseButton.querySelector('h4').textContent = 'اكمل الطلب (الحد الأدنى للطلب ' + #{minOrder} + ' K.D)';
+                                              purchaseButton.querySelector('h4').textContent = '#{theLanguage.completeOrder} (#{theLanguage.MOQ} ' + #{minOrder} + ' K.D)';
                                             } else {
                                               purchaseButton.disabled = false;
-                                              purchaseButton.querySelector('h4').textContent = 'اكمل الطلب';
+                                              purchaseButton.querySelector('h4').textContent = '#{theLanguage.completeOrder}';
                                             }
                                           };
                                           subTotalPrice.addEventListener('DOMSubtreeModified', checkMinOrder);
