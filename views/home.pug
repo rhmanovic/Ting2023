@@ -19,5 +19,10 @@ block content
     
     - var counter = 0
     each productData,index in productDataAll 
+
+      if websiteLangaue === "ar"
+        - var categoryPassName = categoriesPass[index].name
+      else if websiteLangaue === "en"
+        - var categoryPassName = categoriesPass[index].nameE
       
       include ./includes/productsScroll.pug
