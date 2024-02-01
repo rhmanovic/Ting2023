@@ -10,7 +10,7 @@
       "search": "Search ...",
       "title": "ITC for Electricity",
       "edit": "Edit",
-      "AddToCart": "Add To Cart",
+      "addToCart": "Add To Cart",
       "buyNow": "Buy Now",
       "buy": "Buy",
       "cart": "Shopping Cart",
@@ -32,8 +32,16 @@
       "fullAddress": "Full Address",
       "completeOrder": "Complete Order",
       "MOQ": "Minimum Order",
-      "shopMore": "Shop More"
-
+      "shopMore": "Shop More",
+      "available": "Available",
+      "unAavailable": "Unavailable",
+      "chooseColor": "Choose Color",
+      "desc": "Description",
+      "itemDetails": "Item Details",
+      "WarrantyYeares": "Warranty (Year)",
+      "itemDimention": "Item Dimention",
+      "price": "Price",
+      "KD": "KD"
       
     },
     "ar": {
@@ -46,7 +54,7 @@
       "search": "بحث ...",
       "title": "ITC للكهرباء",
       "edit": "تعديل",
-      "AddToCart": "اضف للعربة",
+      "addToCart": "اضف للعربة",
       "buyNow": "اشتر الان",
       "buy": "شاتر",
       "cart": "عربة التسوق",
@@ -68,7 +76,16 @@
       "fullAddress": "العنوان الكامل",
       "completeOrder": "اكمل الطلب",
       "MOQ": "الحد الادنى للطلب",
-      "shopMore": "تسوق المزيد"
+      "shopMore": "تسوق المزيد",
+      "available": "متوفر",
+      "unAavailable": "غير متوفر",
+      "chooseColor": "اختر اللون",
+      "desc": "المواصفات",
+      "itemDetails": "تفاصيل المنتج",
+      "WarrantyYeares": "الكفالة (سنة)",
+      "itemDimention": "ابعاد المنتج",
+      "price": "السعر",
+      "KD": "دك"
     }
   }
 }
