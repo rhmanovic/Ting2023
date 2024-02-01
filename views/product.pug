@@ -1,6 +1,12 @@
 extends layout
 
 block content
+
+  if websiteLangaue === "ar"
+    - var productDataName = productData.name
+  else if websiteLangaue === "en"
+    - var productDataName = productData.nameE
+    
   .col
     include ./includes/productCard.pug
     if productData.discounted
