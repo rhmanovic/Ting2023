@@ -31,7 +31,8 @@
       "fullName": "Full Name",
       "fullAddress": "Full Address",
       "completeOrder": "Complete Order",
-      "MOQ": "Minimum Order"
+      "MOQ": "Minimum Order",
+      "shopMore": "Shop More"
 
       
     },
@@ -66,7 +67,8 @@
       "fullName": "الاسم الكامل",
       "fullAddress": "العنوان الكامل",
       "completeOrder": "اكمل الطلب",
-      "MOQ": "الحد الادنى للطلب"
+      "MOQ": "الحد الادنى للطلب",
+      "shopMore": "تسوق المزيد"
     }
   }
 }
