@@ -2,7 +2,7 @@
   .card-header.bg-white.border-0
     ul.nav.nav-tabs.card-header-tabs
       li.nav-item
-        a.nav-link.active.px-4.bg-light(href='#') المواصفات
+        a.nav-link.active.px-4.bg-light(href='#')= theLanguage.desc
         
   .card-body.border-bottom.cardShadow.text-right.border-3
     //- h5.card-title Special title treatment
@@ -15,12 +15,12 @@
     table.table.table-striped
       thead
         tr
-          th(scope='col') تفاصيل المنتج
+          th(scope='col')= theLanguage.itemDetails
           th(scope='col')
 
       tbody
         tr
-          th الكفالة (سنة)
+          th= theLanguage.WarrantyYeares
 
           if managerNow
             td
@@ -29,7 +29,7 @@
           else
             td= `${productData.warranty}`
         tr
-          th ابعاد المنتج
+          th= theLanguage.itemDimention
 
           if managerNow
             td
