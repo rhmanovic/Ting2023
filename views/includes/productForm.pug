@@ -1,6 +1,6 @@
 form#cart(method='POST' action='/cart')
   div.px-lg-3.text-right
-      h3.my-4#product_name= productData.name
+      h3.my-4#product_name= productDataName
   
       if productData.discounted
         include ./timer.pug
@@ -10,21 +10,21 @@ form#cart(method='POST' action='/cart')
       .col.p-0
           span.badge.badge-light.mt-2
               if productData.canBeOrdered
-                Span.text-success متوفر
+                Span.text-success= theLanguage.available
       
       
           
       if productData.discounted
         .fs-2
-          span= " السعر "
+          span= ` ${theLanguage.price} `
           span.text-danger.fw-bold= productData.discountPrice.toFixed(3)
-          span.text-danger.fw-bold= " د.ك "
-          span.text-decoration-line-through.fs-3=` ${productData.price.toFixed(3)} د.ك`
+          span.text-danger.fw-bold= ` ${theLanguage.KD} `
+          span.text-decoration-line-through.fs-3=` ${productData.price.toFixed(3)} ${theLanguage.KD}`
       else
         .container.fs-1
-          span= " السعر "
+          span= ` ${theLanguage.price} `
           span.fw-bold= productData.price.toFixed(3)
-          span.fw-bold= " د.ك "
+          span.fw-bold= ` ${theLanguage.KD} `
                   
   
   
@@ -33,13 +33,13 @@ form#cart(method='POST' action='/cart')
       if productData.canBeOrdered
         
         - var variation = productData.variation
-        p اختر اللون
+        p= theLanguage.chooseColor 
         .input-group.my-2
           select.form-select.col-3(name='variation' type='string')
             each letter in variation.split("-")
               option(value=letter)= letter
   
-        p.my-0 الكمية
+        p.my-0= theLanguage.quantity
         div.my-1
             label.sr-only(for='inlineFormInputGroup')
             .input-group.my-2
@@ -69,7 +69,7 @@ form#cart(method='POST' action='/cart')
           input#pprice(type="" name="price" value= productData.price)
   
   
-        input#pname(type="" name="name" value= productData.name)
+        input#pname(type="" name="name" value= productDataName)
         
         input#pproductNo(type="" name="productNo" value= productData.productNo)
         input#pproductNo(type="" name="parentNo" value= productData.productNo)
@@ -94,12 +94,12 @@ form#cart(method='POST' action='/cart')
       if productData.canBeOrdered
         if productData.buyknow
           button.col.btn.tomato.mt-3.text-white#addToCartButton(type='submit')
-            | اشتر الان
+            span= theLanguage.buyNow
             i.mx-2.fa.fa-cart-plus(aria-hidden='true')
         else
           button.col.btn.tomato.mt-3.text-white#addToCartButton(type='submit')
-            | اضف للعربة
+            span= theLanguage.addToCart
             i.mx-2.fa.fa-cart-plus(aria-hidden='true')
       else
         .alert.alert-danger(role='alert')
-          | غير متوفر !
+          span= theLanguage.unAavailable
