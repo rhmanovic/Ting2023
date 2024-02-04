@@ -3,9 +3,11 @@ extends layout
 block content
 
   
-  
+  // theLanguage.orders
   .main.container
-    p Site Images
+    h1= theLanguage.siteImages
+    hr
+    br
     each image, index in SiteImages
       .col-md-8.col-md-offset-2
         form(action=`manager/SiteImages?toedit=${index}`, method='post', enctype='multipart/form-data')
