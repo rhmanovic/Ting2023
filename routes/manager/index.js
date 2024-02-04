@@ -12,14 +12,58 @@ var User = require('../../models/user');
 var City = require('../../models/city');
 var mid = require('../../middleware'); 
 const keys = require("../../config/keys");
+const fs = require('fs');
+
 
 
 var nodemailer = require('nodemailer');
 
 
+router.post("/SiteImages", mid.requiresAdmin , function (req, res, next) {
+  const { toedit } = req.query;
+  const { L } = req.query;
+  const myFile = req.body.myFile;
+
+  console.log("SiteImages called");
 
 
-var fs = require('fs');
+  upload(req, res, (err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      if (req.file) {
+
+        const filename = "req.file.filename";
+
+        console.log("filename")
+        console.log(filename)
+
+        // Write the updated SiteData object to the data.json file
+        try {
+          fs.writeFileSync('data/SiteImages.json', JSON.stringify(SiteImages), 'utf8');
+          res.redirect("SiteImages");
+        } catch (error) {
+          next(error);
+        }
+
+
+
+        // return res.render("manager", { title: '', fileLInk: fileLInk });
+      } else {
+        res.send(`Error: No file selected`)
+      }
+    }
+  })
+
+  
+
+
+
+})
+
+
+
+
 const multer = require('multer')
 var path = require('path');
 
