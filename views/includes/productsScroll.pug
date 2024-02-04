@@ -1,5 +1,5 @@
 if counter == 0
-  .div.bghome
+  .div.bghome(style=`background-image: url(/img/upload/${SiteImages.BackGround01})`)
     h1.text-white.p-3.Alexfontbold= categoryPassName
     br
     a(href=`/category/${categoriesPass[index].URLname}`)
@@ -28,7 +28,7 @@ else if counter == 1
 
 else if counter == 2
   
-  .div.bghome2
+  .div.bghome2(style=`background-image: url(/img/upload/${SiteImages.BackGround02})`)
     h1.p-3.Alexfontbold= categoryPassName
     br
     a(href=`/category/${categoriesPass[index].URLname}`)
