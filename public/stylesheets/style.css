@@ -36,14 +36,14 @@ body {
 
 
 .bghome {
-      background-image: url(/img/backgrounds/bg002.png);
+      /* background-image: url(/img/backgrounds/bg002.png); */
     /* font-weight: bold; */
     background-position: right;
     background-size: cover;
 }
 
 .bghome2 {
-      background-image: url(/img/backgrounds/bg003.png);
+      /* background-image: url(/img/backgrounds/bg003.png); */
     font-weight: normal;
     background-position: right;
     background-size: cover;
