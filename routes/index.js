@@ -16,6 +16,8 @@ const keys = require("../config/keys");
 var nodemailer = require("nodemailer");
 const fs = require('fs');
 const SiteData = JSON.parse(fs.readFileSync('data/data.json', 'utf8'));
+var mid = require('../middleware'); 
+
 
 router.get("/changeLanguage", function (req, res) {
 
@@ -548,7 +550,23 @@ router.get("/upSell/:productNo/:source", function (req, res, next) {
   });
 });
 
-router.get("/SiteData", function (req, res, next) {
+router.get("/SiteImages" , function (req, res, next) {
+
+  
+  try {
+    
+    fs.writeFileSync('data/SiteImages.json', JSON.stringify(SiteImages), 'utf8');
+    return res.render("SiteImages", { SiteImages: SiteImages });
+    
+  } catch (error) {
+    return next(error);
+  }
+
+});
+
+
+
+router.get("/SiteData", mid.requiresAdmin , function (req, res, next) {
 
   try {
     fs.writeFileSync('data/data.json', JSON.stringify(SiteData), 'utf8');
@@ -558,9 +576,37 @@ router.get("/SiteData", function (req, res, next) {
   }
 
 });
+router.get("/SiteLanguage", mid.requiresAdmin , function (req, res, next) {
+  
+  try {
+    fs.writeFileSync('data/language.json', JSON.stringify(language), 'utf8');
+    return res.render("SiteLanguage", { language: language });
+  } catch (error) {
+    return next(error);
+  }
+
+});
 
 
-router.post("/SiteData", function (req, res, next) {
+router.post("/SiteLanguage", mid.requiresAdmin , function (req, res, next) {
+  const { toedit } = req.query;
+  const { L } = req.query;
+  const userInput = req.body.userInput;
+
+  // Update the SiteData object with the user input
+  language.language[L][toedit] = userInput;
+
+  // Write the updated SiteData object to the data.json file
+  try {
+    fs.writeFileSync('data/language.json', JSON.stringify(language), 'utf8');
+    res.redirect("SiteLanguage");
+  } catch (error) {
+    next(error);
+  }
+})
+
+
+router.post("/SiteData", mid.requiresAdmin , function (req, res, next) {
   const { toedit } = req.query;
   const userInput = req.body.userInput;
 
