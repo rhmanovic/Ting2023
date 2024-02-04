@@ -29,7 +29,9 @@ function requiresAdmin(req, res, next) {
     // var err = new Error('You are not Mr. Abdulrahman the Admin');
     // err.status = 401;
     // return next(err);
-    return res.redirect('/')
+    var err = new Error('الصفحة مخصصة للمديرين فقط، الرجاء تسجيل الدخول اولا');
+    err.status = 401;
+    return next(err);
   }
 
 }
