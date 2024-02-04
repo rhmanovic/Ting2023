@@ -21,7 +21,6 @@ var nodemailer = require('nodemailer');
 
 router.post("/SiteImages", mid.requiresAdmin , function (req, res, next) {
   const { toedit } = req.query;
-  const { L } = req.query;
   const myFile = req.body.myFile;
 
   console.log("SiteImages called");
@@ -33,15 +32,18 @@ router.post("/SiteImages", mid.requiresAdmin , function (req, res, next) {
     } else {
       if (req.file) {
 
-        const filename = "req.file.filename";
+        const filename = req.file.filename;
 
         console.log("filename")
         console.log(filename)
 
+
+        SiteImages[toedit] = filename;
+        
         // Write the updated SiteData object to the data.json file
         try {
           fs.writeFileSync('data/SiteImages.json', JSON.stringify(SiteImages), 'utf8');
-          res.redirect("SiteImages");
+          res.redirect("/SiteImages");
         } catch (error) {
           next(error);
         }
