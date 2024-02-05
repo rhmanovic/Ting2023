@@ -63,11 +63,11 @@ router.get("/send", function (req, res) {
 
   var mailOptions = {
     from: "eng.dugaim@gmail.com",
-    to: keys.internal.EmailsForOrders,
+    to: theData.EmailsForOrders,
     subject: `${massege} رقم الطلب: ${orderID}`,
     text: `mobile: ${mobile},
   orderID: ${orderID}. 
-  ${keys.internal.host}/manager/orderPage/${orderID}, 
+  ${theData.host}/manager/orderPage/${orderID}, 
   color: ${color},
   KentStatus: ${KentStatus},
   source: ${req.session.source}`,
