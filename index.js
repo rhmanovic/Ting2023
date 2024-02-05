@@ -155,6 +155,7 @@ app.use(function(err, req, res, next) {
 // Make language.json available in layout.pug
 global.language = require('./data/language.json');
 global.SiteImages = require('./data/SiteImages.json');
+global.theData = require('./data/data.json');
 
 
 
