@@ -336,7 +336,7 @@ router.get('/order/:sortTo', mid.requiresSaleseman, function(req, res, next) {
   }
   
   
-  Order.find({}).sort({ [sortTo]: 1 }).exec(function(error, orderData) {
+  Order.find({}).sort({ [sortTo]: -1 }).exec(function(error, orderData) {
     if (error) {
       return next(error);
     } else {
