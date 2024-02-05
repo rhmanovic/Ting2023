@@ -33,10 +33,12 @@ nav.navbar-expand-lg.bgnav.text-white
         a(aria-current='page' href='/login')= theLanguage.login
   
 
-    .p-2.bd-highlight.border-bottom
-      a(aria-current='page' href='/contact')= theLanguage.contactus
+    
     
     if managerNow || theSalesemanNow
+      .p-2.bd-highlight.border-bottom
+        a(aria-current='page' href='/manager') الادارة
+
       .p-2.bd-highlight.border-bottom
         a(aria-current='page' href='/emptyCart')= theLanguage.emptyCart
       .p-2.bd-highlight.border-bottom
@@ -48,10 +50,10 @@ nav.navbar-expand-lg.bgnav.text-white
 
     if currentUser
       .p-2.bd-highlight.border-bottom
-        a(aria-current='page' href='/manager/order/1')= theLanguage.orders
-      .p-2.bd-highlight.border-bottom
         a(aria-current='page' href='/logout')= theLanguage.logout
-
+    .p-2.bd-highlight.border-bottom
+      a(aria-current='page' href='/contact')= theLanguage.contactus
+  
    
 
    
