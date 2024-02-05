@@ -8,8 +8,8 @@
   "author": "Abdulrahman Al-Dhufiri",
   "private": true,
   "scripts": {
-    "start": "node ./index"
-  },
+    "start": "next start -p 3000"
+  }
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
