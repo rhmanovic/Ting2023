@@ -45,3 +45,5 @@ if managerNow || theSalesemanNow
         p.text-danger= `التكلفه    ${productData.name} =  ${productData.cost} `
       a(href=`../manager/editAny/Product/${productData._id}/price//${productData.price?productData.price:"NaN"}/${typeof productData.price}/productshop`)
         p= `سعر  ${productData.name} =  ${productData.price} `
+      a(href=`../manager/editAny/Product/${productData._id}/discountPrice//${productData.discountPrice?productData.discountPrice:"NaN"}/${typeof productData.discountPrice}/productshop`)
+        p= `(بعد الخصم)  ${productData.name} =  ${productData.discountPrice} `
