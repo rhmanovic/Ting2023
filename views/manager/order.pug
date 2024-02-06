@@ -9,10 +9,31 @@ block content
   - var profit2 = 0
 
   .main.container
-    h1 صفحة الطلبات
+    h1.text-center.mb-4 الطلبات
 
+    
+  .table-responsive
+    table.table.table-bordered
+      thead
+        tr
+          th(scope='col') رقم الطلب
+          th(scope='col') رقم الفاتورة
+          th(scope='col') هاتف
+          th(scope='col') التاريخ
+          th(scope='col') الحالة
+          th(scope='col') الاجمالي
+      tbody
+        each order,index in orderData
+          if (order.status != "deleted" && order.warehouse)
+            tr
+              td= `${order.orderNo}`
+              td= `${order.invoice}`
+              td= `${order.mobile}`
+              td= `${order.time.toLocaleDateString("en-GB")}`
+              td= `${order.status}`
+              td -
 
-    .row
+    // .row
         h3 انشئ طلب
         
   
@@ -31,13 +52,6 @@ block content
               button.btn.btn-primary(type='submit') طلب جديد
 
         
-        .ist-group.my-3
-          .list-group-item
-            a.navbar-brand(href=`/manager/order/2`) رتب حسب رقم الطلب
-          
-          .list-group-item
-            a.navbar-brand(href=`/manager/order/1`) رتب حسب رقم الفاتورة
-          
         .col.col-lg-6
             table.table
                 thead
@@ -47,13 +61,14 @@ block content
                             //- th(scope='col') Order No
                                 //-   th(scope='col') ID
                             th(scope='col') رقم الهاتف
-                            th(scope='col') المتجر
+                            //th(scope='col') المتجر
                             th(scope='col') الحالة
                             th(scope='col') التاريخ
-                            th(scope='col') الاجمالي
-                            if managerNow
-                              th(scope='col') التكلفة
-                              th(scope='col') حالة الدفع
+                            // div
+                              th(scope='col') الاجمالي
+                              if managerNow
+                                th(scope='col') التكلفة
+                                th(scope='col') الهامش
                 tbody
                         - var previousIndexOrder = 0
                         each order,index in orderData
@@ -73,16 +88,16 @@ block content
                                 td= order.mobile  
 
                                 - previousIndexOrder = order.invoice
-
-                                if (order.warehouse == "qurain")
-                                    td
-                                        span.badge.text-bg-success= `${order.warehouse}`
-                                else if (order.warehouse == "naseem")
-                                    td
-                                        span.badge.text-bg-primary= `${order.warehouse}`
-                                else
-                                    td
-                                        span.badge.text-bg-warning= `${order.warehouse}`
+                                // div
+                                  if (order.warehouse == "qurain")
+                                      td
+                                          span.badge.text-bg-success= `${order.warehouse}`
+                                  else if (order.warehouse == "naseem")
+                                      td
+                                          span.badge.text-bg-primary= `${order.warehouse}`
+                                  else
+                                      td
+                                          span.badge.text-bg-warning= `${order.warehouse}`
 
                                 if (order.status == "completed")
                                     td.text-white.bg-primary مكتمل
@@ -97,31 +112,32 @@ block content
 
 
                                 td= `${order.time.toLocaleDateString("en-GB")}`
-                                if (order.status == "returned")
-                                  td= order.totalCost
-                                else
-                                  td= order.totalPrice
 
-                                if managerNow
+                                // div
                                   if (order.status == "returned")
-                                    td= order.totalPrice
-                                  else
                                     td= order.totalCost
-                                  if (!isNaN(order.totalPrice - order.totalCost))
-                                    td= (order.totalPrice - order.totalCost).toFixed(3)
-                                    -  profit += (order.totalPrice - order.totalCost)
-                                    if (order.time.getMonth() == 5)
-                                      -  profit5 += (order.totalPrice - order.totalCost)
-                                    if (order.time.getMonth() == 4)
-                                      -  profit4 += (order.totalPrice - order.totalCost)
-                                    if (order.time.getMonth() == 3)
-                                      -  profit3 += (order.totalPrice - order.totalCost)
-                                    if (order.time.getMonth() == 2)
-                                      -  profit2 += (order.totalPrice - order.totalCost)
-                                  td= order.KentStatus
-                                   
-                        p= profit
-                        p= profit4
+                                  else
+                                    td= order.totalPrice
+  
+                                  if managerNow
+                                    if (order.status == "returned")
+                                      td= order.totalPrice
+                                    else
+                                      td= order.totalCost
+                                    if (!isNaN(order.totalPrice - order.totalCost))
+                                      td= (order.totalPrice - order.totalCost).toFixed(3)
+                                      -  profit += (order.totalPrice - order.totalCost)
+                                      if (order.time.getMonth() == 5)
+                                        -  profit5 += (order.totalPrice - order.totalCost)
+                                      if (order.time.getMonth() == 4)
+                                        -  profit4 += (order.totalPrice - order.totalCost)
+                                      if (order.time.getMonth() == 3)
+                                        -  profit3 += (order.totalPrice - order.totalCost)
+                                      if (order.time.getMonth() == 2)
+                                        -  profit2 += (order.totalPrice - order.totalCost)
+                        // div           
+                          p= profit
+                          p= profit4
                         
 
 
