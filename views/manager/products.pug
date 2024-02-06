@@ -1,135 +1,109 @@
-extends layout
-
-block content
-
-  
-  .main.container
-    h1 Products Page
-
-
-    .row
-        h3 Create Product
-
-        form(method='POST' action='AddProduct')
-          .row
-            //- .col-sm
-              label(for='SKU') SKU :
-              input.form-control(type='text' name='SKU')
-            .col-sm
-              label(for='name') Name :
-              input.form-control(type='text' placeholder='Name' name='name')
-             
-          .row
-            .col-sm
-              label.text-white .
-              br
-              button.btn.btn-primary(type='submit') Submit
-
-        table.table
-          thead
-            tr
-              //- th(scope='col') #
-              th(scope='col') No
-              th(scope='col') Name
-              th(scope='col') Cost
-              th.bg-warning(scope='col') Price
-              th.bg-warning(scope='col') Price %
-              th.bg-warning(scope='col') Price Profit
-              th.bg-info(scope='col') 40%
-              th.bg-info(scope='col') Profit 40%
-              th(scope='col') Discount Price
-              th.bg-success(scope='col') Discount Price should
-              th.bg-success(scope='col') Discount %
-              th.bg-success(scope='col') Discoun Profit
-              th(scope='col') Quantity
-              //th(scope='col') Naseem
-              th(scope='col') Qurain
-              //th(scope='col') Category
-              th(scope='col') sellCount
-              th(scope='col') Brand
-              //th(scope='col') Vendor
-              th(scope='col') Status
-              //th(scope='col') warranty
-          tbody
-            each product,index in productData
-               
+ble.table
+            thead
               tr
-                //- th(scope='row')= index+1
-                
-                td
-                  a(href=`../product/${product.url}`)
-                    if product.googleSheet
-                      span.text-danger= `${product.productNo}`
-                    else
-                      span= `${product.productNo}`
+                //- th(scope='col') #
+                th(scope='col') No
+                th(scope='col') Name
+                th(scope='col') Cost
+                th.bg-warning(scope='col') Price
+                th.bg-warning(scope='col') Price %
+                th.bg-warning(scope='col') Price Profit
+                th.bg-info(scope='col') 40%
+                th.bg-info(scope='col') Profit 40%
+                th(scope='col') Discount Price
+                th.bg-success(scope='col') Discount Price should
+                th.bg-success(scope='col') Discount %
+                th.bg-success(scope='col') Discoun Profit
+                th(scope='col') Quantity
+                //th(scope='col') Naseem
+                th(scope='col') Qurain
+                //th(scope='col') Category
+                th(scope='col') sellCount
+                th(scope='col') Brand
+                //th(scope='col') Vendor
+                th(scope='col') Status
+                //th(scope='col') warranty
+            tbody
+              each product,index in productData
+                 
+                tr
+                  //- th(scope='row')= index+1
                   
-
-
-
-                td
-                  a(href=`productPage/${product._id}`)
-                    div= product.name
-                //td= product.name
-                if product.cost
-                  td= `${product.cost.toFixed(3)}`
-                else
-                  td -
-                if product.price
-                  td.bg-warning= `${product.price.toFixed(3)}`                
-                else 
-                  td -
-                if product.price && product.cost
-                  - var pricePercentage = (product.price - product.cost)/product.cost*100
-                  td.bg-warning= `${(pricePercentage).toFixed(0) + "%"}`          
-                  td.bg-warning= `${( product.price - product.cost).toFixed(3)}`          
-                else 
-                  td.bg-warning -
-                  td.bg-warning -
-                td.bg-info= `${(product.cost * 1.4).toFixed(2)}`
-                td.bg-info= `${((product.cost * 1.4)-product.cost).toFixed(3)}`
-                - var averagePercentage = ( (pricePercentage/100 + 1) + 1.4) / 2
-                td
-                  a(href=`editAny/Product/${product._id}/discountPrice/${(product.cost * averagePercentage).toFixed(2)}/${typeof productData.discountPrice}/productPage`)
-                    if (product.discountPrice == 0)
-                      span.bg-danger.text-white= product.discountPrice
-                    else
-                      span= product.discountPrice
-
-                  br
-                  if (product.discountPrice > product.price)
-                    span.text-danger عدل السعر
-                  br
-
-                  a(href=`editAny/Product/${product._id}/discounted/${(product.discounted)}/${typeof product.discounted}/productPage`)
-                    if product.discounted               
-                      span.bg-warning فعال
-                    else
-                      span.bg-info غير فعال
-
-                
-                if (product.discountPrice.toFixed(2) != (product.cost * averagePercentage).toFixed(2))
-                  td.bg-info= `${(product.cost * averagePercentage).toFixed(2)}`
-                else
-                  td.bg-success= `${(product.cost * averagePercentage).toFixed(2)}`
-
-                td.bg-success= ((averagePercentage-1) * 100).toFixed(0)
-                td.bg-success= `${((product.cost * averagePercentage) - product.cost).toFixed(2)}`
-                
-                
-
-
-                
-                td= `${product.quantity}`
-                //td= `${product.naseem}`
-                td= `${product.qurain}`
-                //td= `${product.categoryName}`
-                td= `${product.sellCount}`
-                td= product.brandName
-                //td= product.vendorName
-                td= `${product.status}`
-                //td= product.warranty
-                //td
-                  a(href=`deletProduct/${product._id}`)
-                    .badge.text-bg-danger.ms-1
-                      i.bi.bi-trash.m-2
-
+                  td
+                    a(href=`../product/${product.url}`)
+                      if product.googleSheet
+                        span.text-danger= `${product.productNo}`
+                      else
+                        span= `${product.productNo}`
+                    
+  
+  
+  
+                  td
+                    a(href=`productPage/${product._id}`)
+                      div= product.name
+                  //td= product.name
+                  if product.cost
+                    td= `${product.cost.toFixed(3)}`
+                  else
+                    td -
+                  if product.price
+                    td.bg-warning= `${product.price.toFixed(3)}`                
+                  else 
+                    td -
+                  if product.price && product.cost
+                    - var pricePercentage = (product.price - product.cost)/product.cost*100
+                    td.bg-warning= `${(pricePercentage).toFixed(0) + "%"}`          
+                    td.bg-warning= `${( product.price - product.cost).toFixed(3)}`          
+                  else 
+                    td.bg-warning -
+                    td.bg-warning -
+                  td.bg-info= `${(product.cost * 1.4).toFixed(2)}`
+                  td.bg-info= `${((product.cost * 1.4)-product.cost).toFixed(3)}`
+                  - var averagePercentage = ( (pricePercentage/100 + 1) + 1.4) / 2
+                  td
+                    a(href=`editAny/Product/${product._id}/discountPrice/${(product.cost * averagePercentage).toFixed(2)}/${typeof productData.discountPrice}/productPage`)
+                      if (product.discountPrice == 0)
+                        span.bg-danger.text-white= product.discountPrice
+                      else
+                        span= product.discountPrice
+  
+                    br
+                    if (product.discountPrice > product.price)
+                      span.text-danger عدل السعر
+                    br
+  
+                    a(href=`editAny/Product/${product._id}/discounted/${(product.discounted)}/${typeof product.discounted}/productPage`)
+                      if product.discounted               
+                        span.bg-warning فعال
+                      else
+                        span.bg-info غير فعال
+  
+                  
+                  if (product.discountPrice.toFixed(2) != (product.cost * averagePercentage).toFixed(2))
+                    td.bg-info= `${(product.cost * averagePercentage).toFixed(2)}`
+                  else
+                    td.bg-success= `${(product.cost * averagePercentage).toFixed(2)}`
+  
+                  td.bg-success= ((averagePercentage-1) * 100).toFixed(0)
+                  td.bg-success= `${((product.cost * averagePercentage) - product.cost).toFixed(2)}`
+                  
+                  
+  
+  
+                  
+                  td= `${product.quantity}`
+                  //td= `${product.naseem}`
+                  td= `${product.qurain}`
+                  //td= `${product.categoryName}`
+                  td= `${product.sellCount}`
+                  td= product.brandName
+                  //td= product.vendorName
+                  td= `${product.status}`
+                  //td= product.warranty
+                  //td
+                    a(href=`deletProduct/${product._id}`)
+                      .badge.text-bg-danger.ms-1
+                        i.bi.bi-trash.m-2
+  
+  
