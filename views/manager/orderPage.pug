@@ -128,18 +128,6 @@ block content
                         
 
 
-        .row
-          .col
-            a(href=`/invoicePrint/${orderData._id}`)
-              .btn.btn-success.bg-warning.mb-2 اطبع الفاتورة
-          .col
-            a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${mobile}`)
-              .btn.btn-success.bg-warning.mb-2 واتساب فارغ
-          .col
-            a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${mobile}/?text=تم%20استلام%20طلبك%20من%20شركة%20ITC%0aرقم%20الطلب: %20${orderData.orderNo}%0aالاجمالي:${(total - orderData.discount + orderData.shippingCost).toFixed(3)}د.ك%0aللاطلاع على تفاصيل الطلب:%0ahttps://itcstore.net/invoicePrint/${orderData.orderNo}`)
-              .btn.btn-success.bg-warning.mb-2 واتساب بالبيانات
-
-        
 
 
 
@@ -282,6 +270,13 @@ block content
         - var mobile = 0
         - mobile = (orderData.mobile).slice(-8)
 
-        
-        
-        
+        .row
+          .col
+            a(href=`/invoicePrint/${orderData._id}`)
+              .btn.btn-success.bg-warning.mb-2 اطبع الفاتورة
+          .col
+            a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${mobile}`)
+              .btn.btn-success.bg-warning.mb-2 واتساب فارغ
+          .col
+            a(aria-label='Chat on WhatsApp' href=`https://wa.me/965${mobile}/?text=تم%20استلام%20طلبك%20من%20شركة%${language.language.ar.title}%0aرقم%20الطلب: %20${orderData.orderNo}%0aالاجمالي:${(total - orderData.discount + orderData.shippingCost).toFixed(3)}د.ك%0aللاطلاع على تفاصيل الطلب:%0a${theData.host}/invoicePrint/${orderData.orderNo}`)
+              .btn.btn-success.bg-warning.mb-2 واتساب بالبيانات
