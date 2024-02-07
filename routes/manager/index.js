@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Product = require('../../models/product');
+var Inventory = require('../../models/inventory');
 var Category = require('../../models/category');
 var Vendor = require('../../models/vendor');
 var Brand = require('../../models/brand');
@@ -213,6 +214,29 @@ router.get('/products', mid.requiresSaleseman, function(req, res, next) {
     }
   });
 });
+
+router.get('/inventory', mid.requiresSaleseman, function(req, res, next) {
+  Inventory.find({}).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/inventory', { title: 'Inventory Management', inventoryData: inventoryData });
+    }
+  });
+});
+
+router.get('/inventory/:productNo', mid.requiresSaleseman, function(req, res, next) {
+  const { productNo } = req.params;
+  Inventory.find({ productNo: productNo }).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else {
+      return res.render('manager/inventory', { title: 'Inventory Management', inventoryData: inventoryData });
+    }
+  });
+});
+
+
 
 router.get('/category', mid.requiresSaleseman, function(req, res, next) {
   Category.find({}).sort({ categoryNo: 1 }).exec(function(error, categoryData) {
@@ -541,14 +565,65 @@ router.get('/productPage/:productId/', mid.requiresSaleseman, function(req, res,
     if (error) {
       return next(error);
     } else {
-      return res.render('manager/productPage', { title: 'productPage', productData: productData });
+
+      
+    Inventory.find({ productID: productId }).exec(function(error, inventoryData) {
+      if (error) {
+        return next(error);
+      } else {
+        return res.render('manager/productPage', { title: 'productPage', productData: productData, inventoryData:inventoryData });
+      }
+    });
+
+      
+      
     }
   });
+
+
+  
 });
 
 
 
+router.get('/editInventory/:inventoryId', mid.requiresSaleseman, function(req, res, next) {
+  const { inventoryId } = req.params;
 
+  Inventory.findOne({ _id: inventoryId }).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else if (!inventoryData) {
+      var err = new Error('Inventory not found.');
+      err.status = 404;
+      return next(err);
+    } else {
+      return res.render('manager/editInventory', { title: 'Edit Inventory', inventoryData: inventoryData });
+    }
+  });
+});
+
+router.post('/editInventory', mid.requiresSaleseman, function(req, res, next) {
+  const inventoryId = req.body.inventoryId;
+  const updatedData = {
+    cost: req.body.cost,
+    brand: req.body.brand,
+    productNo: req.body.productNo,
+    nameA: req.body.nameA,
+    nameE: req.body.nameE,
+    quantityShop: req.body.quantityShop,
+    quantitywarehouse01: req.body.quantitywarehouse01,
+    vendormobile: req.body.vendormobile,
+    min: req.body.min
+  };
+
+  Inventory.findByIdAndUpdate(inventoryId, updatedData, { new: true }, function(error, inventory) {
+    if (error) {
+      return next(error);
+    } else {
+      res.redirect('/manager/inventory/' + updatedData.productNo);
+    }
+  });
+});
 
 router.get('/editAny/:collection/:id/:field/:value/:type/:returnTo', mid.requiresSaleseman, function(req, res, next) {
 
@@ -567,8 +642,9 @@ router.get('/editAny/:collection/:id/:field/:value/:type/:returnTo', mid.require
     console.log("__________")
     if (data.collection == "Product") { var x = Product } // is there somesing more todo
     else if (data.collection == "Category") { var x = Category }
+    else if (data.collection == "Inventory") { var x = Inventory }
 
-    if (data.field == "brand") { var y = Brand } // is there somesing more todo
+    if (data.field == "brand") { var y = Brand }
     else if (data.field == "category") { var y = Category }
 
     
@@ -821,6 +897,7 @@ router.post('/editAny', mid.requiresSaleseman, function(req, res, next) {
   else if (data.collection == "Order") { var x = Order }
   else if (data.collection == "TransferRequest") { var x = TransferRequest }
   else if (data.collection == "User") { var x = User }
+  else if (data.collection == "Inventory") { var x = Inventory }
 
   if (data.field == 'category'){var usingSplit = data.value.split(','); data.value = usingSplit}
   
@@ -836,6 +913,9 @@ router.post('/editAny', mid.requiresSaleseman, function(req, res, next) {
 
     if (data.returnTo == "productshop") {
       return res.redirect(data.referer);
+      
+    } else if ( data.collection == "Inventory" ) {
+      return res.redirect( "Inventory" + "/" + data.returnTo);
     } else {
       return res.redirect(data.returnTo + "/" + data.id);
     }
@@ -1116,9 +1196,38 @@ router.get('/completePurchase/:purchaseId/', mid.requiresSaleseman, function(req
 
 });
 
+// POST /AddProduct
+router.post('/AddInventory', mid.requiresAdmin, function(req, res, next) {
+  var inventoryData = {
+    productID: req.body.productID,
+    cost: req.body.cost,
+    nameA: req.body.nameA,
+    nameE: req.body.nameE,
+    productNo: req.body.productNo,
+    brand: req.body.brand,
+    productNameA: req.body.productNameA,
+    productNameE: req.body.productNameE,
+    quantityShop: req.body.quantityShop,
+    quantitywarehouse01: req.body.quantitywarehouse01,
+    vendormobile: req.body.vendormobile,
+    min: req.body.min,
+  }
+
+  console.log("inventoryData");
+  console.log(inventoryData);
 
 
+  Inventory.create(inventoryData, function(error, theInventory) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {      
+      res.redirect(`productPage/${inventoryData.productID}`)
+    }
+  });
 
+  
+})
 
 
 
@@ -1168,18 +1277,12 @@ router.post('/AddProduct', mid.requiresAdmin, function(req, res, next) {
           }
         }).then(function() {
           res.redirect('products')
-          // res.redirect('back')
         }).catch(function(error) {
           return next(error);
         });
       } else{
         res.redirect('products')
-
       }
-
-
-
-      // res.redirect('products')
     }
   });
 
@@ -1417,7 +1520,14 @@ router.post('/AddProductToPurchase', mid.requiresSaleseman, function(req, res, n
 
 
 
-
+router.get('/deleteInventory/:inventoryId/', mid.requiresAdmin, function(req, res) {
+  const { inventoryId } = req.params;
+  Inventory.deleteOne({ _id: inventoryId }).then(function() {
+    res.redirect('back');
+  }).catch(function(error) {
+    res.status(500).send(error)
+  });
+});
 
 //Get // 
 router.get('/deletProduct/:productId/', mid.requiresAdmin, function(req, res) {
