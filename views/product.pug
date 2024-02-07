@@ -12,7 +12,9 @@ block content
     if productData.discounted
       include ./includes/advantages.pug                                         
     include ./includes/description.pug
-    include ./manager/includes/inventoryData.pug
+    if managerNow || theSalesemanNow
+      include ./manager/includes/inventoryData.pug
+      include ./manager/includes/inventory.pug
     include ./includes/productManager.pug
     include ./includes/productScript.pug
 
