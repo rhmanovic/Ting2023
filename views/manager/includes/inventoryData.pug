@@ -14,6 +14,7 @@ table.table.table-striped.table-success
       th صنف
       th المحل
       th المخزن
+      th
   tbody
     each inventory,index in inventoryData
       tr
@@ -21,3 +22,9 @@ table.table.table-striped.table-success
         td= inventory.nameA
         td= inventory.quantityShop
         td= inventory.quantitywarehouse01
+        td
+          a.btn.btn-sm.btn-success(href=`https://wa.me/965${inventory.vendormobile}?text=_______New%20Order_______%0aItem:%20${productData.nameE}%0abrand:%20${inventory.brand}%0acolor:%20${inventory.nameE}%0aQuantity:%20` target="_blank")
+            i.fa.fa-whatsapp
+            |  اطلب
+          
+
