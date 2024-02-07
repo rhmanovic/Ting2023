@@ -1,0 +1,55 @@
+extends layout
+
+
+block content
+
+  .main
+    .container
+      .card.text-dark.bg-light.mb-3.rtl(style='max-width: 32rem;')
+        .card-header.text-center.fs-1 عدل صنف
+        form(action='../editInventory' method='post').px-1
+        
+          .row.row-cols-2
+            .col
+              .form-group 
+                label(for='input1') رقم المنتج
+                input.form-control(type='text' name='' value=inventoryData.productNo disabled)
+                input#input0.form-control(name='productNo' value=inventoryData.productNo type='hidden')
+            .col
+              .form-group 
+                label(for='input1') العلامة التجارية 
+                input#input11.form-control(type='text' name='brand' value=inventoryData.brand)
+            .col
+              .form-group 
+                label(for='input1') التكلفة  
+                input#input11.form-control(type='number' name='cost' step="0.001" value=inventoryData.cost)
+            .col
+              .form-group 
+                label(for='input1') اسم المتغير (عربي)
+                input#input1.form-control(type='text' name='nameA' value=inventoryData.nameA)
+            .col
+              .form-group 
+                label(for='input1') اسم المتغير (انجليزي)
+                input#input1.form-control(type='text' name='nameE' value=inventoryData.nameE)
+            .col
+              .form-group
+                label(for='input2') الكمية في المحل
+                input#input2.form-control(type='text' name='quantityShop' value=inventoryData.quantityShop)
+            .col
+              .form-group
+                label(for='input2') الكمية في المخزن
+                input#input3.form-control(type='text' name='quantitywarehouse01' value=inventoryData.quantitywarehouse01)
+            .col
+              .form-group
+                label(for='input2') اقل كمية
+                input#input3.form-control(type='number' name='min' value=inventoryData.min)
+            .col
+              .form-group
+                label(for='input2') هاتف المورد
+                input#input3.form-control(type='text' name='vendormobile' value=inventoryData.vendormobile)
+          input(type='hidden' name='productID' value=inventoryData.productID)
+          input(type='hidden' name='productNameA' value=inventoryData.productNameA)
+          input(type='hidden' name='productNameE' value=inventoryData.productNameE)
+          input(type='hidden' name='inventoryId' value=inventoryData._id)
+          .d-grid.gap-2
+            button.btn.btn-primary.mt-2(type='submit') ارسل
