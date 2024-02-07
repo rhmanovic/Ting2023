@@ -5,6 +5,7 @@ var Chapter = require("../models/chapter");
 var Course = require("../models/course");
 var Product = require("../models/product");
 var Category = require("../models/category");
+var Inventory = require("../models/inventory");
 var Vendor = require("../models/vendor");
 var Brand = require("../models/brand");
 var Warehouse = require("../models/warehouse");
@@ -672,17 +673,23 @@ router.get("/product/:url", function (req, res, next) {
           title = productData.name;
         }
 
-        return res.render("product", {
-          title: title,
-          productData: productData,
-          ShowModal: ShowModal,
-          Q: Q,
+        
+        Inventory.find({ productNo: productData.productNo }).exec(function (error, inventoryData) {
+          if (error) {
+            return next(error);
+          } else {
+            return res.render("product", {
+              title: title,
+              productData: productData,
+              ShowModal: ShowModal,
+              Q: Q,
+              inventoryData: inventoryData,
+            });
+          }
         });
-        // if (ShowModal == "yes")  {
-        //   return res.render('product2', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
-        // } else {
-        //   return res.render('product', { title: title, productData: productData, ShowModal:ShowModal, Q:Q});
-        // }
+
+        
+        
       }
     });
   } catch (error) {
