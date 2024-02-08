@@ -259,24 +259,18 @@ router.get("/category", mid.requiresSaleseman, function (req, res, next) {
     });
 });
 
-router.get(
-  "/transferRequestPage",
-  mid.requiresSaleseman,
-  function (req, res, next) {
-    TransferRequest.find({})
-      .sort({ _id: -1 })
-      .exec(function (error, requestData) {
-        if (error) {
-          return next(error);
-        } else {
-          return res.render("manager/transferRequestPage", {
-            title: "Transfer Request",
-            requestData: requestData,
-          });
-        }
-      });
-  },
-);
+router.get("/transferRequest", mid.requiresSaleseman, (req, res, next) => {
+  TransferRequest.find({}).sort({ _id: -1 }).exec((error, requestData) => {
+    if (error) {
+      return next(error);
+    }
+    res.render("manager/transferRequest", {
+      title: "Transfer Request",
+      requestData: requestData
+    });
+  });
+});
+
 
 router.get("/users", mid.requiresAdmin, function (req, res, next) {
   User.find({}).exec(function (error, usersData) {
@@ -1551,8 +1545,8 @@ router.post("/AddWarehouse", mid.requiresAdmin, function (req, res, next) {
 // POST /AddOrder
 router.post("/AddOrder", mid.requiresSaleseman, function (req, res, next) {
   var orderData = {
-    name: req.body.name,
-    warehouse: req.body.warehouse,
+    invoice: req.body.invoice,
+    mobile: req.body.mobile,
   };
   console.log(orderData);
 
