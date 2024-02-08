@@ -16,6 +16,20 @@ block content
                     th(scope='col') Value
                 tbody
                     tr
+                      th صورة الفاتورة
+                      th :
+                      if orderData.img
+                        td 
+                          a(href=`${orderData.img}`) رابط الصورة
+                      else
+                        td -
+                      //td  
+                        if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                      td 
+                          a(href=`../uploadImage/Order/${orderData._id}/orderPage`)
+                            span.badge.text-bg-success
+                              i.fa.fa-upload.p-1(aria-hidden='true')
+                    tr
                         th رقم الطلب
                         th :
                         td= `${orderData.orderNo}`
@@ -59,20 +73,7 @@ block content
                             span.badge.text-bg-success
                               i.fa.fa-cog.p-1(aria-hidden='true')
 
-                    tr
-                      th صورة الفاتورة
-                      th :
-                      if orderData.img
-                        td 
-                          a(href=`${orderData.img}`) رابط الصورة
-                      else
-                        td -
-                      //td  
-                        if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
-                      td 
-                          a(href=`../uploadImage/Order/${orderData._id}/orderPage`)
-                            span.badge.text-bg-success
-                              i.fa.fa-upload.p-1(aria-hidden='true')
+                    
 
                     tr
                       th 
