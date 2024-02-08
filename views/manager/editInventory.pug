@@ -5,6 +5,13 @@ block content
 
   .main
     .container
+
+      ul.fs-2
+        li Product: #{inventoryData.productNameA}
+        li
+          a(href=`/manager/productPage/${inventoryData.productID}`)
+            span Produt No: #{inventoryData.productNo}
+            
       .card.text-dark.bg-light.mb-3.rtl(style='max-width: 32rem;')
         .card-header.text-center.fs-1 عدل صنف
         form(action='../editInventory' method='post').px-1
@@ -25,20 +32,26 @@ block content
                 input#input11.form-control(type='number' name='cost' step="0.001" value=inventoryData.cost)
             .col
               .form-group 
-                label(for='input1') اسم المتغير (عربي)
+                label(for='input1') اسم الصنف (عربي)
                 input#input1.form-control(type='text' name='nameA' value=inventoryData.nameA)
             .col
               .form-group 
-                label(for='input1') اسم المتغير (انجليزي)
+                label(for='input1') اسم الصنف (انجليزي)
                 input#input1.form-control(type='text' name='nameE' value=inventoryData.nameE)
             .col
               .form-group
                 label(for='input2') الكمية في المحل
-                input#input2.form-control(type='text' name='quantityShop' value=inventoryData.quantityShop)
+                if managerNow
+                  input#input2.form-control(type='text' name='quantityShop' value=inventoryData.quantityShop)
+                else
+                  input#input2.form-control(type='text' value=inventoryData.quantityShop disabled)
             .col
               .form-group
                 label(for='input2') الكمية في المخزن
-                input#input3.form-control(type='text' name='quantitywarehouse01' value=inventoryData.quantitywarehouse01)
+                if managerNow
+                  input#input3.form-control(type='text' name='quantitywarehouse01' value=inventoryData.quantitywarehouse01)
+                else
+                  input#input3.form-control(type='text' value=inventoryData.quantitywarehouse01 disabled)
             .col
               .form-group
                 label(for='input2') اقل كمية
