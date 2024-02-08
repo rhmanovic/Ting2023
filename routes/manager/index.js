@@ -271,6 +271,38 @@ router.get("/transferRequest", mid.requiresSaleseman, (req, res, next) => {
   });
 });
 
+router.get('/approveTransfer/:transferId', mid.requiresSaleseman, function(req, res, next) {
+  const { transferId } = req.params;
+
+  TransferRequest.findOne({ _id: transferId }).exec(function(error, transferData) {
+    if (error) {
+      return next(error);
+    } else {
+      Inventory.findOneAndUpdate(
+        { _id: transferData.inventoryID },
+        { $inc: { [transferData.from]: -transferData.quantity, [transferData.to]: transferData.quantity } },
+        { new: true }
+      ).exec(function(error, inventoryData) {
+        if (error) {
+          return next(error);
+        } else {
+          TransferRequest.findOneAndUpdate(
+            { _id: transferId },
+            { $set: { shopApprove: true, approvedBy: req.session.userName, approveDate: new Date(new Date().getTime() + (3 * 60 * 60 * 1000)) } },
+
+          ).then(function() {
+            res.redirect('/manager/transferRequest');
+          }).catch(function(error) {
+            return next(error);
+          });
+        }
+      });
+    }
+  });
+});
+
+
+
 
 router.get("/users", mid.requiresAdmin, function (req, res, next) {
   User.find({}).exec(function (error, usersData) {
@@ -667,12 +699,12 @@ router.get(
 );
 
 router.get(
-  "/editInventory/:inventoryId",
+  "/editInventory/:inventoryID",
   mid.requiresSaleseman,
   function (req, res, next) {
-    const { inventoryId } = req.params;
+    const { inventoryID } = req.params;
 
-    Inventory.findOne({ _id: inventoryId }).exec(
+    Inventory.findOne({ _id: inventoryID }).exec(
       function (error, inventoryData) {
         if (error) {
           return next(error);
@@ -692,7 +724,7 @@ router.get(
 );
 
 router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
-  const inventoryId = req.body.inventoryId;
+  const inventoryID = req.body.inventoryID;
   const updatedData = {
     cost: req.body.cost,
     brand: req.body.brand,
@@ -706,7 +738,7 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
   };
 
   Inventory.findByIdAndUpdate(
-    inventoryId,
+    inventoryID,
     updatedData,
     { new: true },
     function (error, inventory) {
@@ -1578,50 +1610,61 @@ router.post("/AddPurchase", mid.requiresSaleseman, function (req, res, next) {
   });
 });
 
-// POST /CreateTransferRequest
-router.post(
-  "/CreateTransferRequest",
-  mid.requiresSaleseman,
-  function (req, res, next) {
-    var transferRequestData = {
-      quantity: req.body.quantity,
-      productID: req.body.data.slice(0, 24),
-      toName: req.body.data.slice(24, 30),
-      fromName: req.body.data.slice(30, 36),
-    };
+// GET /CreateTransferRequest
+router.get('/transferRequestNew/:inventoryID/:from/:to', mid.requiresSaleseman, function(req, res, next) {
+  const { inventoryID } = req.params;
+  const { from } = req.params;
+  const { to } = req.params;
 
-    Product.findOne({ _id: transferRequestData.productID }).exec(
-      function (error, productData) {
-        if (error) {
-          return next(error);
-        } else {
-          var createTransferData = {
-            quantity: transferRequestData.quantity,
-            productID: productData._id,
-            productNo: productData.productNo,
-            productName: productData.name,
-            toID: transferRequestData.productID,
-            toName: transferRequestData.toName,
-            fromName: transferRequestData.fromName,
-            // "quantity": yyyy,
-          };
+  Inventory.findOne({ _id: inventoryID }).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else if (!inventoryData) {
+      var err = new Error('Inventory not found.');
+      err.status = 404;
+      return next(err);
+    } else {
+      res.render('manager/transferRequestNew', {
+        title: 'New Transfer Request',
+        inventoryData: inventoryData,
+        from: from,
+        to: to
+      });
+    }
+  });
+});
 
-          TransferRequest.create(
-            createTransferData,
-            function (error, theRequest) {
-              if (error) {
-                console.log(error.code);
-                return next(error);
-              } else {
-                res.redirect("transferRequest");
-              }
-            },
-          );
-        }
-      },
-    );
-  },
-);
+router.post('/transferRequestNew', mid.requiresSaleseman, function(req, res, next) {
+  var transferRequestData = {
+    inventoryID: req.body.inventoryID,
+    productID: req.body.productID,
+    nameA: req.body.nameA,
+    nameE: req.body.nameE,
+    productNo: req.body.productNo,
+    brand: req.body.brand,
+    productNameA: req.body.productNameA,
+    from: req.body.from,
+    to: req.body.to,
+    requestBy: req.session.userName,
+    
+    
+    
+    quantity: req.body.quantity
+  };
+
+  console.log("TransferRequest")
+  console.log(transferRequestData)
+  
+
+  TransferRequest.create(transferRequestData, function(error, newTransferRequest) {
+    if (error) {
+      return next(error);
+    } else {
+      res.redirect('/manager/transferRequest');
+    }
+  });
+});
+
 
 // POST /Add Product to Order
 router.post(
@@ -1698,11 +1741,11 @@ router.post(
 );
 
 router.get(
-  "/deleteInventory/:inventoryId/",
+  "/deleteInventory/:inventoryID/",
   mid.requiresAdmin,
   function (req, res) {
-    const { inventoryId } = req.params;
-    Inventory.deleteOne({ _id: inventoryId })
+    const { inventoryID } = req.params;
+    Inventory.deleteOne({ _id: inventoryID })
       .then(function () {
         res.redirect("back");
       })
