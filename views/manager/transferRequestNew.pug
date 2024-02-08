@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .main.container.rtl
+    .text-center.mb-4
+      h1.fs-1.text-center طلب تحويل جديد
+ 
+    
+    form(action='/manager/transferRequestNew' method='post')
+      
+      .form-group
+        label(for='quantity') الكمية:
+        input#quantity.form-control(type='number' name='quantity' required)
+
+      input(type='hidden' name='inventoryID' value=inventoryData._id)
+      input(type='hidden' name='productID' value=inventoryData.productID)
+      
+      input(type='hidden' name='nameA' value=inventoryData.nameA)
+      input(type='hidden' name='nameE' value=inventoryData.nameE)
+      input(type='hidden' name='productNo' value=inventoryData.productNo)
+      input(type='hidden' name='brand' value=inventoryData.brand)
+      input(type='hidden' name='productNameA' value=inventoryData.productNameA)
+      input(type='hidden' name='from' value=from)
+      input(type='hidden' name='to' value=to)
+      
+     
+      
+      button.btn.btn-primary(type='submit').mt-2 Submit
+      
+    ul.fs-2.rtl
+    li رقم المنتج: #{inventoryData.productNo}
+    li اسم المنتج: #{inventoryData.productNameA}
+    li الصنف: #{inventoryData.nameA}
+    li من: #{from}
+    li الى: #{to}
