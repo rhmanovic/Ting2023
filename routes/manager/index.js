@@ -1417,15 +1417,15 @@ router.post("/AddInventory", mid.requiresAdmin, function (req, res, next) {
     min: req.body.min,
   };
 
-  console.log("inventoryData");
-  console.log(inventoryData);
+  console.log("sendBack");
+  console.log(inventoryData.sendBack);
 
   Inventory.create(inventoryData, function (error, theInventory) {
     if (error) {
       console.log(error.code);
       return next(error);
     } else {
-      res.redirect(`productPage/${inventoryData.productID}`);
+      res.redirect("back");
     }
   });
 });
