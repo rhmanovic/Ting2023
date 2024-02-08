@@ -7,6 +7,7 @@ block content
     .container
       .text-center.mb-4
         h1.fs-1.text-center ادارة المخزون
+
        
             
       ul.fs-2
@@ -44,6 +45,24 @@ block content
               td= item.min
               td= item.vendormobile
               td
+                a(href=`/manager/xxxxx/${item._id}`)
+                  .badge.text-bg-success.ms-1
+                    span اطلب من
+                    br
+                    span المخزن
+              td
+                a(href=`/manager/xxxxx/${item._id}`)
+                  .badge.text-bg-primary.ms-1
+                    span ارسل 
+                    br
+                    span للمخزن
+              td
+                a(href=`/manager/xxxxx/${item._id}`)
+                  .badge.text-bg-success.ms-1
+                    span اطلب من
+                    br
+                    span المورد
+              td
                 a(href=`/manager/deleteinventory/${item._id}`)
-                    .badge.text-bg-danger.ms-1
-                        i.fa.fa-trash
+                  .badge.text-bg-danger.ms-1
+                      i.fa.fa-trash
