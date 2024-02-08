@@ -1,32 +1,87 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var TransferRequestSchema = new mongoose.Schema({
-    requestNo: Number,
+    requestNo: {
+      type: Number,
+      default: 0
+    },
     status : {
         type: String,
         default: "processing"
     },
-    fromID: String,
-    fromName: String,
-    toID: String,
-    toName: String,
-    productNo: String,
-    productID: String,
-    productName: String,
-    quantity: Number,
-    senderApprove: {
-        type: Boolean,
-        default: false
+    from: String,
+    to: String,
+    
+    
+
+
+    inventoryID: {
+      type: String,
+      default: "",
+      text: true,
     },
-    receiverApprove: {
+    productID: {
+      type: String,
+      default: "",
+      text: true,
+    },
+    nameA: {
+      type: String,
+      default: "",
+      text: true,
+    },
+    nameE: {
+      type: String,
+      default: "",
+      text: true,
+    },
+    productNo: {
+      type: String,
+      default: "",
+      text: true,
+    },
+    brand: {
+      type: String,
+      default: "",
+      text: true,
+    },
+    productNameA: {
+      type: String,
+      default: "",
+    },
+    productNameE: {
+      type: String,
+      default: "",
+    },
+
+
+  
+    quantity: {
+      type: Number,
+      default: 0
+    },
+    requestBy: {
+        type: String,
+        default: "-"
+    },
+    approvedBy: {
+        type: String,
+        default: "-"
+    },
+    shopApprove: {
         type: Boolean,
         default: false
     },
     managerApprove : {
-        type: String,
-        default: "no"
+        type: Boolean,
+        default: false
     },
-    time : { type : Date, default: Date.now },
+    time : { type : Date, default: () => new Date(new Date().getTime() + (3 * 60 * 60 * 1000)) },
+    
+    approveDate: {
+        type: Date,
+        default: null
+    },
 });
  
 var TransferRequest = mongoose.model('transferRequest', TransferRequestSchema);
