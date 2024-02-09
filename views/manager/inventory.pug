@@ -15,54 +15,55 @@ block content
         li
           a(href=`/manager/productPage/${inventoryData[0].productID}`)
             span Produt No: #{inventoryData[0].productNo}
-      
-      table.table.table-hover
-        thead
-          tr
-            th
-            th الماركة
-            th التكلفة
-            th الصنف (عربي)
-            th الصنف (E)
-            th كمية المحل
-            th كمية المخزن
-            th اقل كمية
-            th عداد البيع
-            th الكفالة
-            th هاتف المورد
-            th
-        tbody
-          each item in inventoryData
+
+      .table-responsive     
+        table.table.table-hover
+          thead
             tr
-              td
-                a(href=`/manager/editInventory/${item._id}`)
-                  span.badge.text-bg-success.mx-1
-                    i.fa.fa-cog(aria-hidden='true')
-              td= item.brand
-              td= item.cost
-              td= item.nameA
-              td= item.nameE
-              td= item.quantityShop
-              td= item.quantitywarehouse01
-              td= item.min
-              td= item.sellcount
-              td= item.warranty
-              td= item.vendormobile
-              td
-                a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop`)
-                  .badge.text-bg-success.ms-1
-                    span اطلب من
-                    br
-                    span المخزن
-              td
-                a(href=`/manager/transferRequestNew/${item._id}/quantityShop/quantitywarehouse01`)
-                  .badge.text-bg-primary.ms-1
-                    span ارسل 
-                    br
-                    span للمخزن
-              td
-                a(href=`/manager/xxxxx/${item._id}`)
-                  .badge.text-bg-success.ms-1
-                    span اطلب من
-                    br
-                    span المورد
+              th
+              th الماركة
+              th التكلفة
+              th الصنف (عربي)
+              th الصنف (E)
+              th كمية المحل
+              th كمية المخزن
+              th اقل كمية
+              th عداد البيع
+              th الكفالة
+              th هاتف المورد
+              th
+          tbody
+            each item in inventoryData
+              tr
+                td
+                  a(href=`/manager/editInventory/${item._id}`)
+                    span.badge.text-bg-success.mx-1
+                      i.fa.fa-cog(aria-hidden='true')
+                td= item.brand
+                td= item.cost
+                td= item.nameA
+                td= item.nameE
+                td= item.quantityShop
+                td= item.quantitywarehouse01
+                td= item.min
+                td= item.sellcount
+                td= item.warranty
+                td= item.vendormobile
+                td
+                  a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop`)
+                    .badge.text-bg-success.ms-1
+                      span اطلب من
+                      br
+                      span المخزن
+                td
+                  a(href=`/manager/transferRequestNew/${item._id}/quantityShop/quantitywarehouse01`)
+                    .badge.text-bg-primary.ms-1
+                      span ارسل 
+                      br
+                      span للمخزن
+                td
+                  a(href=`/manager/xxxxx/${item._id}`)
+                    .badge.text-bg-success.ms-1
+                      span اطلب من
+                      br
+                      span المورد
