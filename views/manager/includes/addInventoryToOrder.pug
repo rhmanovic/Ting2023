@@ -1,0 +1,32 @@
+form(method='POST' action='/manager/addInventoryToOrder')
+
+  .form-group
+    label(for='quantity') Quantity:
+    input.form-control(type='number' name='quantity' required)
+  .form-group
+    label(for='price') Price:
+    input.form-control(type='number' name='price' step='0.001' required)
+  
+  
+  .form-group
+    label(for='inventory') Item:
+    input.form-control(type='text' placeholder='Search Inventory...' id='inventorySearch' onfocus='this.nextElementSibling.size = this.nextElementSibling.options.length')
+    select.form-control(name='inventoryID' id='inventorySelect' onchange='this.size=1;')
+      each item, index in inventoryData
+        option(value=`${item._id}`)= `${item.productNo} - ${item.productNameA} - ${item.nameA} - ${item.brand}`
+  
+  script.
+    const inventorySearch = document.querySelector('#inventorySearch');
+    const inventorySelect = document.querySelector('#inventorySelect');
+    inventorySearch.addEventListener('input', function(e) {
+      const searchTerms = e.target.value.toLowerCase().split(/\s+/);
+      for (const option of inventorySelect.options) {
+        const textValue = option.textContent.toLowerCase();
+        const isMatch = searchTerms.every(term => textValue.includes(term));
+        option.style.display = isMatch ? '' : 'none';
+      }
+    });
+  
+  
+  input.form-control(type='hidden' name='orderID' value=`${orderData._id}`)
+  button.btn.btn-primary(type='submit') اضف للطلب
