@@ -51,6 +51,10 @@ var InventorySchema = new mongoose.Schema({
       type: Number,
       default: 0,
     },
+    sellcount: {
+      type: Number,
+      default: 0,
+    },
     private: {
       type: Boolean,
       default: false,
@@ -58,6 +62,11 @@ var InventorySchema = new mongoose.Schema({
     vendormobile: {
       type: String,
       default: "",
+    },
+    
+    warranty: {
+      type: String,
+      default: "-",
     },
 });
 
