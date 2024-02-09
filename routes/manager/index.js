@@ -654,14 +654,14 @@ router.get(
       if (error) {
         return next(error);
       } else {
-        Product.find({}).exec(function (error, productsData) {
+        Inventory.find({}).exec(function (error, inventoryData) {
           if (error) {
             return next(error);
           } else {
             return res.render("manager/orderPage", {
               title: "Order",
               orderData: orderData,
-              productsData: productsData,
+              inventoryData: inventoryData,
             });
           }
         });
@@ -698,6 +698,54 @@ router.get(
   },
 );
 
+
+router.post("/addInventoryToOrder", mid.requiresSaleseman, function(req, res, next) {
+ 
+  const { price, inventoryID, quantity, orderID } = req.body;
+
+  Inventory.findById(inventoryID).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else if (!inventoryData) {
+      var err = new Error('Inventory not found.');
+      err.status = 404;
+      return next(err);
+    } else {
+      Order.findByIdAndUpdate(
+        orderID,
+        {
+          $push: {
+            
+            prices: price,
+            inventoryIDs: inventoryID,
+            inventoryQuantities: quantity,
+            inventoryCosts: inventoryData.cost,
+            nameAs: inventoryData.nameA,
+            nameEs: inventoryData.nameE,
+            productNos: inventoryData.productNo,
+            productIDs: inventoryData.productID,
+            brands: inventoryData.brand,
+            productNameAs: inventoryData.productNameA,
+            productNameEs: inventoryData.productNameE,
+            warranties: inventoryData.warranty,
+            
+
+          }
+        },
+        { new: true }
+      ).exec(function(error, order) {
+        if (error) {
+          return next(error);
+        } else {
+          res.redirect('/manager/orderPage/' + orderID);
+        }
+      });
+    }
+  });
+});
+
+
+
 router.get(
   "/editInventory/:inventoryID",
   mid.requiresSaleseman,
@@ -724,6 +772,9 @@ router.get(
 );
 
 router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
+
+  
+  
   const inventoryID = req.body.inventoryID;
   const updatedData = {
     cost: req.body.cost,
@@ -735,20 +786,23 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     quantitywarehouse01: req.body.quantitywarehouse01,
     vendormobile: req.body.vendormobile,
     min: req.body.min,
+    warranty: req.body.warranty,
   };
 
-  Inventory.findByIdAndUpdate(
-    inventoryID,
-    updatedData,
-    { new: true },
-    function (error, inventory) {
-      if (error) {
-        return next(error);
-      } else {
-        res.redirect("/manager/inventory/" + updatedData.productNo);
-      }
-    },
-  );
+  
+
+    Inventory.findByIdAndUpdate(
+      inventoryID,
+      updatedData,
+      { new: true },
+      function (error, inventory) {
+        if (error) {
+          return next(error);
+        } else {
+          res.redirect("/manager/inventory/" + updatedData.productNo);
+        }
+      },
+    );
 });
 
 router.get(
@@ -1192,6 +1246,46 @@ router.get("/test", mid.requiresAdmin, function (req, res, next) {
     }
   });
 });
+
+
+router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req, res, next) {
+  const { orderId } = req.params;
+  try {
+    const orderData = await Order.findOne({ _id: orderId }).exec();
+
+    const updateData = {
+      status: "completed",
+      totalPrice: orderData.quantity.reduce((total, qty, index) => total + qty * orderData.prices[index], 0) - orderData.discount + orderData.shippingCost,
+      totalCost: orderData.quantity.reduce((total, qty, index) => total + qty * orderData.costs[index], 0)
+    };
+
+    await Order.findOneAndUpdate({ _id: orderId }, { $set: updateData });
+
+    const writeOperations = orderData.inventoryIDs.map((inventoryID, index) => ({
+      updateOne: {
+        filter: { _id: inventoryID },
+        update: {
+          $inc: {
+            quantityShop: -orderData.inventoryQuantities[index],
+            sellcount: orderData.inventoryQuantities[index],
+          }
+        }
+      }
+    }));
+
+    console.log(JSON.stringify(writeOperations));
+
+    await Inventory.bulkWrite(writeOperations);
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
+})
+
+
+
+
+
 
 router.get(
   "/completeOrder/:orderId/",
