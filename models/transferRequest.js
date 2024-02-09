@@ -11,6 +11,11 @@ var TransferRequestSchema = new mongoose.Schema({
     },
     from: String,
     to: String,
+
+    url: {
+      type: String,
+      default: "",
+    },
     
     
 
