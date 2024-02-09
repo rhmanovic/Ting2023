@@ -27,6 +27,8 @@ block content
             th كمية المحل
             th كمية المخزن
             th اقل كمية
+            th عداد البيع
+            th الكفالة
             th هاتف المورد
             th
         tbody
@@ -43,6 +45,8 @@ block content
               td= item.quantityShop
               td= item.quantitywarehouse01
               td= item.min
+              td= item.warranty
+              td= item.sellcount
               td= item.vendormobile
               td
                 a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop`)
@@ -62,7 +66,3 @@ block content
                     span اطلب من
                     br
                     span المورد
-              td
-                a(href=`/manager/deleteinventory/${item._id}`)
-                  .badge.text-bg-danger.ms-1
-                      i.fa.fa-trash
