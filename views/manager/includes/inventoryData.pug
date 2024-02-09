@@ -1,30 +1,47 @@
-hr.mt-4
+.card.mx-1
+  .card-header.collapsed(data-bs-toggle='collapse' data-bs-target='#collapseInventoryForm1' aria-expanded='false' aria-controls='collapseInventoryForm1')
+    i.fas.fa-angle-down.mx-1
+    | ادارة المخزون 
+  .collapse.show#collapseInventoryForm1
+    .card-body
 
-.text-center.mb-2
-  span.fs-3.text-center ادارة المخزون
-  a(href=`/manager/inventory/${productData.productNo}`)
-    span.badge.text-bg-success.mx-2
-      i.fa.fa-cog.p-1(aria-hidden='true')
-  
-
-table.table.table-striped.table-success
-  thead
-    tr
-      th ماركة
-      th صنف
-      th المحل
-      th المخزن
-      th
-  tbody
-    each inventory,index in inventoryData
-      tr
-        td= inventory.brand
-        td= inventory.nameA
-        td= inventory.quantityShop
-        td= inventory.quantitywarehouse01
-        td
-          a.btn.btn-sm.btn-success(href=`https://wa.me/965${inventory.vendormobile}?text=_______New%20Order_______%0aItem:%20${productData.nameE}%0abrand:%20${inventory.brand}%0acolor:%20${inventory.nameE}%0aQuantity:%20` target="_blank")
-            i.fa.fa-whatsapp
-            |  اطلب
-          
-
+      .text-center.mb-2
+        span.fs-3.text-center ادارة المخزون
+        a(href=`/manager/inventory/${productData.productNo}`)
+          span.badge.text-bg-success.mx-2
+            i.fa.fa-cog.p-1(aria-hidden='true')
+        
+      .table-responsive
+        table.table.table-striped.table-success
+          thead
+            tr
+              th ماركة
+              th صنف
+              th المحل
+              th المخزن
+              th
+              th
+              th
+              th التكلفة
+              th مبيوع
+          tbody
+            each inventory,index in inventoryData
+              tr
+                td= inventory.brand
+                td= inventory.nameA
+                td= inventory.quantityShop
+                td= inventory.quantitywarehouse01
+                td
+                  a.btn.btn-sm.btn-success(href=`/manager/transferRequestNew/${inventory._id}/quantitywarehouse01/quantityShop/${productData.url}`)
+                    |  اطلب
+                    |  المخزن
+                td
+                  a.btn.btn-sm.btn-success(href=`/manager/transferRequestNew/${inventory._id}/quantityShop/quantitywarehouse01/${productData.url}`)
+                    |  ارسل
+                    |  للمخزن
+                td
+                  a.btn.btn-sm.btn-success(href=`https://wa.me/965${inventory.vendormobile}?text=_______New%20Order_______%0aItem:%20${productData.nameE}%0abrand:%20${inventory.brand}%0acolor:%20${inventory.nameE}%0aQuantity:%20` target="_blank")
+                    i.fa.fa-whatsapp
+                    |  كلم المندوب
+                td= inventory.cost
+                td= inventory.sellcount
