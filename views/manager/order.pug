@@ -26,6 +26,8 @@ block content
             th(scope='col') التاريخ
             th(scope='col') الحالة
             th(scope='col') الاجمالي
+            th(scope='col') التكلفة
+            th(scope='col') الهامش
         tbody
           each order,index in orderData
             if (order.status != "deleted")
@@ -33,13 +35,34 @@ block content
                 td
                   a(href=`/manager/orderPage/${order._id}`)
                     div= `${order.orderNo}`
-                td= `${order.invoice}`
-                td= `${order.mobile}`
+
+                if order.invoice
+                  td= `${order.invoice}`
+                else
+                  td
+                
+                if order.mobile
+                  td= `${order.mobile}`
+                else
+                  td
+                
+                
+                
+                
                 td= `${order.time.toLocaleDateString("en-GB")}`
-                td= `${order.status}`
-                td -
-  
-      
-  
-          
-          
+
+                if (order.status == "completed")
+                  td.bg-info مكتمل
+                else if (order.status == "processing")
+                  td جار المعالجة
+                else if (order.status == "canceled")
+                  td.bg-warning ملغي 
+                else if (order.status == "returned")
+                  td.bg-danger مرتجع 
+                else
+                  td= `${order.status}`
+                
+                
+                td= `${order.totalPrice}`
+                td= `${order.totalCost}`
+                td= `${(order.totalPrice - order.totalCost).toFixed(3)}`
