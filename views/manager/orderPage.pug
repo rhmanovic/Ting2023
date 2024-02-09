@@ -8,11 +8,18 @@ block content
     if (orderData.status != "canceled") 
       include ./includes/orderTable.pug
       
-      if orderData.status != "completedxxxx"
+      if orderData.status != "completed" && orderData.status != "returned"
         .row
           .col
             form(action=`/manager/completeOrder/${orderData._id}` method='POST')
               button.btn.btn-success(type='submit') Complete Order
+          .col
+            form(action=`/manager/returnOrder/${orderData._id}` method='POST')
+              button.btn.btn-danger(type='submit') Return Order
 
-    include ./includes/addInventoryToOrder.pug
+
+
+        include ./includes/addInventoryToOrder.pug
+
+    
     include ./includes/orderPrintContact.pug
