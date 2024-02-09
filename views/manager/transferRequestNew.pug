@@ -4,7 +4,11 @@ block content
   .main.container.rtl
     .text-center.mb-4
       h1.fs-1.text-center طلب تحويل جديد
- 
+
+      if (from == "quantitywarehouse01")
+        h4 من المخزن الى المحل
+      else
+        h4 من المحل الى المخزن
     
     form(action='/manager/transferRequestNew' method='post')
       
@@ -22,14 +26,24 @@ block content
       input(type='hidden' name='productNameA' value=inventoryData.productNameA)
       input(type='hidden' name='from' value=from)
       input(type='hidden' name='to' value=to)
+      input(type='hidden' name='url' value=url)
       
      
       
-      button.btn.btn-primary(type='submit').mt-2 Submit
-      
+      button.btn.btn-primary(type='submit').mt-2 اطلب
+
+    table.table.table-striped.table-success
+      thead
+        tr
+          th المتوفر في المحل
+          th المتوفر في المخزن
+      tbody
+        tr
+          td= inventoryData.quantityShop
+          td= inventoryData.quantitywarehouse01
+        
     ul.fs-2.rtl
     li رقم المنتج: #{inventoryData.productNo}
     li اسم المنتج: #{inventoryData.productNameA}
     li الصنف: #{inventoryData.nameA}
-    li من: #{from}
-    li الى: #{to}
+    li الماركة: #{inventoryData.brand}
