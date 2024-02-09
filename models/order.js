@@ -95,8 +95,15 @@ var OrderSchema = new mongoose.Schema({
     type: String,
     default: "-"
   },
-  totalPrice: Number,
-  totalCost: Number,
+  
+  totalPrice: {
+    type: String,
+    default: 0
+  },
+  totalCost: {
+    type: Number,
+    default: 0
+  },
   mobile: {
     type: String,
     default: "-"
