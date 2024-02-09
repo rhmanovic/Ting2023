@@ -11,6 +11,11 @@ block content
         li
           a(href=`/manager/productPage/${inventoryData.productID}`)
             span Produt No: #{inventoryData.productNo}
+
+        if managerNow
+          a(href=`/manager/deleteinventory/${inventoryID}`)
+            .badge.text-bg-danger.ms-1
+                i.fa.fa-trash
             
       .card.text-dark.bg-light.mb-3.rtl(style='max-width: 32rem;')
         .card-header.text-center.fs-1 عدل صنف
