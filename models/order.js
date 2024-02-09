@@ -1,6 +1,69 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var OrderSchema = new mongoose.Schema({
+
+  
+
+  inventoryQuantities: [{
+    type: Number,
+    default: 0
+  }],
+  inventoryCosts: [{
+    type: Number,
+    default: 0
+  }],
+  inventoryPrices: [{
+    type: Number,
+    default: 0
+  }],
+  
+  nameAs: [{
+    type: String,
+    default: ""
+  }],
+  nameEs: [{
+    type: String,
+    default: ""
+  }],
+  productNos: [{
+    type: String,
+    default: ""
+  }],
+  productIDs: [{
+    type: String,
+    ref: ''
+  }],
+  brands: [{
+    type: String,
+    default: ""
+  }],
+  warranties: [{
+    type: String,
+    default: "-"
+  }],
+  productNameAs: [{
+    type: String,
+    default: ""
+  }],
+  productNameEs: [{
+    type: String,
+    default: ""
+  }],
+  costs: [{
+    type: Number,
+    default: 0
+  }],
+  prices: [{
+    type: Number,
+    default: 0
+  }],
+  inventoryIDs: [{
+    type: String,
+    ref: ''
+  }],
+
+
+  
   orderNo: Number,
   img: String,
   payment_method: String,
