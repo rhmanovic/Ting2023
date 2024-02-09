@@ -1,0 +1,73 @@
+.table-responsive
+  table.table
+      thead.table-secondary
+          tr
+          th #
+          th اسم المنتج
+          th اللون
+          th الكفاله
+  
+          //- th ID
+          th الكمية
+          th السعر
+          th الاجمالي
+      tbody
+          - var x = 0 , total = 0
+          each product,index in orderData.productIDs
+              - x = x + 1
+              tr 
+                  td= `${index+1}`
+                  td= orderData.productNames[index]
+                  td= orderData.variation[index]
+                  td= orderData.warranty[index]
+  
+                  //- td= orderData.productIDs[index]
+                  //td= orderData.quantity[index]
+                  td
+                    form(method='POST' action='/manager/editOrder')
+                      input.form-control(value=`${orderData.quantity[index]}` name='Value')
+                      input.form-control(value=`${index}` name='index' type='hidden')
+                      input.form-control(value=`quantity` name='field' type='hidden')
+                      input.form-control(value=`${orderData._id}` name='orderID' type='hidden')
+                      if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                        button.btn.badge.text-bg-success.mx-2.my-1
+                          i.fa.fa-cog.p-1(aria-hidden='true')
+  
+                  td
+                    form(method='POST' action='/manager/editOrder')
+                      input.form-control(value=`${orderData.price[index]}` name='Value')
+                      input.form-control(value=`${index}` name='index' type='hidden')
+                      input.form-control(value=`price` name='field' type='hidden')
+                      input.form-control(value=`${orderData._id}` name='orderID' type='hidden')
+                      if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                        button.btn.badge.text-bg-success.mx-2.my-1
+                          i.fa.fa-cog.p-1(aria-hidden='true')
+  
+                  td= (orderData.quantity[index] * orderData.price[index]).toFixed(3)
+                  - total = total + orderData.price[index] * orderData.quantity[index] 
+  
+      tbody
+          th.table-secondary الخصم 
+            if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+             a(href=`../editAny/Order/${orderData._id}/discount//${orderData.discount?orderData.discount:"NaN"}/${typeof orderData.discount}/orderPage`)
+               span.badge.text-bg-success
+                i.fa.fa-cog.p-1(aria-hidden='true')
+          th.table-secondary
+            input.form-control(value=`${orderData.discount}` type='number' name='quantity' disabled)
+          th.table-secondary 
+      tbody
+          th.table-secondary الشحن 
+            if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+              a(href=`../editAny/Order/${orderData._id}/shippingCost//${orderData.shippingCost?orderData.shippingCost:"NaN"}/${typeof orderData.shippingCost}/orderPage`)
+                span.badge.text-bg-success
+                  i.fa.fa-cog.p-1(aria-hidden='true')
+  
+  
+          th.table-secondary
+            input.form-control(value=`${orderData.shippingCost}` type='number' name='quantity' disabled)
+          th.table-secondary 
+  
+      tbody
+          th.table-secondary Total 
+          th.table-secondary= (total - orderData.discount + orderData.shippingCost).toFixed(3)
+          th.table-secondary 
