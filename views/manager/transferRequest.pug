@@ -3,56 +3,59 @@ extends layout
 block content
   .main.container
     h1 طلبات التحويل
-    .row
-        //- h3 Choose product To Transfer
+    .table-responsive
+      table.table
+        thead
+          tr.table-secondary
+            th(scope='col') رقم المنتج
+            th(scope='col') اسم المنتج
+            th(scope='col') الصنف
+            th(scope='col') الكمية
+            th(scope='col') من
+            th(scope='col') الى
+            th(scope='col') موافقة الاستلام
+            th(scope='col') تاريخ الموافقة
+            th(scope='col') اسم الطالب
+            th(scope='col') تاريخ الطلب
+        tbody
+          each request,index in requestData
+            tr
+              td(scope='row')
+                span= request.productNo
+                br
+                
+              
+                a(href=`/product/${request.url}`)
+                  .badge.text-bg-info.mx-1 اذهب للمنتج 
+              td= request.productNameA
+              td= request.nameA
+              td= request.quantity
+              td
+                if (request.from == "quantitywarehouse01")
+                  span المخزن
+                else if (request.from == "quantityShop")
+                  span المحل
+              td
+                if (request.to === "quantitywarehouse01")
+                  span المخزن
+                else if (request.to === "quantityShop")
+                  span المحل
+              
+              
+              if !request.shopApprove
+                td
+                  a(href=`/manager/approveTransfer/${request._id}`)
+                    .badge.text-bg-secondary.mx-1 اعتماد الاستلام
+              else
+                td
+                  span تم اعتماد الطلب
+                  br
+                  span من #{request.approvedBy}
+              
+              if request.shopApprove
+                td= request.approveDate.toLocaleDateString('en-GB')
+              else
+                td -
 
-        .col
-          table.table
-            thead
-              tr.table-secondary
-                th(scope='col') رقم المنتج
-                th(scope='col') اسم المنتج
-                th(scope='col') الصنف
-                th(scope='col') الكمية
-                th(scope='col') الى
-                th(scope='col') من
-                th(scope='col') موافقة الاستلام
-                th(scope='col') تاريخ الموافقة
-                th(scope='col') اسم الطالب
-                th(scope='col') تاريخ الطلب
-            tbody
-              each request,index in requestData
-                tr
-                  td= request.productNo
-                  td= request.productNameA
-                  td= request.nameA
-                  td= request.quantity
-                  td
-                    if (request.to == "quantitywarehouse01")
-                      span المخزن
-                    else if (request.to == "quantityShop")
-                      span المحل
-                  td
-                    if (request.from === "quantitywarehouse01")
-                      span المخزن
-                    else if (request.from === "quantityShop")
-                      span المحل
-                  
-                  
-                  if !request.shopApprove
-                    td
-                      a(href=`/manager/approveTransfer/${request._id}`)
-                        .badge.text-bg-secondary.mx-1 اعتماد الاستلام
-                  else
-                    td
-                      span تم اعتماد الطلب
-                      br
-                      span من #{request.approvedBy}
-                  
-                  if request.shopApprove
-                    td= request.approveDate.toLocaleDateString('en-GB')
-                  else
-                    td -
-
-                  td= request.requestBy
-                  td= request.time.toLocaleDateString('en-GB')
+              td= request.requestBy
+              td= request.time.toLocaleDateString('en-GB')
