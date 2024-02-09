@@ -1770,10 +1770,11 @@ router.post("/AddPurchase", mid.requiresSaleseman, function (req, res, next) {
 });
 
 // GET /CreateTransferRequest
-router.get('/transferRequestNew/:inventoryID/:from/:to', mid.requiresSaleseman, function(req, res, next) {
+router.get('/transferRequestNew/:inventoryID/:from/:to/:url', mid.requiresSaleseman, function(req, res, next) {
   const { inventoryID } = req.params;
   const { from } = req.params;
   const { to } = req.params;
+  const { url } = req.params;
 
   Inventory.findOne({ _id: inventoryID }).exec(function(error, inventoryData) {
     if (error) {
@@ -1787,7 +1788,8 @@ router.get('/transferRequestNew/:inventoryID/:from/:to', mid.requiresSaleseman, 
         title: 'New Transfer Request',
         inventoryData: inventoryData,
         from: from,
-        to: to
+        to: to,
+        url: url
       });
     }
   });
@@ -1804,6 +1806,7 @@ router.post('/transferRequestNew', mid.requiresSaleseman, function(req, res, nex
     productNameA: req.body.productNameA,
     from: req.body.from,
     to: req.body.to,
+    url: req.body.url,
     requestBy: req.session.userName,
     
     
