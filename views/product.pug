@@ -14,8 +14,12 @@ block content
     include ./includes/description.pug
     if managerNow || theSalesemanNow
       include ./manager/includes/inventoryData.pug
+      br
       include ./manager/includes/inventory.pug
+    br
     include ./includes/productManager.pug
+    br
+      
     include ./includes/productScript.pug
 
     if ShowModal
