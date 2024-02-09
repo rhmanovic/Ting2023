@@ -1,0 +1,32 @@
+.table-responsive
+  table.table
+    thead.table-secondary
+      tr
+        th #
+        th اسم المنتج
+        th الصنف
+        th الماركة
+        th الكفالة (سنة)
+        th الكمية
+        th السعر
+        th الاجمالي
+    tbody
+      - var grandTotal = 0
+      each val, index in orderData.inventoryQuantities
+        - var total = val * orderData.prices[index]
+        - grandTotal += total
+        tr
+          td= index + 1
+          td= orderData.productNameAs[index]
+          td= orderData.nameAs[index]
+          td= orderData.brands[index]
+          td= orderData.warranties[index]
+          td= val
+          td= orderData.prices[index].toFixed(3)
+          td= total.toFixed(3)
+          td= orderData.inventoryIDs[index]
+    tfoot
+      tr.table-secondary
+        td(colspan='6') 
+        td الاجمالي
+        td= grandTotal.toFixed(3)
