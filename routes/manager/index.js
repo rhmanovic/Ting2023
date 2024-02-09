@@ -1253,11 +1253,25 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
   try {
     const orderData = await Order.findOne({ _id: orderId }).exec();
 
+    // if (orderData.status == "completed"){      
+    //   throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
+    // }
+
     const updateData = {
       status: "completed",
-      totalPrice: orderData.quantity.reduce((total, qty, index) => total + qty * orderData.prices[index], 0) - orderData.discount + orderData.shippingCost,
-      totalCost: orderData.quantity.reduce((total, qty, index) => total + qty * orderData.costs[index], 0)
+      
+      totalPrice: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.prices[index]);
+      }, 0) - orderData.discount + orderData.shippingCost).toFixed(3),
+      
+      totalCost: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.inventoryCosts[index]);
+      }, 0)).toFixed(3),
+
+      
     };
+
+    console.log(updateData);
 
     await Order.findOneAndUpdate({ _id: orderId }, { $set: updateData });
 
@@ -1273,9 +1287,60 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
       }
     }));
 
-    console.log(JSON.stringify(writeOperations));
+    
 
     await Inventory.bulkWrite(writeOperations);
+    
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
+})
+
+
+router.post('/returnOrder/:orderId', mid.requiresSaleseman, async function(req, res, next) {
+  const { orderId } = req.params;
+  try {
+    const orderData = await Order.findOne({ _id: orderId }).exec();
+
+    // if (orderData.status == "completed"){      
+    //   throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
+    // }
+
+    const updateData = {
+      status: "returned",
+      
+      totalCost: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.prices[index]);
+      }, 0) - orderData.discount + orderData.shippingCost).toFixed(3),
+      
+      totalPrice: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.inventoryCosts[index]);
+      }, 0)).toFixed(3),
+
+      
+    };
+
+    console.log(updateData);
+
+    await Order.findOneAndUpdate({ _id: orderId }, { $set: updateData });
+
+    const writeOperations = orderData.inventoryIDs.map((inventoryID, index) => ({
+      updateOne: {
+        filter: { _id: inventoryID },
+        update: {
+          $inc: {
+            quantityShop: orderData.inventoryQuantities[index],
+            sellcount: -orderData.inventoryQuantities[index],
+          }
+        }
+      }
+    }));
+
+    
+
+    await Inventory.bulkWrite(writeOperations);
+    
     res.redirect("back");
   } catch (error) {
     next(error);
