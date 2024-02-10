@@ -66,51 +66,59 @@
                       span.badge.text-bg-success
                         i.fa.fa-cog.p-1(aria-hidden='true')
   
-  
-  
-              tr
-                th 
-                th 
-                th 
-                th
-                  br
-                  br
-              tr
-                  th وسيلة الدفع 
-                  th :
-                  td= `${orderData.payment_method}`
-              tr
-                  th حاله دفع اونلاين
-                  th :
-                  td= `${orderData.KentStatus}`
-              tr
-                  th تأكيد الدفع
-                  th :
-                  td= `${orderData.KentStatusBackEnd}`
-              tr
-                  th المتجر
-                  th :
-                  td= `${orderData.warehouse}`
-                  td
-                    if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
-                      a(href=`../editAny/Order/${orderData._id}/warehouse//${orderData.warehouse?orderData.warehouse:"NaN"}/${typeof orderData.warehouse}/orderPage`)
-                        span.badge.text-bg-success
-                          i.fa.fa-cog.p-1(aria-hidden='true')
-              tr
-                  th paymentLog
-                  th :
-                  td= `${orderData.paymentLog}`
-                  td
-                    if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
-                      a(href=`../editAny/Order/${orderData._id}/paymentLog//${orderData.paymentLog?orderData.paymentLog:"NaN"}/${typeof orderData.paymentLog}/orderPage`)
-                        span.badge.text-bg-success
-                          i.fa.fa-cog.p-1(aria-hidden='true')
-              tr
-                  th الحالة
-                  th :
-                  td= `${orderData.status}`
-                  td
-                    if (orderData.status != "completed" && orderData.status != "returned")
-                      a(href=`../editAny/Order/${orderData._id}/status//${orderData.status?orderData.status:"NaN"}/${typeof orderData.status}/orderPage`)
-                        span.badge.text-bg-success
-                          i.fa.fa-cog.p-1(aria-hidden='true')
+
+
+      .card.mb-4
+        .card-header.collapsed(data-bs-toggle='collapse' data-bs-target='#collapseInventoryForm2' aria-expanded='false' aria-controls='collapseInventoryForm2')
+          i.fas.fa-angle-down.mx-1
+          | البيانات الاضافية
+        .collapse#collapseInventoryForm2
+          .card-body
+            table.table.table-sm 
+    
+                tr
+                  th 
+                  th 
+                  th 
+                  th
+                    br
+                    br
+                tr
+                    th وسيلة الدفع 
+                    th :
+                    td= `${orderData.payment_method}`
+                tr
+                    th حاله دفع اونلاين
+                    th :
+                    td= `${orderData.KentStatus}`
+                tr
+                    th تأكيد الدفع
+                    th :
+                    td= `${orderData.KentStatusBackEnd}`
+                tr
+                    th المتجر
+                    th :
+                    td= `${orderData.warehouse}`
+                    td
+                      if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                        a(href=`../editAny/Order/${orderData._id}/warehouse//${orderData.warehouse?orderData.warehouse:"NaN"}/${typeof orderData.warehouse}/orderPage`)
+                          span.badge.text-bg-success
+                            i.fa.fa-cog.p-1(aria-hidden='true')
+                tr
+                    th paymentLog
+                    th :
+                    td= `${orderData.paymentLog}`
+                    td
+                      if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                        a(href=`../editAny/Order/${orderData._id}/paymentLog//${orderData.paymentLog?orderData.paymentLog:"NaN"}/${typeof orderData.paymentLog}/orderPage`)
+                          span.badge.text-bg-success
+                            i.fa.fa-cog.p-1(aria-hidden='true')
+                tr
+                    th الحالة
+                    th :
+                    td= `${orderData.status}`
+                    td
+                      if (orderData.status != "completed" && orderData.status != "returned")
+                        a(href=`../editAny/Order/${orderData._id}/status//${orderData.status?orderData.status:"NaN"}/${typeof orderData.status}/orderPage`)
+                          span.badge.text-bg-success
+                            i.fa.fa-cog.p-1(aria-hidden='true')
