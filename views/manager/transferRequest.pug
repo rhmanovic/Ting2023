@@ -10,6 +10,7 @@ block content
             th(scope='col') رقم المنتج
             th(scope='col') اسم المنتج
             th(scope='col') الصنف
+            th(scope='col') الماركة
             th(scope='col') الكمية
             th(scope='col') من
             th(scope='col') الى
@@ -29,6 +30,7 @@ block content
                   .badge.text-bg-info.mx-1 اذهب للمنتج 
               td= request.productNameA
               td= request.nameA
+              td= request.brand
               td= request.quantity
               td
                 if (request.from == "quantitywarehouse01")
