@@ -50,13 +50,13 @@ block content
                 td= item.warranty
                 td= item.vendormobile
                 td
-                  a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop`)
+                  a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop/${item.producturl}`)
                     .badge.text-bg-success.ms-1
                       span اطلب من
                       br
                       span المخزن
                 td
-                  a(href=`/manager/transferRequestNew/${item._id}/quantityShop/quantitywarehouse01`)
+                  a(href=`/manager/transferRequestNew/${item._id}/quantityShop/quantitywarehouse01/${item.producturl}`)
                     .badge.text-bg-primary.ms-1
                       span ارسل 
                       br
