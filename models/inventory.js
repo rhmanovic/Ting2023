@@ -7,6 +7,11 @@ var InventorySchema = new mongoose.Schema({
       default: "",
       text: true,
     },
+    producturl: {
+      type: String,
+      default: "",
+      text: true,
+    },
     nameA: {
       type: String,
       default: "",
