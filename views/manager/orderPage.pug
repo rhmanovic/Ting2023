@@ -9,13 +9,15 @@ block content
       include ./includes/orderTable.pug
       
       if orderData.status != "completed" && orderData.status != "returned"
-        .row
-          .col
+        .row.justify-content-evenly.mb-4
+          .col-4
             form(action=`/manager/completeOrder/${orderData._id}` method='POST')
-              button.btn.btn-success(type='submit') Complete Order
-          .col
+              .d-grid.gap-2
+                button.btn.btn-success(type='submit') اكمل الطلب
+          .col-4
             form(action=`/manager/returnOrder/${orderData._id}` method='POST')
-              button.btn.btn-danger(type='submit') Return Order
+              .d-grid.gap-2
+                button.btn.btn-danger(type='submit') ارجع الطلب
 
 
 
