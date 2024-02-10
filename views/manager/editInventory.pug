@@ -69,6 +69,14 @@ block content
               .form-group
                 label(for='input2') هاتف المورد
                 input#input3.form-control(type='text' name='vendormobile' value=inventoryData.vendormobile)
+            .col
+              .form-group
+                label(for='input2') url
+                if managerNow
+                  input#input3.form-control(type='text' name='producturl' value=inventoryData.producturl)
+                else
+                  input#input3.form-control(type='text' value=inventoryData.producturl disabled)
+                  
           input(type='hidden' name='productID' value=inventoryData.productID)
           input(type='hidden' name='productNameA' value=inventoryData.productNameA)
           input(type='hidden' name='productNameE' value=inventoryData.productNameE)
