@@ -727,6 +727,7 @@ router.post("/addInventoryToOrder", mid.requiresSaleseman, function(req, res, ne
             brands: inventoryData.brand,
             productNameAs: inventoryData.productNameA,
             productNameEs: inventoryData.productNameE,
+            producturl: inventoryData.producturl,
             warranties: inventoryData.warranty,
             
 
@@ -751,6 +752,8 @@ router.get(
   mid.requiresSaleseman,
   function (req, res, next) {
     const { inventoryID } = req.params;
+
+    
 
     Inventory.findOne({ _id: inventoryID }).exec(
       function (error, inventoryData) {
@@ -786,6 +789,7 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     quantitywarehouse01: req.body.quantitywarehouse01,
     vendormobile: req.body.vendormobile,
     min: req.body.min,
+    producturl: req.body.producturl,
     warranty: req.body.warranty,
   };
 
@@ -1596,6 +1600,7 @@ router.post("/AddInventory", mid.requiresAdmin, function (req, res, next) {
     brand: req.body.brand,
     productNameA: req.body.productNameA,
     productNameE: req.body.productNameE,
+    producturl: req.body.producturl,
     quantityShop: req.body.quantityShop,
     quantitywarehouse01: req.body.quantitywarehouse01,
     vendormobile: req.body.vendormobile,
