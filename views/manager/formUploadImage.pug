@@ -46,7 +46,7 @@ block content
       .row
           h3= `Upload ${data.collection} Image, #${indexGlobal}`
           p new...
-          - action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${indexGlobal}`
+          - action = `/manager/uploadImageList/${data.collection}/${data.id}/${data.returnTo}/${indexGlobal}`
           form.input-group(method='POST' action=action enctype='multipart/form-data')
             .row
               
