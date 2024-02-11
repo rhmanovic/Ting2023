@@ -1,0 +1,44 @@
+.card
+  form(method='POST' action='/manager/addInventoryToPurchase')
+    .card-header
+      h2 اضف منتج
+  
+    .card-body
+      .form-group.mb-2
+        label(for='quantity') الكمية:
+        input.form-control(type='number' name='quantity' required)
+      .form-group.mb-4
+        label(for='price') السعر:
+        input.form-control(type='number' name='price' step='0.001' required)
+  
+      input#myInput(type='text' onkeyup='myFunction()' placeholder='ابحث ...' title='Type in a name').mb-2
+  
+      ul.list-group.px-0#myUL(style='max-height: 300px; overflow-y: auto;').border.border-success
+        each item, index in inventoryData
+          li.list-group-item
+            label
+              input.mx-1(type='radio' name='inventoryID' value=`${item._id}`)
+              | #{item.productNameA} -
+              | #{item.nameA} -
+              | #{item.brand}
+      script.
+        function myFunction() {
+          const input = document.getElementById("myInput");
+          const filter = input.value.toUpperCase();
+          const ul = document.getElementById("myUL");
+          const li = ul.getElementsByTagName("li");
+          for (let i = 0; i < li.length; i++) {
+            const radio = li[i].getElementsByTagName("input")[0];
+            const txtValue = radio.parentNode.textContent || radio.parentNode.innerText;
+            const isMatch = filter.split(/\s+/).every(term => txtValue.toUpperCase().includes(term));
+            li[i].style.display = isMatch ? '' : 'none';
+          }
+        }
+  
+  
+  
+      input(type='hidden' name='purchaseID' value=purchaseData._id)
+      .row.justify-content-center.mt-4
+        .col-6
+          .d-grid.gap-2
+            button.btn.btn-primary(type='submit' required) اضف للطلب
