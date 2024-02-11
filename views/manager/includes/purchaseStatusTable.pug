@@ -1,0 +1,79 @@
+.row 
+  .col.col-lg-4
+      table.table.table-sm 
+          tbody
+            tr
+              th صورة الفاتورة
+              th :
+              if purchaseData.img
+                td 
+                  a(href=`${purchaseData.img}`) رابط الصورة
+              else
+                td -
+              td 
+                a(href=`../uploadImage/Purchase/${purchaseData._id}/purchasePage/img`)
+                  span.badge.text-bg-success
+                    i.fa.fa-upload.p-1(aria-hidden='true')
+            tr
+              th وصل الدفع
+              th :
+              if purchaseData.receiptimg
+                td 
+                  a(href=`${purchaseData.receiptimg}`) رابط الصورة
+              else
+                td -
+              td 
+                a(href=`../uploadImage/Purchase/${purchaseData._id}/purchasePage/receiptimg`)
+                  span.badge.text-bg-success
+                    i.fa.fa-upload.p-1(aria-hidden='true')
+            tr
+              th
+                p وصل كي-نت
+                p (في حال الكاش صور الفاتورة الاصلية مع الكتابة على الفاتورة)   
+              th :
+              if purchaseData.knetimg
+                td 
+                  a(href=`${purchaseData.knetimg}`) رابط الصورة
+              else
+                td -
+              td 
+                a(href=`../uploadImage/Purchase/${purchaseData._id}/purchasePage/knetimg`)
+                  span.badge.text-bg-success
+                    i.fa.fa-upload.p-1(aria-hidden='true')
+            
+            
+            tr
+              th رقم طلب الشراء
+              th :
+              td= purchaseData.purchaseNo
+            tr
+              th رقم الفاتورة
+              th :
+              td= purchaseData.invoice
+            tr
+              th حالة الاستلام
+              th :
+              if (purchaseData.receivingStatus == "received")
+                td تم الاستلام بتاريخ #{purchaseData.receivingDate.toLocaleDateString("en-GB")} (#{purchaseData.receivingName})
+              if (purchaseData.receivingStatus == "returned")
+                td تم الارجاع بتاريخ #{purchaseData.receivingDate.toLocaleDateString("en-GB")} (#{purchaseData.receivingName})
+              if (purchaseData.receivingStatus == "processing")
+                td جار المعالجة 
+              
+            
+            tr
+              th حالة الدفع
+              th :
+              if purchaseData.paymentStatus
+                td تم الدفع بتاريخ (#{purchaseData.paymentName})
+              else
+                td لم يتم الدفع
+            
+            tr
+              th تاريخ انشاء الطلب
+              th :
+              td= `${purchaseData.time.toLocaleDateString("en-GB")}`
+            tr
+              th المورد
+              th :
+              td= `${purchaseData.vendorName}`
