@@ -3,7 +3,7 @@ extends layout
 block content
   .main.container
     if data.collection != "Product"
-      - var action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}`
+      - var action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${data.field}`
       
       .row
           h3= `Upload ${data.collection} Image`
@@ -14,6 +14,8 @@ block content
               .col-sm
                 .input-group.mb-3
                   input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
+                  
+                  
                   //label.input-group-text(for='inputGroupFile02') Upload
                   button#myFile.input-group-text(for='inputGroupFile01') Upload
   
@@ -31,7 +33,7 @@ block content
         .row
             h3= `Upload ${data.collection} Image, #${index}`
             p= img
-            - action = `/manager/uploadImage/${data.collection}/${data.id}/${data.returnTo}/${index}`
+            - action = `/manager/uploadImageList/${data.collection}/${data.id}/${data.returnTo}/${index}`
             form.input-group(method='POST' action=action enctype='multipart/form-data')
               .row
                 
@@ -53,17 +55,3 @@ block content
                   input#inputGroupFile01.form-control(type='file', aria-describedby='myFile' name='myFile')
                   //label.input-group-text(for='inputGroupFile02') Upload
                   button#myFile.input-group-text(for='inputGroupFile01') Upload
-  
-      
-  
-                
-  
-  
-  
-  
-  
-                
-  
-  
-  
-  
