@@ -389,27 +389,20 @@ router.get("/warehouse", mid.requiresSaleseman, function (req, res, next) {
   });
 });
 
-router.get("/purchase", mid.requiresSaleseman, function (req, res, next) {
-  Purchase.find({})
-    .sort({ _id: -1 })
-    .exec(function (error, purchaseData) {
-      if (error) {
-        return next(error);
-      } else {
-        Vendor.find({}).exec(function (error, vendorData) {
-          if (error) {
-            return next(error);
-          } else {
-            return res.render("manager/purchase", {
-              title: "Purchase",
-              purchaseData: purchaseData,
-              vendorData: vendorData,
-            });
-          }
-        });
-      }
+router.get("/purchase", mid.requiresSaleseman, async function (req, res, next) {
+  try {
+    const purchaseData = await Purchase.find({}).sort({ _id: -1 }).exec();
+    const vendorData = await Vendor.find({}).exec();
+    return res.render("manager/purchase", {
+      title: "Purchase",
+      purchaseData: purchaseData,
+      vendorData: vendorData,
     });
+  } catch (error) {
+    return next(error);
+  }
 });
+
 
 router.get("/order/:sortTo", mid.requiresSaleseman, function (req, res, next) {
   var { sortTo } = req.params;
@@ -621,26 +614,22 @@ router.get(
 router.get(
   "/purchasePage/:purchaseId/",
   mid.requiresSaleseman,
-  function (req, res, next) {
+  async function (req, res, next) {
     const { purchaseId } = req.params;
 
-    Purchase.findOne({ _id: purchaseId }).exec(function (error, purchaseData) {
-      if (error) {
-        return next(error);
-      } else {
-        Product.find({}).exec(function (error, productsData) {
-          if (error) {
-            return next(error);
-          } else {
-            return res.render("manager/purchasePage", {
-              title: "Purchase",
-              purchaseData: purchaseData,
-              productsData: productsData,
-            });
-          }
-        });
-      }
-    });
+    try {
+      const purchaseData = await Purchase.findOne({ _id: purchaseId }).exec();
+      const inventoryData = await Inventory.find({}).exec();
+      
+      return res.render("manager/purchasePage", {
+        title: "Purchase",
+        purchaseData: purchaseData,
+        inventoryData: inventoryData,
+      });
+      
+    } catch (error) {
+      return next(error);
+    }
   },
 );
 
@@ -739,6 +728,53 @@ router.post("/addInventoryToOrder", mid.requiresSaleseman, function(req, res, ne
           return next(error);
         } else {
           res.redirect('/manager/orderPage/' + orderID);
+        }
+      });
+    }
+  });
+});
+
+router.post("/addInventoryToPurchase", mid.requiresSaleseman, function(req, res, next) {
+ 
+  const { price, inventoryID, quantity, purchaseID } = req.body;
+
+  Inventory.findById(inventoryID).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else if (!inventoryData) {
+      var err = new Error('Inventory not found.');
+      err.status = 404;
+      return next(err);
+    } else {
+      Purchase.findByIdAndUpdate(
+        purchaseID,
+        {
+          $push: {
+            
+            prices: price,
+            inventoryIDs: inventoryID,
+            inventoryQuantities: quantity,
+            
+            nameAs: inventoryData.nameA,
+            nameEs: inventoryData.nameE,
+            productNos: inventoryData.productNo,
+            productIDs: inventoryData.productID,
+            brands: inventoryData.brand,
+            productNameAs: inventoryData.productNameA,
+            productNameEs: inventoryData.productNameE,
+            producturl: inventoryData.producturl,
+            warranties: inventoryData.warranty,
+            
+            
+
+          }
+        },
+        { new: true }
+      ).exec(function(error, order) {
+        if (error) {
+          return next(error);
+        } else {
+          res.redirect('/manager/purchasePage/' + purchaseID);
         }
       });
     }
@@ -869,13 +905,14 @@ router.get(
 );
 
 router.get(
-  "/uploadImage/:collection/:id/:returnTo",
+  "/uploadImage/:collection/:id/:returnTo/:field",
   mid.requiresSaleseman,
   function (req, res, next) {
     const data = {
       collection: req.params.collection,
       id: req.params.id,
       returnTo: req.params.returnTo,
+      field: req.params.field,
     };
     console.log(data);
 
@@ -886,6 +923,8 @@ router.get(
       var x = Category;
     } else if (data.collection == "Order") {
       var x = Order;
+    } else if (data.collection == "Purchase") {
+      var x = Purchase;
     }
 
     x.findOne({ _id: data.id }).exec(function (error, result) {
@@ -899,6 +938,7 @@ router.get(
           title: "Upload",
           data: data,
           result: result,
+          field: data.field,
         });
       }
     });
@@ -906,13 +946,14 @@ router.get(
 );
 
 router.post(
-  "/uploadImage/:collection/:id/:returnTo",
+  "/uploadImage/:collection/:id/:returnTo/:field",
   mid.requiresSaleseman,
   function (req, res, next) {
     const data = {
       collection: req.params.collection,
       id: req.params.id,
       returnTo: req.params.returnTo,
+      field: req.params.field,
     };
 
     const host = req.headers.host;
@@ -936,6 +977,7 @@ router.post(
             data.collection,
             data.id,
             data.returnTo,
+            data.field,
             filename,
             res,
           );
@@ -949,9 +991,10 @@ router.post(
   },
 );
 
-function addLinkImgLingToAny2(collection, id, returnTo, filename, res) {
+function addLinkImgLingToAny2(collection, id, returnTo, field, filename, res) {
   arr_update_dict = { $set: {} };
   //this shoudl be dynamic us refere
+  
   var z = 0;
   if (collection == "Product") {
     var x = Product;
@@ -969,10 +1012,17 @@ function addLinkImgLingToAny2(collection, id, returnTo, filename, res) {
     var x = Order;
     var returnLink = "/manager/orderPage/" + id;
     z = 1;
+  } else if (collection == "Purchase") {
+    var x = Purchase;
+    var returnLink = "/manager/purchasePage/" + id;
+    z = 1;
   }
 
+  console.log("filename: " + filename);
+
+
   if (z == 1) {
-    arr_update_dict["$set"]["img"] = "/img/upload/" + filename;
+    arr_update_dict["$set"][field] = "/img/upload/" + filename;
     x.findOneAndUpdate({ _id: id }, arr_update_dict)
       .then(function () {
         res.redirect(returnLink); // do to my specific product todo
@@ -986,7 +1036,7 @@ function addLinkImgLingToAny2(collection, id, returnTo, filename, res) {
 }
 
 router.post(
-  "/uploadImage/:collection/:id/:returnTo/:index",
+  "/uploadImageList/:collection/:id/:returnTo/:index",
   mid.requiresSaleseman,
   function (req, res, next) {
     const data = {
@@ -1251,15 +1301,37 @@ router.get("/test", mid.requiresAdmin, function (req, res, next) {
   });
 });
 
+router.post('/approvePaymentPurchaseOrder/:purchaseId', mid.requiresSaleseman, async function(req, res, next) {
+  // Your new code will be implemented here
+  // Use appropriate indentation and follow the existing code style
+  
+  Purchase.findOneAndUpdate(
+    { _id: req.params.purchaseId },
+    { $set: { paymentStatus: true, paymentName: req.session.userName } },
+    { new: true }
+  )
+  .exec(function(error, updatedPurchase) {
+    if (error) {
+      return next(error);
+    } else {
+      console.log('Payment status updated successfully.');
+      res.redirect("back");
+    }
+  });
+
+  
+  
+});
+
 
 router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req, res, next) {
   const { orderId } = req.params;
   try {
     const orderData = await Order.findOne({ _id: orderId }).exec();
 
-    // if (orderData.status == "completed"){      
-    //   throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
-    // }
+    if (orderData.status == "completed"){      
+      throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
+    }
 
     const updateData = {
       status: "completed",
@@ -1286,6 +1358,105 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
           $inc: {
             quantityShop: -orderData.inventoryQuantities[index],
             sellcount: orderData.inventoryQuantities[index],
+          }
+        }
+      }
+    }));
+
+    
+
+    await Inventory.bulkWrite(writeOperations);
+    
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
+})
+
+
+router.post('/completePurchaseOrder/:purchaseId', mid.requiresSaleseman, async function(req, res, next) {
+  const { purchaseId } = req.params;
+  try {
+    const purchaseData = await Purchase.findOne({ _id: purchaseId }).exec();
+
+    if (purchaseData.receivingStatus == "received"){      
+      throw new Error('Purchase Order is already recieved and can not be recieved twice. طلب الشراء بالفعل تم استلامه. ولا يمكن استلامه مرة اخرى');
+    }
+
+    const updateData = {
+      receivingStatus: "received",
+      
+      totalPrice: (purchaseData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * purchaseData.prices[index]);
+      }, 0)).toFixed(3),
+      receivingName: req.session.userName,
+      receivingDate: new Date(),
+      
+      
+
+      
+    };
+
+    console.log(updateData);
+
+    await Purchase.findOneAndUpdate({ _id: purchaseId }, { $set: updateData });
+
+    const writeOperations = purchaseData.inventoryIDs.map((inventoryID, index) => ({
+      updateOne: {
+        filter: { _id: inventoryID },
+        update: {
+          $inc: {
+            quantityShop: purchaseData.inventoryQuantities[index],
+            procurecount: purchaseData.inventoryQuantities[index],
+          }
+        }
+      }
+    }));
+
+    
+
+    await Inventory.bulkWrite(writeOperations);
+    
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.post('/returnPurchaseOrder/:purchaseId', mid.requiresSaleseman, async function(req, res, next) {
+  const { purchaseId } = req.params;
+  try {
+    const purchaseData = await Purchase.findOne({ _id: purchaseId }).exec();
+
+    if (purchaseData.receivingStatus == "returned"){      
+      throw new Error('Purchase Order is already returned and can not be returned twice. طلب الشراء بالفعل تم ارجاعه. ولا يمكن ارجاعه مرة اخرى');
+    }
+
+    const updateData = {
+      receivingStatus: "returned",
+      
+      totalPrice: (purchaseData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * purchaseData.prices[index]);
+      }, 0)).toFixed(3),
+      receivingName: req.session.userName,
+      receivingDate: new Date(),
+      
+      
+
+      
+    };
+
+    console.log(updateData);
+
+    await Purchase.findOneAndUpdate({ _id: purchaseId }, { $set: updateData });
+
+    const writeOperations = purchaseData.inventoryIDs.map((inventoryID, index) => ({
+      updateOne: {
+        filter: { _id: inventoryID },
+        update: {
+          $inc: {
+            quantityShop: -purchaseData.inventoryQuantities[index],
+            procurecount: -purchaseData.inventoryQuantities[index],
           }
         }
       }
@@ -1759,9 +1930,9 @@ router.post("/AddOrder", mid.requiresSaleseman, function (req, res, next) {
 // POST /AddPurchase
 router.post("/AddPurchase", mid.requiresSaleseman, function (req, res, next) {
   var purchaseData = {
-    warehouse: req.body.warehouse,
+    invoice: req.body.invoice,
     vendorID: req.body.vendor.split("#")[0],
-    vendorName: req.body.vendor.split("#")[1],
+    vendorName: req.body.vendor.split("#")[1], 
   };
 
   Purchase.create(purchaseData, function (error, thePurchase) {
