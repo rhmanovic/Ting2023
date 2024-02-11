@@ -1,12 +1,6 @@
-.row
-  
-  
+.row 
   .col.col-lg-2
       table.table.table-sm 
-          //- thead
-              tr
-              th(scope='col') Proparty
-              th(scope='col') Value
           tbody
               tr
                 th صورة الفاتورة
@@ -16,12 +10,10 @@
                     a(href=`${orderData.img}`) رابط الصورة
                 else
                   td -
-                //td  
-                  if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
                 td 
-                    a(href=`../uploadImage/Order/${orderData._id}/orderPage`)
-                      span.badge.text-bg-success
-                        i.fa.fa-upload.p-1(aria-hidden='true')
+                  a(href=`../uploadImage/Order/${orderData._id}/orderPage/img`)
+                    span.badge.text-bg-success
+                      i.fa.fa-upload.p-1(aria-hidden='true')
               tr
                   th رقم الطلب
                   th :
