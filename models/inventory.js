@@ -60,6 +60,10 @@ var InventorySchema = new mongoose.Schema({
       type: Number,
       default: 0,
     },
+    procurecount: {
+      type: Number,
+      default: 0,
+    },
     private: {
       type: Boolean,
       default: false,
