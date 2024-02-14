@@ -56,6 +56,10 @@ var InventorySchema = new mongoose.Schema({
       type: Number,
       default: 0,
     },
+    minShop: {
+      type: Number,
+      default: 0,
+    },
     sellcount: {
       type: Number,
       default: 0,
