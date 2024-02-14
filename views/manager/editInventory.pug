@@ -59,6 +59,10 @@ block content
                   input#input3.form-control(type='text' value=inventoryData.quantitywarehouse01 disabled)
             .col
               .form-group
+                label(for='input2') اقل كمية (المحل)
+                input#input3.form-control(type='number' name='minShop' value=inventoryData.minShop)
+            .col
+              .form-group
                 label(for='input2') اقل كمية
                 input#input3.form-control(type='number' name='min' value=inventoryData.min)
             .col
@@ -76,6 +80,15 @@ block content
                   input#input3.form-control(type='text' name='producturl' value=inventoryData.producturl)
                 else
                   input#input3.form-control(type='text' value=inventoryData.producturl disabled)
+            if managerNow
+              .col
+                .form-group
+                  label(for='sellcount') عداد الشراء
+                  input#input3.form-control(type='text' name='sellcount' value=inventoryData.sellcount)
+              .col
+                .form-group
+                  label(for='procurecount') عداد البيع
+                  input#input3.form-control(type='text' name='procurecount' value=inventoryData.procurecount)
                   
           input(type='hidden' name='productID' value=inventoryData.productID)
           input(type='hidden' name='productNameA' value=inventoryData.productNameA)
