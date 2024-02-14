@@ -110,7 +110,7 @@
                     th :
                     td= `${orderData.status}`
                     td
-                      if (orderData.status != "completed" && orderData.status != "returned")
+                      if (orderData.status != "completed" && orderData.status != "returned" || managerNow)
                         a(href=`../editAny/Order/${orderData._id}/status//${orderData.status?orderData.status:"NaN"}/${typeof orderData.status}/orderPage`)
                           span.badge.text-bg-success
                             i.fa.fa-cog.p-1(aria-hidden='true')
