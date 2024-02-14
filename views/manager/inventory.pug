@@ -20,13 +20,16 @@ block content
         table.table.table-hover
           thead
             tr
+              th #
               th
               th الماركة
+              th الاسم
               th التكلفة
               th الصنف (عربي)
               th الصنف (E)
               th كمية المحل
               th كمية المخزن
+              th اقل كمية (المحل)
               th اقل كمية
               th عداد البيع
               th عداد الشراء
@@ -34,18 +37,23 @@ block content
               th هاتف المورد
               th
           tbody
+            - var index = 0
             each item in inventoryData
+              - index += 1
               tr
+                td= index
                 td
                   a(href=`/manager/editInventory/${item._id}`)
                     span.badge.text-bg-success.mx-1
                       i.fa.fa-cog(aria-hidden='true')
                 td= item.brand
+                td= item.productNameA
                 td= item.cost
                 td= item.nameA
                 td= item.nameE
                 td= item.quantityShop
                 td= item.quantitywarehouse01
+                td= item.minShop
                 td= item.min
                 td= item.sellcount
                 td= item.procurecount
