@@ -824,7 +824,10 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     quantityShop: req.body.quantityShop,
     quantitywarehouse01: req.body.quantitywarehouse01,
     vendormobile: req.body.vendormobile,
+    sellcount: req.body.sellcount,
+    procurecount: req.body.procurecount,
     min: req.body.min,
+    minShop: req.body.minShop,
     producturl: req.body.producturl,
     warranty: req.body.warranty,
   };
@@ -1776,6 +1779,7 @@ router.post("/AddInventory", mid.requiresAdmin, function (req, res, next) {
     quantitywarehouse01: req.body.quantitywarehouse01,
     vendormobile: req.body.vendormobile,
     min: req.body.min,
+    minShop: req.body.minShop,
   };
 
   console.log("sendBack");
