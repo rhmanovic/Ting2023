@@ -41,11 +41,16 @@
                   span.badge.text-bg-success
                     i.fa.fa-upload.p-1(aria-hidden='true')
             
-            
+            tr
+              th طريقة الدفع
+              th :
+              td= purchaseData.payment_method
+              
             tr
               th رقم طلب الشراء
               th :
               td= purchaseData.purchaseNo
+            
             tr
               th رقم الفاتورة
               th :
