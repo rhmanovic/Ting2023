@@ -651,48 +651,25 @@ router.get("/category/:category", function (req, res, next) {
     });
 });
 
-router.get("/product/:url", function (req, res, next) {
-  const { url } = req.params;
-  const { ShowModal } = req.query;
-  const { source } = req.query;
-  const { Q } = req.query;
+router.get("/product/:url", async function (req, res, next) {
+  const { url, ShowModal, source, Q } = req.params;
 
   if (source) {
     req.session.source = source;
-    req.session.save(function (err) {
-      // session saved
-      // return res.render('mutlaa', { title: 'ITC Discount' });
-    });
+    await req.session.save();
   }
 
   try {
-    Product.findOne({ url: url }).exec(function (error, productData) {
-      if (error) {
-        return next(error);
-      } else {
-        var title = "";
-        if (productData) {
-          title = productData.name;
-        }
+    const productData = await Product.findOne({ url: url }).exec();
+    var title = productData ? productData.name : "";
 
-        
-        Inventory.find({ productNo: productData.productNo }).exec(function (error, inventoryData) {
-          if (error) {
-            return next(error);
-          } else {
-            return res.render("product", {
-              title: title,
-              productData: productData,
-              ShowModal: ShowModal,
-              Q: Q,
-              inventoryData: inventoryData,
-            });
-          }
-        });
-
-        
-        
-      }
+    const inventoryData = await Inventory.find({ productNo: productData.productNo }).exec();
+    return res.render("product", {
+      Q: Q,
+      title: title,
+      ShowModal: ShowModal,
+      productData: productData,
+      inventoryData: inventoryData,
     });
   } catch (error) {
     return next(error);
