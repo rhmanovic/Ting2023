@@ -53,3 +53,17 @@ if managerNow || theSalesemanNow
             p= `سعر  ${productData.name} =  ${productData.price} `
           a(href=`../manager/editAny/Product/${productData._id}/discountPrice//${productData.discountPrice?productData.discountPrice:"NaN"}/${typeof productData.discountPrice}/productshop`)
             p= `(بعد الخصم)  ${productData.name} =  ${productData.discountPrice} `
+
+        
+
+        h3 ملاحظات داخلية
+        ul
+          each note in productData.privateNotes
+            li #{note.note} (#{note.date.toLocaleDateString('en-GB')})
+        
+         
+        form(action=`../manager/addPrivateNote/Product/${productData._id}` method='post')
+          .form-group
+            label(for='privateNote') اضف ملاحظة داخلية:
+            input#privateNote.form-control(name='privateNote' rows='3')
+          button.btn.btn-primary(type='submit') اضف
