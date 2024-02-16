@@ -39,6 +39,14 @@ block content
 
 
                     tr
+                        th Mobile
+                        th :
+                        td= `${brandData.mobile}`
+                        td 
+                          a(href=`../editAny/Brand/${brandData._id}/mobile//${brandData.mobile?brandData.mobile:"NaN"}/${typeof brandData.mobile}/brandPage`)
+                            span.badge.text-bg-success Edit
+                            
+                    tr
                         th URL Name
                         th :
                         td= `${brandData.URLname}`
