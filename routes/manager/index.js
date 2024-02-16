@@ -227,48 +227,25 @@ router.get("/posts", mid.requiresSaleseman, function (req, res, next) {
   });
 });
 
-router.get("/products", mid.requiresSaleseman, function (req, res, next) {
-  Product.find({}).exec(function (error, productData) {
-    if (error) {
-      return next(error);
-    } else {
-      // use later function to make it shorter
-      Brand.find({}).exec(function (error, brandData) {
-        if (error) {
-          return next(error);
-        } else {
-          Category.find({}).exec(function (error, categoryData) {
-            if (error) {
-              return next(error);
-            } else {
-              Warehouse.find({}).exec(function (error, warehouseData) {
-                if (error) {
-                  return next(error);
-                } else {
-                  Vendor.find({}).exec(function (error, vendorData) {
-                    if (error) {
-                      return next(error);
-                    } else {
-                      return res.render("manager/products", {
-                        title: "Product",
-                        productData: productData,
-                        categoryData: categoryData,
-                        warehouseData: warehouseData,
-                        brandData: brandData,
-                        vendorData: vendorData,
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
+router.get("/products", mid.requiresSaleseman, async function (req, res, next) {
+  try {
+    const productData = await Product.find({}).exec();
+    const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
+    const categoryData = await Category.find({}).exec();
+    const warehouseData = await Warehouse.find({}).exec();
+    const vendorData = await Vendor.find({}).exec();
 
-      // return res.render('products', { title: 'Product', productData: productData});
-    }
-  });
+    return res.render("manager/products", {
+      title: "Products",
+      productData: productData,
+      categoryData: categoryData,
+      warehouseData: warehouseData,
+      brandData: brandData,
+      vendorData: vendorData,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/inventory", mid.requiresSaleseman, function (req, res, next) {
@@ -405,17 +382,16 @@ router.get("/vendor", mid.requiresAdmin, function (req, res, next) {
   });
 });
 
-router.get("/brand", mid.requiresSaleseman, function (req, res, next) {
-  Brand.find({}).exec(function (error, brandData) {
-    if (error) {
-      return next(error);
-    } else {
-      return res.render("manager/brand", {
-        title: "brand",
-        brandData: brandData,
-      });
-    }
+
+router.get("/brand", mid.requiresSaleseman, async function (req, res, next) {
+  const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
+
+  return res.render("manager/brand", {
+    title: "brand",
+    brandData: brandData,
   });
+  
+ 
 });
 
 router.get(
@@ -1847,57 +1823,42 @@ router.post("/AddInventory", mid.requiresAdmin, function (req, res, next) {
 });
 
 // POST /AddProduct
-router.post("/AddProduct", mid.requiresAdmin, function (req, res, next) {
+router.post("/AddProduct", mid.requiresAdmin, async function (req, res, next) {
   var productData = {
     // 'SKU':req.body.SKU,
     name: req.body.name,
-    // 'variantName': req.body.variantName,
-    // 'price': req.body.price,
-    // 'cost': req.body.cost,
-    // "status": req.body.status,
-    // 'quantity': req.body.quantity,
-    // 'naseem': req.body.naseem,
-    // 'qurain': req.body.qurain,
-    // "description": req.body.description,
-    // "discountPrice": req.body.discountPrice,
-    // "category": req.body.category.split("#")[0],
-    // "categoryName": req.body.category.split("#")[1],
-    // "categoryNo": req.body.category.split("#")[2],
-    // "brand": req.body.brand.slice(0, 24),
-    // "brandName": req.body.brand.slice(24),
-    // "vendor": req.body.vendor.slice(0, 24),
-    // "vendorName": req.body.vendor.slice(24),
-    // 'SuperProductID': req.body.SuperProductID,
-    // 'variant': req.body.variant,
-    // 'group': req.body.group,
-    // 'warranty': req.body.warranty
+    nameE: req.body.nameE,
+    url: req.body.url,
+    productNo: req.body.productNo,
+    cost: req.body.cost,
+    price: req.body.price,
+    warranty: req.body.warranty,
+    brand: {name: "", id: req.body.brandID}
   };
 
-  Product.create(productData, function (error, theProduct) {
+  // Find brand by ID and set brandName
+  if (productData.brand.id) {
+    try {
+      const brand = await Brand.findById(productData.brand.id).exec();
+      productData.brand.name = brand ? brand.name : '';
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+
+  
+  Product.create(productData, function (error, newProduct) {
     if (error) {
-      console.log(error.code);
       return next(error);
     } else {
-      if (productData.SuperProductID) {
-        Product.findOneAndUpdate(
-          { _id: productData.SuperProductID },
-          {
-            $push: {
-              SubProductId: theProduct.id,
-            },
-          },
-        )
-          .then(function () {
-            res.redirect("products");
-          })
-          .catch(function (error) {
-            return next(error);
-          });
-      } else {
-        res.redirect("products");
-      }
+      res.redirect('/manager/productPage/' + newProduct._id);
     }
   });
+
+
+
+ 
 });
 
 // POST /AddCategory
