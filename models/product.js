@@ -162,6 +162,10 @@ var ProductSchema = new mongoose.Schema({
       type: String,
       default: "",
     },
+    mobile: {
+      type: String,
+      default: "",
+    },
   },
   brandName: {
     type: String,
