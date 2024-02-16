@@ -1850,6 +1850,7 @@ router.post("/editProduct/:ProductID", mid.requiresAdmin, async function (req, r
     try {
       const brand = await Brand.findById(productData.brand.id).exec();
       productData.brand.name = brand ? brand.name : '';
+      productData.brand.mobile = brand ? brand.mobile : '';
     } catch (error) {
       return next(error);
     }
