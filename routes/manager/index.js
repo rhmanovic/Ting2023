@@ -701,11 +701,13 @@ router.get( "/productPage/:productId/", mid.requiresSaleseman, async function (r
     try {
       const productData = await Product.findOne({ _id: productId }).exec();
       const inventoryData = await Inventory.find({ productID: productId }).exec();
+      const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
       
       return res.render("manager/productPage", {
         title: "productPage",
         productData: productData,
         inventoryData: inventoryData,
+        brandData: brandData,
       });
       
     } catch (error) {
@@ -1822,6 +1824,55 @@ router.post("/AddInventory", mid.requiresAdmin, function (req, res, next) {
   });
 });
 
+
+// POST /AddProduct
+router.post("/editProduct/:ProductID", mid.requiresAdmin, async function (req, res, next) {
+  
+  const ProductID = req.params.ProductID;
+
+  var productData = {
+    // 'SKU':req.body.SKU,
+    name: req.body.name,
+    nameE: req.body.nameE,
+    url: req.body.url,
+    productNo: req.body.productNo,
+    cost: req.body.cost,
+    price: req.body.price,
+    warranty: req.body.warranty,
+    brand: {name: "", id: req.body.brandID}
+  };
+
+
+
+
+  // Find brand by ID and set brandName
+  if (productData.brand.id) {
+    try {
+      const brand = await Brand.findById(productData.brand.id).exec();
+      productData.brand.name = brand ? brand.name : '';
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+
+
+  Product.findByIdAndUpdate(ProductID, productData, { new: true }, function (error, updatedProduct) {
+    if (error) {
+      return next(error);
+    } else {
+      res.redirect('/manager/productPage/' + updatedProduct._id);
+    }
+  });
+
+
+
+
+});
+
+
+
+
 // POST /AddProduct
 router.post("/AddProduct", mid.requiresAdmin, async function (req, res, next) {
   var productData = {
@@ -1835,6 +1886,7 @@ router.post("/AddProduct", mid.requiresAdmin, async function (req, res, next) {
     warranty: req.body.warranty,
     brand: {name: "", id: req.body.brandID}
   };
+  
 
   // Find brand by ID and set brandName
   if (productData.brand.id) {
