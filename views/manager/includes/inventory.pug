@@ -16,11 +16,11 @@
           .col
             .form-group 
               label(for='input1') العلامة التجارية 
-              input#input11.form-control(type='text' name='brand')
+              input#input11.form-control(type='text' name='brand' value=productData.brand.name)
           .col
             .form-group 
               label(for='input1') التكلفة  
-              input#input11.form-control(type='number' name='cost' step="0.001")
+              input#input11.form-control(type='number' name='cost' step="0.001" value=productData.cost)
           .col
             .form-group 
               label(for='input1') اسم المتغير (عربي)
