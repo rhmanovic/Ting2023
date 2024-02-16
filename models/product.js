@@ -154,8 +154,14 @@ var ProductSchema = new mongoose.Schema({
     default: "",
   },
   brand: {
-    type: String,
-    default: "",
+    name: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: String,
+      default: "",
+    },
   },
   brandName: {
     type: String,
