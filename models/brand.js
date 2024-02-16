@@ -3,6 +3,11 @@ var bcrypt = require('bcryptjs');
 var BrandSchema = new mongoose.Schema({
     brandNo: Number,
     name: String,
+    
+    mobile: {
+      type: String,
+      default: ""
+    },
     URLname: {
       type: String,
       default: ""
