@@ -202,6 +202,7 @@ block content
           td
             p Name: #{productData.brand.name}
             p ID  : #{productData.brand.id}
+            p Mobile  : #{productData.brand.mobile}
           td 
             form(method='POST' action=`../editProduct/${productData._id}`).d-flex.align-items-center
               select.form-control(name='brandID')
