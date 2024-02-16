@@ -17,6 +17,66 @@ const fs = require("fs");
 
 var nodemailer = require("nodemailer");
 
+
+router.post('/addPrivateNote/:collection/:productId', mid.requiresSaleseman, async function(req, res, next) {
+  const { collection, productId } = req.params;
+  const { privateNote } = req.body;
+
+  if (collection == "Product") {
+    var x = Product;
+  }
+    
+
+  try {
+    await x.findByIdAndUpdate(productId, {
+      $push: {
+        privateNotes: {
+          note: privateNote,
+        }
+      }
+    });
+
+    res.redirect(`back`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/updateOrderDiscountShip/:field/:orderId', mid.requiresSaleseman, async function(req, res, next) {
+  const { field, orderId } = req.params;
+  const { value } = req.body;
+
+  try {
+    const update = { $set: {} };
+    update.$set[field] = parseFloat(value);
+
+    await Order.findByIdAndUpdate(orderId, update);
+
+    res.redirect(`/manager/orderPage/${orderId}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/updateOrderLine/:field/:orderId/:index', mid.requiresSaleseman, async function(req, res, next) {
+  const { field, orderId, index } = req.params;
+  const { value } = req.body;
+
+  try {
+    const update = { $set: {} };
+    update.$set[
+      `${field}.${index}`
+    ] = field === 'inventoryQuantities' ? parseInt(value) : parseFloat(value);
+
+    await Order.findByIdAndUpdate(orderId, update);
+
+    res.redirect(`/manager/orderPage/${orderId}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 router.post("/SiteImages", mid.requiresAdmin, function (req, res, next) {
   const { toedit } = req.query;
   const myFile = req.body.myFile;
@@ -659,31 +719,22 @@ router.get(
   },
 );
 
-router.get(
-  "/productPage/:productId/",
-  mid.requiresSaleseman,
-  function (req, res, next) {
+router.get( "/productPage/:productId/", mid.requiresSaleseman, async function (req, res, next) {
     const { productId } = req.params;
 
-    Product.findOne({ _id: productId }).exec(function (error, productData) {
-      if (error) {
-        return next(error);
-      } else {
-        Inventory.find({ productID: productId }).exec(
-          function (error, inventoryData) {
-            if (error) {
-              return next(error);
-            } else {
-              return res.render("manager/productPage", {
-                title: "productPage",
-                productData: productData,
-                inventoryData: inventoryData,
-              });
-            }
-          },
-        );
-      }
-    });
+    try {
+      const productData = await Product.findOne({ _id: productId }).exec();
+      const inventoryData = await Inventory.find({ productID: productId }).exec();
+      
+      return res.render("manager/productPage", {
+        title: "productPage",
+        productData: productData,
+        inventoryData: inventoryData,
+      });
+      
+    } catch (error) {
+      return next(error);
+    }
   },
 );
 
