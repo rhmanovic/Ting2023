@@ -22,7 +22,6 @@ block content
           thead
             tr
               th(scope='col') Brand No
-              th(scope='col') Category id
               th(scope='col') Name
               th(scope='col') Image
               th(scope='col') 
@@ -32,12 +31,9 @@ block content
                 th(scope='row')= brand.brandNo
                 td
                   a(href=`/manager/brandPage/${brand._id}`)
-                    div= `${brand._id}`
-                td= `${brand.name}`
+                    div= `${brand.name}`
+                
                 td
                     a(href=`/manager/deletBrand/${brand._id}`)
                         .badge.text-bg-danger.ms-1
-                            i.bi.bi-trash.m-2
-
-                
-
+                            i.bi.bi-trash.m-2 Delete
