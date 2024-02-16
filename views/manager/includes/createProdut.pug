@@ -1,0 +1,42 @@
+h3 Create Product
+
+form(method='POST' action='AddProduct')
+  .row
+    .col-sm
+      label(for='name') Name :
+      input.form-control(type='text' placeholder='Name' name='name')
+    .col-sm
+      label(for='nameE') Name (English) :
+      input.form-control(type='text' placeholder='Name in English' name='nameE')
+    .col-sm
+      label(for='url') URL :
+      input.form-control(type='text' placeholder='URL' name='url')
+
+    
+  .row
+    .col-sm
+      label(for='productNo') Product No :
+      input.form-control(type='text' placeholder='Product No' name='productNo')
+    
+    
+    .col-sm
+      label(for='cost') Cost :
+      input.form-control(type='number' placeholder='Cost' name='cost' step="0.005")
+    .col-sm
+      label(for='price') Price :
+      input.form-control(type='number' placeholder='Price' name='price' step="0.005")
+    .col-sm
+      label(for='warranty') Warranty :
+      input.form-control(type='number' placeholder='Warranty' name='warranty')
+    .col-sm
+      label(for='brand') Brand :
+      select.form-control(name='brandID')
+        option(value='') Select Brand
+        each brand in brandData
+          option(value=brand._id)= brand.name
+
+  .row
+    .col-sm
+      label.text-white .
+      br
+      button.btn.btn-primary(type='submit') Submit
