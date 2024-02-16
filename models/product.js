@@ -197,6 +197,17 @@ var ProductSchema = new mongoose.Schema({
     type: String,
     default: "-",
   },
+  
+  privateNotes: [{
+    note: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+      default: Date.now
+    }
+    }],
 });
 
 var Product = mongoose.model("product", ProductSchema);
