@@ -48,7 +48,8 @@
           .col
             .form-group
               label(for='input2') هاتف المورد
-              input#input3.form-control(type='text' name='vendormobile')
+              input#input3.form-control(type='text' name='vendormobile' value=productData.brand.mobile)
+        
         input(type='hidden' name='productID' value=productData._id)
         input(type='hidden' name='productNameA' value=productData.name)
         input(type='hidden' name='productNameE' value=productData.nameE)
