@@ -412,18 +412,35 @@ router.get(
   },
 );
 
-router.get("/warehouse", mid.requiresSaleseman, function (req, res, next) {
-  Product.find({}).exec(function (error, productData) {
-    if (error) {
-      return next(error);
-    } else {
-      return res.render("manager/warehouse", {
-        title: "Warehouse",
-        productData: productData,
-      });
-    }
-  });
+router.get("/stock/:place", mid.requiresSaleseman, async function (req, res, next) {
+  
+  const { place } = req.params;
+  var x = "";
+  
+  if (place == "shop") {
+    x = "quantityShop";
+  } else if (place == "warehouse") {
+    x = "quantitywarehouse01";
+  }
+  
+Inventory.find({ [x]: { $ne: 0 } }).exec(function (error, warehouseData) {
+  if (error) {
+    return next(error);
+  } else {
+    return res.render("manager/warehouse", {
+      title: "Warehouse",
+      warehouseData: warehouseData,
+      place: place,
+    });
+  }
 });
+
+
+
+});
+
+
+
 
 router.get("/purchase", mid.requiresSaleseman, async function (req, res, next) {
   try {
