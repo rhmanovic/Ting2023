@@ -2,7 +2,47 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var OrderSchema = new mongoose.Schema({
 
+
+  createdBy: {
+    name: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+      default: () => Date.now() + (3 * 60 * 60 * 1000) // GMT +3
+    }
+  },
   
+  approvedDeletedBy: {
+    name: {
+      type: String,
+      default: "",
+    },
+    status: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+      default: () => Date.now() + (3 * 60 * 60 * 1000) // GMT +3
+    }
+  },
+
+  changeStatusBy: [{
+    name: {
+      type: String,
+      default: "",
+    },
+    status: {
+      type: String,
+      default: "",
+    },
+    date: {
+      type: Date,
+      default: () => Date.now() + (3 * 60 * 60 * 1000) // GMT +3
+    }
+  }],
 
   inventoryQuantities: [{
     type: Number,
