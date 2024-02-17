@@ -28,6 +28,8 @@ block content
             th(scope='col') الاجمالي
             th(scope='col') التكلفة
             th(scope='col') الهامش
+            th(scope='col') الصورة
+            th(scope='col') ارفع صورة
         tbody
           each order,index in orderData
             if (order.status != "deleted")
@@ -66,3 +68,12 @@ block content
                 td= `${order.totalPrice}`
                 td= `${order.totalCost}`
                 td= `${(order.totalPrice - order.totalCost).toFixed(3)}`
+                if order.img
+                  td 
+                    a(href=`${order.img}`) رابط الصورة
+                else
+                  td -
+                td 
+                  a(href=`../uploadImage/Order/${order._id}/orderPage/img`)
+                    span.badge.text-bg-success
+                      i.fa.fa-upload.p-1(aria-hidden='true')
