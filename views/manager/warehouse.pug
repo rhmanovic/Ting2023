@@ -5,41 +5,36 @@ block content
   
   .main.container
     h1 Products Page
+    //p= warehouseData
     - var sr = 1
 
 
     .row
-        h3 المخزن
-
-        table.table
-          thead
-            tr
-              th(scope='col') Sr
-              th(scope='col') No
-              th(scope='col') Name
-              th(scope='col') Quantity
-              th(scope='col') img
-              th(scope='col') SKU
-          tbody
-            each product,index in productData
-              if product.qurain > 0
-               
-                tr
-                  //- th(scope='row')= index+1
-                  td= sr
-                  - sr += 1
-                  td
-                    a(href=`../product/${product.url}`)
-                      if product.googleSheet
-                        span.text-danger= `${product.productNo}`
-                      else
-                        span= `${product.productNo}`
+        h3= place
+        .table-responsive
+          table.table
+            thead
+              tr
+                th #
+                th الماركة
+                th الاسم
+                th الصنف (عربي)
+                th الصنف (E)
+                th كمية المخزن
                 
-                  td
-                    a(href=`productPage/${product._id}`)
-                      div= product.name
-                 
+                
+                
+                
+            tbody
+              each data,index in warehouseData
+                tr
+                  td= index+1
+                  td= data.brand
+                  td= data.productNameA
+                  td= data.nameA
+                  td= data.nameE
+                  if (place == "warehouse")
+                    td= data.quantitywarehouse01
+                  else if  (place == "shop")
+                    td= data.quantityShop
                   
-                  td= product.qurain
-                  td
-                    img.d-block.w-50(src=product.img[0], style="aspect-ratio: 1 / 1;",  height='80')
