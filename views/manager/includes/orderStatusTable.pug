@@ -1,5 +1,5 @@
 .row 
-  .col.col-lg-2
+  .col.col-lg-6
       table.table.table-sm 
           tbody
               tr
@@ -114,3 +114,22 @@
                         a(href=`../editAny/Order/${orderData._id}/status//${orderData.status?orderData.status:"NaN"}/${typeof orderData.status}/orderPage`)
                           span.badge.text-bg-success
                             i.fa.fa-cog.p-1(aria-hidden='true')
+                if orderData.createdBy.name
+                  tr
+                      th منشئ الطلب
+                      th :
+                      td (#{orderData.createdBy.name}) #{orderData.createdBy.date.toLocaleDateString("en-GB")} 
+
+                if orderData.changeStatusBy[0]
+                  tr
+                      th تاريخ تعديل
+                      th :
+                      td
+                        each change in orderData.changeStatusBy
+                          p #{change.name} - #{change.status} - #{change.date.toLocaleDateString("en-GB")}
+                if orderData.approvedDeletedBy.name
+                  tr
+                      th تاريخ تعديل او حذف
+                      th :
+                      td
+                        p #{orderData.approvedDeletedBy.name} - #{orderData.approvedDeletedBy.status} - #{orderData.approvedDeletedBy.date.toLocaleDateString("en-GB")}
