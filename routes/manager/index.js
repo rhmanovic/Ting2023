@@ -1252,7 +1252,13 @@ router.post("/editAny", mid.requiresSaleseman, function (req, res, next) {
   console.log(x);
 
   arr_update_dict = { $set: {} };
+  
   arr_update_dict["$set"][data.field] = data.value;
+
+  if (data.value == "canceled" || data.value == "processing" || data.value == "deleted") {
+    arr_update_dict["$push"] = { changeStatusBy: { name: req.session.userName, status: data.value} };
+  }
+  
   x.findOneAndUpdate({ _id: data.id }, arr_update_dict)
     .then(function () {
       if (data.returnTo == "productshop") {
@@ -1384,6 +1390,11 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
 
     const updateData = {
       status: "completed",
+
+      approvedDeletedBy: {
+        name: req.session.userName,
+        status: "completed",
+      },
       
       totalPrice: (orderData.inventoryQuantities.reduce((total, qty, index) => {
         return total + (qty * orderData.prices[index]);
@@ -1407,6 +1418,8 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
           $inc: {
             quantityShop: -orderData.inventoryQuantities[index],
             sellcount: orderData.inventoryQuantities[index],
+            
+            
           }
         }
       }
@@ -1533,6 +1546,11 @@ router.post('/returnOrder/:orderId', mid.requiresSaleseman, async function(req, 
 
     const updateData = {
       status: "returned",
+
+      approvedDeletedBy: {
+        name: req.session.userName,
+        status: "completed",
+      },
       
       totalCost: (orderData.inventoryQuantities.reduce((total, qty, index) => {
         return total + (qty * orderData.prices[index]);
@@ -2000,6 +2018,7 @@ router.post("/AddOrder", mid.requiresSaleseman, function (req, res, next) {
   var orderData = {
     invoice: req.body.invoice,
     mobile: req.body.mobile,
+    createdBy: { name: req.session.userName }
   };
   console.log(orderData);
 
