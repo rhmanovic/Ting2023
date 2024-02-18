@@ -17,6 +17,32 @@ const fs = require("fs");
 
 var nodemailer = require("nodemailer");
 
+router.get('/nextOrder/:nextPrevious/:currentOrderId', mid.requiresSaleseman, async function(req, res, next) {
+  const { currentOrderId } = req.params;
+  const { nextPrevious } = req.params;
+
+  
+  if (![1, -1].includes(parseInt(nextPrevious))) {
+    var err = new Error('Invalid parameter for nextPrevious. Must be 1 or -1.');
+    err.status = 400;
+    next(err);
+  }
+  
+  try {
+    const currentOrder = await Order.findById(currentOrderId).exec();
+    const nextOrder = await Order.findOne({ _id: { $gt: currentOrder._id } }).sort({ _id: nextPrevious }).exec();
+    if (nextOrder) {
+      res.redirect(`/manager/orderPage/${nextOrder._id}`);
+    } else {
+      var err = new Error('No next order found.');
+      err.status = 404;
+      next(err);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 router.post('/addPrivateNote/:collection/:productId', mid.requiresSaleseman, async function(req, res, next) {
   const { collection, productId } = req.params;
