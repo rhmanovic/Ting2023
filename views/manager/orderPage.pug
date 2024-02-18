@@ -4,6 +4,11 @@ block content
   .main.container.rtl
     
     h1 تفاصيل الطلب
+
+    a.btn.btn-secondary(href=`/manager/nextOrder/1/${orderData._id}`).mx-2 الطلب التالي
+    a.btn.btn-secondary(href=`/manager/nextOrder/-1/${orderData._id}`).mx-2 الطلب السابق
+
+    
     include ./includes/orderStatusTable.pug
 
     if (orderData.status != "canceled") 
