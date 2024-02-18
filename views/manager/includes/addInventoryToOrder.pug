@@ -11,7 +11,7 @@
         label(for='price') السعر:
         input.form-control(type='number' name='price' step='0.001' required)
     
-      input#myInput(type='text' onkeyup='myFunction()' placeholder='ابحث ...' title='Type in a name').mb-2
+      
       
       ul.list-group.px-0#myUL(style='max-height: 300px; overflow-y: auto;').border.border-success
         each item, index in inventoryData
@@ -21,6 +21,9 @@
               | #{item.productNameA} -
               | #{item.nameA} -
               | #{item.brand}
+
+      input#myInput(type='text' onkeyup='myFunction()' placeholder='ابحث ...' title='Type in a name').mb-2
+      
       script.
         function myFunction() {
           const input = document.getElementById("myInput");
