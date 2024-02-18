@@ -5,8 +5,9 @@ block content
     
     h1 تفاصيل الطلب
 
-    a.btn.btn-secondary(href=`/manager/nextOrder/1/${orderData._id}`).mx-2 الطلب التالي
-    a.btn.btn-secondary(href=`/manager/nextOrder/-1/${orderData._id}`).mx-2 الطلب السابق
+    a.btn.btn-outline-primary(href=`/manager/nextOrder/1/${orderData._id}`).mx-2 الطلب التالي
+    a.btn.btn-outline-secondary(href=`/manager/order/2`).mx-2 الطلبات
+    a.btn.btn-outline-primary(href=`/manager/nextOrder/-1/${orderData._id}`).mx-2 الطلب السابق
 
     
     include ./includes/orderStatusTable.pug
