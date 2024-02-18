@@ -33,7 +33,7 @@
                 th :
                 td= `${orderData.mobile}`
                 td  
-                  if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled")
+                  if (orderData.status != "completed" && orderData.status != "returned" && orderData.status != "canceled" || managerNow )
                     a(href=`../editAny/Order/${orderData._id}/mobile//${orderData.mobile?orderData.mobile:"NaN"}/${typeof orderData.mobile}/orderPage`)
                       span.badge.text-bg-success
                         i.fa.fa-cog.p-1(aria-hidden='true')
@@ -133,3 +133,14 @@
                       th :
                       td
                         p #{orderData.approvedDeletedBy.name} - #{orderData.approvedDeletedBy.status} - #{orderData.approvedDeletedBy.date.toLocaleDateString("en-GB")}
+
+      if orderData.img
+        .card.mb-4
+          .card-header.collapsed(data-bs-toggle='collapse' data-bs-target='#collapseInventoryForm2' aria-expanded='false' aria-controls='collapseInventoryForm2')
+            i.fas.fa-angle-down.mx-1
+            | صورة الفاتورة
+          .collapse#collapseInventoryForm2
+            .card-body
+              img(src=`${orderData.img}` alt='Invoice Image')
+        
+  
