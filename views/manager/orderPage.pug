@@ -3,8 +3,7 @@ extends layout
 block content
   .main.container.rtl
     
-    h1 تفاصيل الطلب
-
+    h1 طلب رقم: #{orderData.orderNo}
     a.btn.btn-outline-primary(href=`/manager/nextOrder/1/${orderData._id}`).mx-2 الطلب التالي
     a.btn.btn-outline-secondary(href=`/manager/order/2`).mx-2 الطلبات
     a.btn.btn-outline-primary(href=`/manager/nextOrder/-1/${orderData._id}`).mx-2 الطلب السابق
