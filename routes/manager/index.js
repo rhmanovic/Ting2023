@@ -944,6 +944,9 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
   
   const inventoryID = req.body.inventoryID;
   const updatedData = {
+    productNameA: String(req.body.productNameA),
+    productNameE: String(req.body.productNameE),
+    
     cost: req.body.cost,
     brand: req.body.brand,
     productNo: req.body.productNo,
@@ -958,11 +961,11 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     minShop: req.body.minShop,
     producturl: req.body.producturl,
     warranty: req.body.warranty,
-    productNameA: req.body.productNameA,
-    productNameE: req.body.productNameE,
+    
 
    
   };
+
 
   
 
