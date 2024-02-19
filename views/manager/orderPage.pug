@@ -7,7 +7,9 @@ block content
     a.btn.btn-outline-primary(href=`/manager/nextOrder/1/${orderData._id}`).mx-2 الطلب التالي
     a.btn.btn-outline-secondary(href=`/manager/order/2`).mx-2 الطلبات
     a.btn.btn-outline-primary(href=`/manager/nextOrder/-1/${orderData._id}`).mx-2 الطلب السابق
-
+    
+    if ( orderData.quantity.length > 0)
+      p.text-danger Online
     br
     br
     
@@ -16,7 +18,7 @@ block content
     if (orderData.status != "canceled") 
       include ./includes/orderTable.pug
       
-      if orderData.status != "completed" && orderData.status != "returned"
+      if orderData.status != "completed" && orderData.status != "returned" && orderData.inventoryQuantities.length > 0
         .row.justify-content-evenly.mb-4
           .col-4
             form(action=`/manager/completeOrder/${orderData._id}` method='POST')
@@ -27,9 +29,19 @@ block content
               .d-grid.gap-2
                 button.btn.btn-danger(type='submit') ارجع الطلب
 
+      
 
 
-        include ./includes/addInventoryToOrder.pug
+      include ./includes/addInventoryToOrder.pug
+
+
+      if !orderData.createdBy.name
+        br
+        br
+        h3.mt-4 جدول الطلبات عن طريق الموقع
+        include ./includes/orderTableOld.pug
+        br
+        br
 
     
     include ./includes/orderPrintContact.pug
