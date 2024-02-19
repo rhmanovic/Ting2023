@@ -497,6 +497,9 @@ router.get("/order/:sortTo", mid.requiresSaleseman, function (req, res, next) {
     sortTo = "orderNo";
   }
 
+
+
+  
   Order.find({})
     .sort({ [sortTo]: -1 })
     .exec(function (error, orderData) {
@@ -695,6 +698,47 @@ router.get(
   },
 );
 
+router.get("/orderPage/:orderId/", mid.requiresSaleseman, async function (req, res, next) {
+    const { orderId } = req.params;
+
+
+    // Find the next and previous order IDs based on the current order ID
+    let prevOrder, nextOrder;
+    try {
+
+
+
+      // Find order by ID
+      const orderData = await Order.findById(orderId).exec();
+
+      // Find inventory data for the order
+      const inventoryData = await Inventory.find().exec();
+
+      nextOrder = await Order.findOne({ _id: { $gt: orderId } }, { _id: 1 }).sort({ _id: 1 }).exec();
+      prevOrder = await Order.findOne({ _id: { $lt: orderId } }, { _id: 1 }).sort({ _id: -1 }).exec();
+
+      return res.render("manager/orderPage", {
+        title: "Order Page",
+        orderData: orderData,
+        inventoryData: inventoryData,
+        nextOrder: nextOrder,
+        prevOrder: prevOrder,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+
+
+
+
+  },
+);
+
+
+
+
+
 router.get(
   "/purchasePage/:purchaseId/",
   mid.requiresSaleseman,
@@ -722,6 +766,7 @@ router.get(
   mid.requiresSaleseman,
   function (req, res, next) {
     const { orderId } = req.params;
+    
 
     Order.findOne({ _id: orderId }).exec(function (error, orderData) {
       if (error) {
@@ -742,6 +787,11 @@ router.get(
     });
   },
 );
+
+
+
+
+
 
 router.get( "/productPage/:productId/", mid.requiresSaleseman, async function (req, res, next) {
     const { productId } = req.params;
@@ -1418,6 +1468,13 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
     if (orderData.status == "completed"){      
       throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
     }
+    
+    if (orderData.inventoryQuantities.length == 0){      
+      throw new Error('You can not compelete empty order. لا يمكن اكمال طلب فارغ');
+    }
+
+
+    console.log("kk:" + orderData.inventoryQuantities.length) 
 
     const updateData = {
       status: "completed",
@@ -1426,6 +1483,8 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
         name: req.session.userName,
         status: "completed",
       },
+
+      
       
       totalPrice: (orderData.inventoryQuantities.reduce((total, qty, index) => {
         return total + (qty * orderData.prices[index]);
@@ -1571,9 +1630,13 @@ router.post('/returnOrder/:orderId', mid.requiresSaleseman, async function(req, 
   try {
     const orderData = await Order.findOne({ _id: orderId }).exec();
 
-    // if (orderData.status == "completed"){      
-    //   throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
-    // }
+    if (orderData.status == "returned"){      
+      throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مرجوع. ولا يمكن ارجاعه مرة اخرى');
+    }
+
+    if (orderData.inventoryQuantities.length == 0){      
+      throw new Error('You can not returned empty order. لا يمكن ارجاع طلب فارغ');
+    }
 
     const updateData = {
       status: "returned",
