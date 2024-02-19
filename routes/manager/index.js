@@ -845,8 +845,7 @@ router.post("/addInventoryToOrder", mid.requiresSaleseman, function(req, res, ne
             productNameEs: inventoryData.productNameE,
             producturl: inventoryData.producturl,
             warranties: inventoryData.warranty,
-            productNameA: inventoryData.productNameA,
-            productNameE: inventoryData.productNameE,
+            
             
 
           }
@@ -959,6 +958,10 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     minShop: req.body.minShop,
     producturl: req.body.producturl,
     warranty: req.body.warranty,
+    productNameA: req.body.productNameA,
+    productNameE: req.body.productNameE,
+
+   
   };
 
   
