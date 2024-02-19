@@ -24,16 +24,18 @@ block content
           .row.row-cols-2
             .col-12
               .form-group
-                label(for='productNameA') الاسم
+                label(for='input2') الاسم
                 if managerNow
-                  input#input2.form-control(type='text' name='productNameA' value=inventoryData.productNameA)
+                  input#input3.form-control(type='text' name='productNameA' value=inventoryData.productNameA)
+                  
                 else
                   input#inp
             .col-12
               .form-group
-                label(for='productNameE') الاسم انجليزي
+                label(for='input2') الاسم انجليزي
                 if managerNow
-                  input#input2.form-control(type='text' name='productNameE' value=inventoryData.productNameE)
+                  input#input3.form-control(type='text' name='productNameE' value=inventoryData.productNameE)
+                  
                 else
                   input#inp
             .col
@@ -105,8 +107,7 @@ block content
                   input#input3.form-control(type='text' name='procurecount' value=inventoryData.procurecount)
                   
           input(type='hidden' name='productID' value=inventoryData.productID)
-          input(type='hidden' name='productNameA' value=inventoryData.productNameA)
-          input(type='hidden' name='productNameE' value=inventoryData.productNameE)
+          
           input(type='hidden' name='inventoryID' value=inventoryData._id)
           .d-grid.gap-2
             button.btn.btn-primary.mt-2(type='submit') ارسل
