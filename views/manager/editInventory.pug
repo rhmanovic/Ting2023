@@ -22,6 +22,20 @@ block content
         form(action='../editInventory' method='post').px-1
         
           .row.row-cols-2
+            .col-12
+              .form-group
+                label(for='productNameA') الاسم
+                if managerNow
+                  input#input2.form-control(type='text' name='productNameA' value=inventoryData.productNameA)
+                else
+                  input#inp
+            .col-12
+              .form-group
+                label(for='productNameE') الاسم انجليزي
+                if managerNow
+                  input#input2.form-control(type='text' name='productNameE' value=inventoryData.productNameE)
+                else
+                  input#inp
             .col
               .form-group 
                 label(for='input1') رقم المنتج
