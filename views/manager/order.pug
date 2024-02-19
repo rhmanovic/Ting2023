@@ -37,6 +37,8 @@ block content
                 td
                   a(href=`/manager/orderPage/${order._id}`)
                     div= `${order.orderNo}`
+                  if ( order.quantity.length > 0)
+                    p.text-danger Online
 
                 if order.invoice
                   td= `${order.invoice}`
