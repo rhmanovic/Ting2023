@@ -845,6 +845,8 @@ router.post("/addInventoryToOrder", mid.requiresSaleseman, function(req, res, ne
             productNameEs: inventoryData.productNameE,
             producturl: inventoryData.producturl,
             warranties: inventoryData.warranty,
+            productNameA: inventoryData.productNameA,
+            productNameE: inventoryData.productNameE,
             
 
           }
