@@ -57,7 +57,10 @@ block content
   
                   td
                     a(href=`productPage/${product._id}`)
-                      div= product.name
+                      if product.name
+                        div= product.name
+                      els -
+                      
                   //td= product.name
                   if product.cost
                     td= `${product.cost.toFixed(3)}`
