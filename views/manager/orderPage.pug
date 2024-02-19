@@ -2,11 +2,39 @@ extends layout
 
 block content
   .main.container.rtl
+
+
+    if ( orderData.status == "processing")
+      .alert.alert-dark.col-6
+        | طلب جديد
+    else if ( orderData.status == "canceled")
+      .alert.alert-warning.col-6
+        | طلب ملغي
+    else if ( orderData.status == "returned")
+      .alert.alert-danger.col-6
+        | طلب مرجوع
+    else if ( orderData.status == "completed")
+      .alert.alert-primary.col-6
+        | طلب مكتمل
     
     h1 طلب رقم: #{orderData.orderNo}
-    a.btn.btn-outline-primary(href=`/manager/nextOrder/1/${orderData._id}`).mx-2 الطلب التالي
-    a.btn.btn-outline-secondary(href=`/manager/order/2`).mx-2 الطلبات
-    a.btn.btn-outline-primary(href=`/manager/nextOrder/-1/${orderData._id}`).mx-2 الطلب السابق
+
+    .row
+      .col.px-0
+        if nextOrder
+          a.btn.btn-outline-primary(href=`/manager/orderPage/${nextOrder._id}`).mx-2 التالي
+        else
+          a.btn.btn-outline-light().mx-2 الطلب التالي
+      .col.px-0
+        a.btn.btn-outline-secondary(href=`/manager/order/2`).mx-2 الطلبات
+      .col.px-0
+        form(method='POST' action='/manager/AddOrder')
+          button.btn.btn-outline-danger(type='submit').mx-2 جديد
+      .col.px-0
+        if prevOrder
+          a.btn.btn-outline-primary(href=`/manager/orderPage/${prevOrder._id}`).mx-2 السابق
+  
+    
     
     if ( orderData.quantity.length > 0)
       p.text-danger Online
@@ -18,21 +46,23 @@ block content
     if (orderData.status != "canceled") 
       include ./includes/orderTable.pug
       
-      if orderData.status != "completed" && orderData.status != "returned" && orderData.inventoryQuantities.length > 0
+      if (orderData.status != "completed" && orderData.status != "returned" && orderData.inventoryQuantities.length > 0 || managerNow)
         .row.justify-content-evenly.mb-4
-          .col-4
-            form(action=`/manager/completeOrder/${orderData._id}` method='POST')
-              .d-grid.gap-2
-                button.btn.btn-success(type='submit') اكمل الطلب
-          .col-4
-            form(action=`/manager/returnOrder/${orderData._id}` method='POST')
-              .d-grid.gap-2
-                button.btn.btn-danger(type='submit') ارجع الطلب
-
+          if (orderData.status != "completed")
+            .col-4
+              form(action=`/manager/completeOrder/${orderData._id}` method='POST')
+                .d-grid.gap-2
+                  button.btn.btn-success(type='submit') اكمل الطلب
+          if (orderData.status != "returned")
+            .col-4
+              form(action=`/manager/returnOrder/${orderData._id}` method='POST')
+                .d-grid.gap-2
+                  button.btn.btn-danger(type='submit') ارجع الطلب
+  
       
 
-
-      include ./includes/addInventoryToOrder.pug
+      if (orderData.status != "completed" && orderData.status != "returned" )
+        include ./includes/addInventoryToOrder.pug
 
 
       if !orderData.createdBy.name
