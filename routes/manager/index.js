@@ -14,7 +14,7 @@ var City = require("../../models/city");
 var mid = require("../../middleware");
 const keys = require("../../config/keys");
 const fs = require("fs");
-const sharp = require('sharp');
+
 
 var nodemailer = require("nodemailer");
 
@@ -1124,27 +1124,20 @@ router.post(
       } else {
         if (req.file) {
           const filename = req.file.filename;
-          const filePath = path.join(__dirname, '../../public/img/upload', filename);
-          sharp(filePath)
-            .resize(500)
-            .jpeg({ quality: 80 })
-            .toBuffer()
-            .then(data => fs.writeFileSync(filePath, data))
-            .then(() => {
-              const fileLink = `https://${host}/img/upload/` + filename;
-              console.log("filename");
-              console.log(filename);
-              console.log(fileLink);
-              addLinkImgLingToAny2(
-                data.collection,
-                data.id,
-                data.returnTo,
-                data.field,
-                filename,
-                res,
-              );
-            })
-            .catch(err => console.error(err));
+          const fileLInk = `https://${host}/` + filename;
+          console.log("filename");
+          console.log(filename);
+          console.log(fileLInk);
+          addLinkImgLingToAny2(
+            data.collection,
+            data.id,
+            data.returnTo,
+            data.field,
+            filename,
+            res,
+          );
+
+          // return res.render("manager", { title: '', fileLInk: fileLInk });
         } else {
           res.send(`Error: No file selected`);
         }
