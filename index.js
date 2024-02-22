@@ -52,14 +52,11 @@ const upload = multer({
 }).single('myFile');
 
 
-// connect to mongodb ATLAS
-mongoose.set('strictQuery', false);
-mongoose.connect(keys.mongodb.dbURI, () => { console.log('connected to mongodb') });
+// Establish connection to MongoDB Atlas
+mongoose.connect(keys.mongodb.dbURI)
+  .then(() => console.log('Successfully connected to MongoDB Atlas.'))
+  .catch(err => console.error('Connection to MongoDB Atlas failed:', err));
 
-
-// mongoose.connect(keys.mongodb.dbURI)
-//   .then(() => console.log('connected to mongo'))
-//   .catch((err) => console.log('Connection failed'));
 
 
 
