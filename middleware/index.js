@@ -44,21 +44,19 @@ function requiresSaleseman(req, res, next) {
     var userId = req.session.userId
 
 
-    User.findById(userId).exec(function (error, user) {
-      if (error) {
-        return next(error);
+    User.findById(userId).then(user => {
+      if (user.saleseman) {
+        return next();
+      } else if (user.admin){
+        return next();
       } else {
-        if (user.saleseman) {
-          return next();
-        } else if (user.admin){
-          return next();
-        } else {
-          console.log(user);
-          var err = new Error('هذه الصفحه فقط لموظفين الشرك');
-          err.status = 401;
-          return next(err);
-        }
+        console.log(user);
+        var err = new Error('هذه الصفحه فقط لموظفين الشرك');
+        err.status = 401;
+        return next(err);
       }
+    }).catch(error => {
+      return next(error);
     });
 
   
@@ -69,7 +67,6 @@ function requiresSaleseman(req, res, next) {
   }
 
 }
-
 
 function requiresSubscription(req, res, next) {
   const {id1} = req.params;
