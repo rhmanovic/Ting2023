@@ -14,6 +14,7 @@ var City = require("../../models/city");
 var mid = require("../../middleware");
 const keys = require("../../config/keys");
 const fs = require("fs");
+const sharp = require('sharp');
 
 var nodemailer = require("nodemailer");
 
@@ -279,38 +280,53 @@ router.get("/products", mid.requiresSaleseman, async function (req, res, next) {
   }
 });
 
-router.get("/inventory", mid.requiresSaleseman, function (req, res, next) {
-  Inventory.find({}).exec(function (error, inventoryData) {
-    if (error) {
-      return next(error);
-    } else {
-      return res.render("manager/inventory", {
-        title: "Inventory Management",
-        inventoryData: inventoryData,
-      });
-    }
-  });
+router.get("/inventory", mid.requiresSaleseman, async function (req, res, next) {
+  try {
+    const inventoryData = await Inventory.find({}).exec();
+    const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
+    return res.render("manager/inventory", {
+      title: "Inventory Management",
+      inventoryData: inventoryData,
+      brandData: brandData
+    });
+  } catch (error) {
+    return next(error);
+  }
 });
 
-router.get(
-  "/inventory/:productNo",
-  mid.requiresSaleseman,
-  function (req, res, next) {
-    const { productNo } = req.params;
-    Inventory.find({ productNo: productNo }).exec(
-      function (error, inventoryData) {
-        if (error) {
-          return next(error);
-        } else {
-          return res.render("manager/inventory", {
-            title: "Inventory Management",
-            inventoryData: inventoryData,
-          });
-        }
-      },
-    );
-  },
-);
+router.get( "/inventory/:productNo", mid.requiresSaleseman, async function (req, res, next) {
+  
+  const { productNo } = req.params;
+  try {
+    const inventoryData = await Inventory.find({ productNo: productNo }).exec();
+    const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
+    return res.render('manager/inventory', {
+      title: 'Inventory Management',
+      inventoryData: inventoryData,
+      brandData: brandData
+    });
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+
+router.get('/inventoryForBrand/:brandName', mid.requiresSaleseman, async function(req, res, next) {
+  const { brandName } = req.params;
+
+  try {
+    const inventoryData = await Inventory.find({ brand: brandName }).exec();
+    const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
+    return res.render('manager/inventory', {
+      title: 'Inventory for ' + brandName,
+      inventoryData: inventoryData,
+      brandData: brandData
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/category", mid.requiresSaleseman, function (req, res, next) {
   Category.find({})
@@ -961,6 +977,7 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     min: req.body.min,
     minShop: req.body.minShop,
     producturl: req.body.producturl,
+    VendorItemNo: req.body.VendorItemNo,
     warranty: req.body.warranty,
     
 
@@ -977,7 +994,7 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
         if (error) {
           return next(error);
         } else {
-          res.redirect("/manager/inventory/" + updatedData.productNo);
+          return res.redirect("back");
         }
       },
     );
@@ -1107,20 +1124,27 @@ router.post(
       } else {
         if (req.file) {
           const filename = req.file.filename;
-          const fileLInk = `https://${host}/` + filename;
-          console.log("filename");
-          console.log(filename);
-          console.log(fileLInk);
-          addLinkImgLingToAny2(
-            data.collection,
-            data.id,
-            data.returnTo,
-            data.field,
-            filename,
-            res,
-          );
-
-          // return res.render("manager", { title: '', fileLInk: fileLInk });
+          const filePath = path.join(__dirname, '../../public/img/upload', filename);
+          sharp(filePath)
+            .resize(500)
+            .jpeg({ quality: 80 })
+            .toBuffer()
+            .then(data => fs.writeFileSync(filePath, data))
+            .then(() => {
+              const fileLink = `https://${host}/img/upload/` + filename;
+              console.log("filename");
+              console.log(filename);
+              console.log(fileLink);
+              addLinkImgLingToAny2(
+                data.collection,
+                data.id,
+                data.returnTo,
+                data.field,
+                filename,
+                res,
+              );
+            })
+            .catch(err => console.error(err));
         } else {
           res.send(`Error: No file selected`);
         }
