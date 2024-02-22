@@ -20,8 +20,6 @@ const SiteData = JSON.parse(fs.readFileSync('data/data.json', 'utf8'));
 var mid = require('../middleware'); 
 
 
-
-
 router.get("/changeLanguage", function (req, res) {
 
   
@@ -114,6 +112,7 @@ router.get("/send", function (req, res) {
   });
 });
 
+
 var mid = require("../middleware");
 
 var nodemailer = require("nodemailer");
@@ -129,7 +128,7 @@ router.get("/sitemap2.xml", function (req, res) {
   res.sendFile("/sitemap.xml");
 });
 
-router.get("/invoicePrint/:id", function (req, res, next) {
+router.get("/invoicePrint/:id", async function (req, res, next) {
   const { id } = req.params;
 
   const googleAPI =
@@ -137,17 +136,16 @@ router.get("/invoicePrint/:id", function (req, res, next) {
   const ourLink = `${keys.internal.host}/orderStatus/${id}`;
   const payLink = googleAPI + ourLink;
 
-  Order.findOne({ _id: id }).exec(function (error, orderData) {
-    if (error) {
-      return next(error);
-    } else {
-      return res.render("invoicePrint", {
-        title: `invoice no: ${orderData.orderNo}`,
-        orderData: orderData,
-        payLink: payLink,
-      });
-    }
-  });
+  try {
+    const orderData = await Order.findOne({ _id: id }).exec();
+    return res.render("invoicePrint", {
+      title: `invoice no: ${orderData.orderNo}`,
+      orderData: orderData,
+      payLink: payLink,
+    });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 router.post("/Disc", function (req, res, next) {
@@ -173,7 +171,7 @@ router.get("/sheet", function (req, res, next) {
   });
 });
 
-router.get("/orderReceived", function (req, res, next) {
+router.get("/orderReceived", async function (req, res, next) {
   return res.render("redirect", { title: "Order" });
 });
 
@@ -271,17 +269,17 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.post("/upSellApprove", function (req, res, next) {
+router.post("/upSellApprove", async function (req, res, next) {
   var cartData = req.session.cartData0;
 
   var IDs = [];
   var Names = [];
   var Prices = [];
   var Quantities = [];
-  Warrantys = [];
+  var Warrantys = [];
   var Costs = [];
   var Warranties = [];
-  cartIDs = [];
+  var cartIDs = [];
 
   cartData.forEach(function (product, index, array) {
     Names.push(product.Name);
@@ -296,9 +294,7 @@ router.post("/upSellApprove", function (req, res, next) {
   var orderData = {
     mobile: req.body.mobile,
     note: req.body.color,
-    //'invoice': req.body.invoice,
     address: req.body.address,
-    // 'discount': req.body.discount,
     customerName: req.body.customerName,
     shippingCost: 1.5,
     price: Prices,
