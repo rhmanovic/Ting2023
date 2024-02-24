@@ -105,6 +105,11 @@ block content
                 .form-group
                   label(for='procurecount') عداد البيع
                   input#input3.form-control(type='text' name='procurecount' value=inventoryData.procurecount)
+
+            .col
+              .form-group
+                label(for='input2') رقم المنتج عند المورد
+                  input#input3.form-control(type='text' value=inventoryData.VendorItemNo name="VendorItemNo")
                   
           input(type='hidden' name='productID' value=inventoryData.productID)
           
