@@ -15,6 +15,10 @@ block content
         li
           a(href=`/manager/productPage/${inventoryData[0].productID}`)
             span Produt No: #{inventoryData[0].productNo}
+      .d-flex.flex-wrap
+        each brand in brandData
+           a(href=`/manager/inventoryForBrand/${brand.name}`)
+            .p-2.border.border-dark.mx-1.mb-2= brand.name
 
       .table-responsive     
         table.table.table-hover
@@ -35,6 +39,7 @@ block content
               th عداد الشراء
               th الكفالة
               th هاتف المورد
+              th رقم المنتج عند المورد
               th
           tbody
             - var index = 0
@@ -60,6 +65,7 @@ block content
                   td= item.procurecount
                   td= item.warranty
                   td= item.vendormobile
+                  td= item.VendorItemNo
                   td
                     a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop/${item.producturl}`)
                       .badge.text-bg-success.ms-1
