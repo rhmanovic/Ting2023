@@ -44,7 +44,7 @@ function requiresSaleseman(req, res, next) {
     var userId = req.session.userId
 
 
-    User.findById(userId).then(user => {
+    User.findById(userId).then(function (user) {
       if (user.saleseman) {
         return next();
       } else if (user.admin){
@@ -55,10 +55,9 @@ function requiresSaleseman(req, res, next) {
         err.status = 401;
         return next(err);
       }
-    }).catch(error => {
+    }).catch(function(error) {
       return next(error);
     });
-
   
   } else {
     var err = new Error('الرجاء تسجيل الدخول، فقط فريق العمل من يستطيع الدخول لهذه الصفحة');
@@ -67,6 +66,7 @@ function requiresSaleseman(req, res, next) {
   }
 
 }
+
 
 function requiresSubscription(req, res, next) {
   const {id1} = req.params;
