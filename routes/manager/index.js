@@ -19,6 +19,8 @@ const sharp = require('sharp');
 
 var nodemailer = require("nodemailer");
 
+
+
 router.get('/nextOrder/:nextPrevious/:currentOrderId', mid.requiresSaleseman, async function(req, res, next) {
   const { currentOrderId, nextPrevious } = req.params;
 
@@ -345,16 +347,16 @@ router.get("/category", mid.requiresSaleseman, function (req, res, next) {
     });
 });
 
-router.get("/transferRequest", mid.requiresSaleseman, async (req, res, next) => {
-  try {
-    const requestData = await TransferRequest.find({}).sort({ _id: -1 }).exec();
+router.get("/transferRequest", mid.requiresSaleseman, (req, res, next) => {
+  TransferRequest.find({}).sort({ _id: -1 }).exec((error, requestData) => {
+    if (error) {
+      return next(error);
+    }
     res.render("manager/transferRequest", {
       title: "Transfer Request",
       requestData: requestData
     });
-  } catch (error) {
-    next(error);
-  }
+  });
 });
 
 router.get('/approveTransfer/:transferId', mid.requiresSaleseman, function(req, res, next) {
@@ -507,33 +509,27 @@ router.get("/purchase", mid.requiresSaleseman, async function (req, res, next) {
 
 
 router.get("/order/:sortTo", mid.requiresSaleseman, function (req, res, next) {
-  const { sortTo } = req.params;
-  let sortOrder;
+  var { sortTo } = req.params;
 
-  switch (sortTo) {
-    case '1':
-      sortOrder = { invoice: -1 };
-      break;
-    case '2':
-      sortOrder = { orderNo: -1 };
-      break;
-    default:
-      sortOrder = {};
-      break;
+  if (sortTo == 1) {
+    sortTo = "invoice";
+  } else if (sortTo == 2) {
+    sortTo = "orderNo";
   }
 
-  Order.find({}).sort(sortOrder).then((orderData) => {
-    res.render("manager/order", {
-      title: "Order",
-      orderData: orderData,
-    });
-  }).catch((error) => {
-    var err = new Error('An error occurred while fetching orders.');
-    err.status = 500;
-    return next(err);
-  });
-});
 
+
+  
+  Order.find({})
+    .sort({ [sortTo]: -1 })
+    .then(orderData => {
+      return res.render("manager/order", {
+        title: "Order",
+        orderData: orderData,
+      });
+    })
+    .catch(error => next(error));
+});
 
 router.get("/order/:userID", mid.requiresSaleseman, function (req, res, next) {
   const { userID } = req.params;
@@ -935,31 +931,29 @@ router.post("/addInventoryToPurchase", mid.requiresSaleseman, function(req, res,
 router.get(
   "/editInventory/:inventoryID",
   mid.requiresSaleseman,
-  function (req, res, next) {
+  async function (req, res, next) {
     const { inventoryID } = req.params;
 
-    
-
-    Inventory.findOne({ _id: inventoryID }).exec(
-      function (error, inventoryData) {
-        if (error) {
-          return next(error);
-        } else if (!inventoryData) {
-          var err = new Error("Inventory not found.");
-          err.status = 404;
-          return next(err);
-        } else {
-          return res.render("manager/editInventory", {
-            title: "Edit Inventory",
-            inventoryData: inventoryData,
-          });
-        }
-      },
-    );
+    try {
+      const inventoryData = await Inventory.findOne({ _id: inventoryID }).exec();
+      if (!inventoryData) {
+        var err = new Error("Inventory not found.");
+        err.status = 404;
+        throw err;
+      } else {
+        return res.render("manager/editInventory", {
+          title: "Edit Inventory",
+          inventoryData: inventoryData,
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
   },
 );
 
-router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
+
+router.post("/editInventory", mid.requiresSaleseman, async function (req, res, next) {
 
   
   
@@ -984,27 +978,22 @@ router.post("/editInventory", mid.requiresSaleseman, function (req, res, next) {
     producturl: req.body.producturl,
     VendorItemNo: req.body.VendorItemNo,
     warranty: req.body.warranty,
-    
 
    
   };
 
-
     
-    Inventory.findByIdAndUpdate(
-      inventoryID,
-      updatedData,
-      { new: true },
-      function (error, inventory) {
-        if (error) {
-          return next(error);
-        } else {
-          return res.redirect("back");
-        }
-      },
-    );
+    try {
+      await Inventory.findByIdAndUpdate(
+        inventoryID,
+        updatedData,
+        { new: true }
+      );
+      return res.redirect("back");
+    } catch (error) {
+      next(error);
+    }
 });
-
 router.get(
   "/editAny/:collection/:id/:field/:value/:type/:returnTo",
   mid.requiresSaleseman,
@@ -1076,22 +1065,20 @@ router.get(
     };
     console.log(data);
 
+    let resultModel;
     if (data.collection == "Product") {
-      var x = Product;
-    } // is there somesing more todo
-    else if (data.collection == "Category") {
-      var x = Category;
+      resultModel = Product;
+    } else if (data.collection == "Category") {
+      resultModel = Category;
     } else if (data.collection == "Order") {
-      var x = Order;
+      resultModel = Order;
     } else if (data.collection == "Purchase") {
-      var x = Purchase;
+      resultModel = Purchase;
     }
 
     try {
-      const result = await x.findOne({ _id: data.id }).exec();
+      const result = await resultModel.findOne({ _id: data.id }).exec();
       console.log(result);
-
-      //res.redirect(returnLink) // do to my specific product todo
       return res.render("manager/formUploadImage", {
         title: "Upload",
         data: data,
@@ -1099,7 +1086,7 @@ router.get(
         field: data.field,
       });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   },
 );
@@ -2181,26 +2168,30 @@ router.post("/AddPurchase", mid.requiresSaleseman, function (req, res, next) {
 });
 
 // GET /CreateTransferRequest
-router.get('/transferRequestNew/:inventoryID/:from/:to/:url', mid.requiresSaleseman, async function(req, res, next) {
-  const { inventoryID, from, to, url } = req.params;
+router.get('/transferRequestNew/:inventoryID/:from/:to/:url', mid.requiresSaleseman, function(req, res, next) {
+  const { inventoryID } = req.params;
+  const { from } = req.params;
+  const { to } = req.params;
+  const { url } = req.params;
 
-  try {
-    const inventoryData = await Inventory.findOne({ _id: inventoryID }).exec();
-    if (!inventoryData) {
-      throw new Error('Inventory not found.');
+  Inventory.findOne({ _id: inventoryID }).exec(function(error, inventoryData) {
+    if (error) {
+      return next(error);
+    } else if (!inventoryData) {
+      var err = new Error('Inventory not found.');
+      err.status = 404;
+      return next(err);
+    } else {
+      res.render('manager/transferRequestNew', {
+        title: 'New Transfer Request',
+        inventoryData: inventoryData,
+        from: from,
+        to: to,
+        url: url
+      });
     }
-    res.render('manager/transferRequestNew', {
-      title: 'New Transfer Request',
-      inventoryData: inventoryData,
-      from: from,
-      to: to,
-      url: url
-    });
-  } catch (error) {
-    next(error);
-  }
+  });
 });
-
 
 router.post('/transferRequestNew', mid.requiresSaleseman, function(req, res, next) {
   var transferRequestData = {
