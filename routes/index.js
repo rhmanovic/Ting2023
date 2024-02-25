@@ -331,6 +331,28 @@ router.post("/SiteLanguage", mid.requiresAdmin , function (req, res, next) {
   }
 })
 
+router.post('/AddfieldToSiteLanguage', mid.requiresAdmin, function (req, res, next) {
+  const { fieldName } = req.body;
+
+  // Ensure the fieldName is provided
+  if (!fieldName) {
+    return res.status(400).send('Field name is required.');
+  }
+
+  // Add the new field to both English and Arabic sections
+  language.language['en'][fieldName] = '';
+  language.language['ar'][fieldName] = '';
+
+  // Write the updated language object to the language.json file
+  try {
+    fs.writeFileSync('data/language.json', JSON.stringify(language), 'utf8');
+    res.send(`${fieldName} added successfully to SiteLanguage.`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 
 router.post("/SiteData", mid.requiresAdmin , function (req, res, next) {
   const { toedit } = req.query;
