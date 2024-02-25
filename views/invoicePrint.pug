@@ -2,6 +2,23 @@ extends layoutInvoice
 
 block content
   - var total = 0;
+
+  - var websiteLangaue = "ar"
+
+  if choosedLangaue === "ar"
+    - websiteLangaue = "ar"
+  else if choosedLangaue === "en"
+    - websiteLangaue = "en"
+
+
+
+
+  if websiteLangaue === 'ar'
+    - var theLanguage = language.language.ar
+  else if websiteLangaue === 'en'
+    - var theLanguage = language.language.en
+
+    
   main.container.px-0.fw-bold
     
     p.fs-1.text-center.mt-5 فاتورة
@@ -41,12 +58,12 @@ block content
               th هاتف
               th.px-2 :
               td.ltr.d-flex.flex-row-reverse= `${orderData.mobile}`
-            if orderData.KentStatus == "CAPTURED"
+            // if orderData.KentStatus == "CAPTURED"
               tr 
                 th حالة الدفع
                 th.px-2 :
                 td.ltr.d-flex.flex-row-reverse مدفوع كي-نت
-            else
+            // else
               tr 
                 th حالة الدفع
                 th.px-2 :
@@ -57,58 +74,64 @@ block content
         
       .col.ltr
         img(src='/img/upload/myFile-1706093299954.png', alt='ITC', data-purpose='ITC-brand-logo', height='100')
-        p.mt-1 شركة اي تي ستور للتجارة العامة
+        p.mt-1= theLanguage.company
     
-    table.table
-      thead.table-secondary
-        tr
-          //th #
-          th 
-            span اسم المنتج
-            
-          
-          //- th ID
-          th الكفالة (سنة)
-          th الكمية
-          th 
-            span السعر
-            br
-            span د.ك
-          th 
-            span الاجمالي
-            br
-            span د.ك
-          
-      tbody.fw-bold.fs-4
-        each product,index in orderData.productIDs
+    .table-responsive
+      table.table
+        thead.table-secondary
           tr
-            td
-              span= orderData.productNames[index]
-
-            //
-              if orderData.warehouseNo[index]
-                td= orderData.warehouseNo[index]
-              else
-                td -
-            td= orderData.warranty[index]
-            td= orderData.quantity[index]
-            td= orderData.price[index]
-            td= (orderData.price[index] * orderData.quantity[index]).toFixed(3)
-            - total += orderData.price[index] * orderData.quantity[index]
-      tbody.fw-bold.fs-4    
-        tr
-          td
-          td
-          th.table-secondary الشحن          
-          th= orderData.shippingCost
-        tr
-          td
-          td
-          th.table-secondary الاجمالي  
-          - total += orderData.shippingCost
-          th= total.toFixed(3)
-
-
+            th #
+            th اسم المنتج
+            th الصنف
+            th الماركة
+            th الكفالة (سنة)
+            th الكمية
+            th السعر
+            th الاجمالي
+        tbody
+          - var grandTotal = 0
+          each val, index in orderData.inventoryQuantities
+            if val != 0
+              - var total = val * orderData.prices[index]
+              - grandTotal += total
+    
+              tr(style=(val==0 ? 'text-decoration: line-through ; color: gray ' : ''))
+    
+                td= index + 1
+                td= orderData.productNameAs[index]
+                td= orderData.nameAs[index]
+                td= orderData.brands[index]
+                td= orderData.warranties[index]
+    
+    
+                td= val
+    
+                td= orderData.prices[index].toFixed(3)
+                 
+    
+    
+    
+                td= total.toFixed(3)
+  
+        tfoot
+          //tr.table-secondary
+            td(colspan='8')
+          tr
+            td(colspan='6') 
+            td.table-secondary الخصم
+            td.table-secondary= orderData.discount.toFixed(3)
+             
+          tr
+            td(colspan='6') 
+            td.table-secondary التوصيل
+            td.table-secondary= orderData.shippingCost.toFixed(3)
+            
+  
+          tr.table-secondary
+            td(colspan='6') 
+            td الاجمالي
+            td= grandTotal.toFixed(3)
+  
 
     ul
       li البضاعة المباعة ترد وتستبدل خلال 14 يوم.
