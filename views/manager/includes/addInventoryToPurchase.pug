@@ -19,8 +19,10 @@
             label
               input.mx-1(type='radio' name='inventoryID' value=`${item._id}`)
               | #{item.productNameA} -
-              | #{item.nameA} -
-              | #{item.brand}
+              span(style='background-color: yellow') #{item.nameA} -
+              span(style='color: green') #{item.brand} -
+              span(style='color: blue') #{item.VendorItemNo} -
+              span(style='color: red')  (#{item.cost.toFixed(3)})
       script.
         function myFunction() {
           const input = document.getElementById("myInput");
