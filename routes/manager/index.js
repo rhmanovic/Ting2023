@@ -19,6 +19,55 @@ const sharp = require('sharp');
 
 var nodemailer = require("nodemailer");
 
+router.get('/formEditVendorBrands/:vendorId', mid.requiresAdmin, async function(req, res, next) {
+  const { vendorId } = req.params;
+
+  try {
+    const vendorData = await Vendor.findOne({ _id: vendorId }).exec();
+    const brandData = await Brand.find({}).sort({ brandNo: 1 }).exec();
+
+    return res.render('manager/formEditVendorBrands', {
+      title: 'Edit Vendor Brands',
+      vendorData: vendorData,
+      brandData: brandData
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
+router.post('/formEditVendorBrands/:vendorId/:index', mid.requiresAdmin, async function(req, res, next) {
+  const { vendorId, index } = req.params;
+  const { value } = req.body;
+
+  console.log(`Vendor ID: ${vendorId}, Index: ${index}, Value: ${value}`);
+
+  
+  try {
+    arr_update_dict = { $set: {} };
+    arr_update_dict["$set"][`vendorBrands.${index}`] = value;
+
+
+
+    Vendor.findOneAndUpdate(
+      { _id: vendorId },
+      arr_update_dict,
+    ).then(function () {
+      
+      res.redirect(`/manager/vendorPage/${vendorId}`);
+    });
+    
+
+   
+    
+  } catch (error) {
+    next(error);
+  }
+  
+});
+
+
 
 
 router.get('/nextOrder/:nextPrevious/:currentOrderId', mid.requiresSaleseman, async function(req, res, next) {
@@ -153,24 +202,37 @@ router.post("/SiteImages", mid.requiresAdmin, function (req, res, next) {
 const multer = require("multer");
 var path = require("path");
 
-router.get(
-  "/brandPage/:brandId/",
-  mid.requiresSaleseman,
-  function (req, res, next) {
+router.get( "/brandPage/:brandId/", mid.requiresSaleseman, async function (req, res, next) {
     const { brandId } = req.params;
 
-    Brand.findOne({ _id: brandId }).exec(function (error, brandData) {
-      if (error) {
-        return next(error);
-      } else {
-        return res.render("manager/brandPage", {
-          title: "brandPage",
-          brandData: brandData,
-        });
-      }
-    });
+    try {
+      const brandData = await Brand.findOne({ _id: brandId }).exec();
+      return res.render("manager/brandPage", {
+        title: "brandPage",
+        brandData: brandData,
+      });
+    } catch (error) {
+      return next(error);
+    }
   },
 );
+
+router.get("/vendorPage/:vendorId/", mid.requiresSaleseman, async function (req, res, next) {
+    const { vendorId } = req.params;
+
+    try {
+      const vendorData = await Vendor.findOne({ _id: vendorId })
+      return res.render("manager/vendorPage", {
+        title: "Vendor Page",
+        vendorData: vendorData,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
+
 
 router.get(
   "/categoryPage/:categoryId/",
@@ -420,17 +482,16 @@ router.get("/userPage/:userId/", mid.requiresAdmin, function (req, res, next) {
   });
 });
 
-router.get("/vendor", mid.requiresAdmin, function (req, res, next) {
-  Vendor.find({}).exec(function (error, vendorData) {
-    if (error) {
-      return next(error);
-    } else {
-      return res.render("manager/vendor", {
-        title: "Vendor",
-        vendorData: vendorData,
-      });
-    }
-  });
+router.get("/vendor", mid.requiresAdmin, async function (req, res, next) {
+  try {
+    const vendorData = await Vendor.find({}).sort({ vendorNo: 1 }).exec();
+    return res.render("manager/vendor", {
+      title: "Vendor",
+      vendorData: vendorData,
+    });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 
@@ -496,7 +557,7 @@ Inventory.find({ [x]: { $ne: 0 } }).exec(function (error, warehouseData) {
 router.get("/purchase", mid.requiresSaleseman, async function (req, res, next) {
   try {
     const purchaseData = await Purchase.find({}).sort({ _id: -1 }).exec();
-    const vendorData = await Vendor.find({}).exec();
+    const vendorData = await Vendor.find({}).sort({ vendorNo: 1 }).exec();
     return res.render("manager/purchase", {
       title: "Purchase",
       purchaseData: purchaseData,
@@ -504,6 +565,24 @@ router.get("/purchase", mid.requiresSaleseman, async function (req, res, next) {
     });
   } catch (error) {
     return next(error);
+  }
+});
+
+router.get('/purchaseForVendor/:vendorName', mid.requiresSaleseman, async function(req, res, next) {
+  const { vendorName } = req.params;
+
+  try {
+    const purchaseData = await Purchase.find({ vendorName: vendorName }).sort({ _id: -1 }).exec();
+    const vendorData = await Vendor.find({}).sort({ vendorNo: 1 }).exec();
+
+    console.log(vendorData)
+    return res.render('manager/purchase', {
+      title: 'Purchase for ' + vendorName,
+      purchaseData: purchaseData,
+      vendorData: vendorData
+    });
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -761,10 +840,23 @@ router.get(
   mid.requiresSaleseman,
   async function (req, res, next) {
     const { purchaseId } = req.params;
-
+    
     try {
       const purchaseData = await Purchase.findOne({ _id: purchaseId }).exec();
-      const inventoryData = await Inventory.find({}).exec();
+      const vendorData = await Vendor.findOne({ name: purchaseData.vendorName }).select('vendorBrands').exec();
+      
+
+      
+     
+
+      const inventoryData = await Inventory.find({ brand: vendorData.vendorBrands }).exec();
+
+      
+    
+    
+    
+
+    
       
       return res.render("manager/purchasePage", {
         title: "Purchase",
@@ -879,51 +971,43 @@ router.post("/addInventoryToOrder", mid.requiresSaleseman, function(req, res, ne
   });
 });
 
-router.post("/addInventoryToPurchase", mid.requiresSaleseman, function(req, res, next) {
+router.post("/addInventoryToPurchase", mid.requiresSaleseman, async function(req, res, next) {
  
   const { price, inventoryID, quantity, purchaseID } = req.body;
 
-  Inventory.findById(inventoryID).exec(function(error, inventoryData) {
-    if (error) {
-      return next(error);
-    } else if (!inventoryData) {
-      var err = new Error('Inventory not found.');
-      err.status = 404;
-      return next(err);
-    } else {
-      Purchase.findByIdAndUpdate(
-        purchaseID,
-        {
-          $push: {
-            
-            prices: price,
-            inventoryIDs: inventoryID,
-            inventoryQuantities: quantity,
-            
-            nameAs: inventoryData.nameA,
-            nameEs: inventoryData.nameE,
-            productNos: inventoryData.productNo,
-            productIDs: inventoryData.productID,
-            brands: inventoryData.brand,
-            productNameAs: inventoryData.productNameA,
-            productNameEs: inventoryData.productNameE,
-            producturl: inventoryData.producturl,
-            warranties: inventoryData.warranty,
-            
-            
-
-          }
-        },
-        { new: true }
-      ).exec(function(error, order) {
-        if (error) {
-          return next(error);
-        } else {
-          res.redirect('/manager/purchasePage/' + purchaseID);
-        }
-      });
+  try {
+    const inventoryData = await Inventory.findById(inventoryID).exec();
+    if (!inventoryData) {
+      throw new Error('Inventory not found.');
     }
-  });
+
+    await Purchase.findByIdAndUpdate(
+      purchaseID,
+      {
+        $push: {
+          
+          prices: price,
+          inventoryIDs: inventoryID,
+          brands: inventoryData.brand,
+          nameAs: inventoryData.nameA,
+          nameEs: inventoryData.nameE,
+          inventoryQuantities: quantity,
+          warranties: inventoryData.warranty,
+          producturl: inventoryData.producturl,
+          productNos: inventoryData.productNo,
+          productIDs: inventoryData.productID,
+          productNameAs: inventoryData.productNameA,
+          productNameEs: inventoryData.productNameE,
+          
+          
+          
+        }
+      }
+    );
+    res.redirect('/manager/purchasePage/' + purchaseID);
+  } catch (error) {
+    next(error);
+  }
 });
 
 
@@ -1028,24 +1112,16 @@ router.get(
         var y = Category;
       }
 
-      x.findOne({ _id: data.id }).exec(function (error, result) {
-        if (error) {
-          return next(error);
-        } else {
-          y.find({}).exec(function (error, subData) {
-            if (error) {
-              return next(error);
-            } else {
-              return res.render("manager/formEditAny", {
-                title: "Upload",
-                data: data,
-                result: result,
-                subData: subData,
-              });
-            }
+      x.findOne({ _id: data.id }).then(result => {
+        y.find({}).then(subData => {
+          return res.render("manager/formEditAny", {
+            title: "Upload",
+            data: data,
+            result: result,
+            subData: subData,
           });
-        }
-      });
+        }).catch(error => next(error));
+      }).catch(error => next(error));
     } else {
       console.log("xxxcxxx_xxxxx");
       return res.render("manager/formEditAny", { title: "Edit", data: data });
@@ -1279,8 +1355,11 @@ router.post(
     const { id } = req.params;
     const value = req.body.value;
 
+    
+    console.log("____________212");
     console.log(collection);
     console.log(index);
+    console.log(field);
     console.log(id);
     console.log(value);
 
@@ -1295,6 +1374,11 @@ function addDataToAny(collection, id, value, index, dataFiled, res) {
   if (collection == "Product") {
     var x = Product;
     var returnLink = "/manager/productPage/" + id;
+    z = 1;
+  }
+  if (collection == "Vendor") {
+    var x = Vendor;
+    var returnLink = "/manager/vendorPage/" + id;
     z = 1;
   }
   // else if (collection == "Product" && returnTo == "productshop") { var x = Product; var returnLink = '../product/' + id; z = 1 }
@@ -1461,25 +1545,18 @@ router.get("/test", mid.requiresAdmin, function (req, res, next) {
 });
 
 router.post('/approvePaymentPurchaseOrder/:purchaseId', mid.requiresSaleseman, async function(req, res, next) {
-  // Your new code will be implemented here
-  // Use appropriate indentation and follow the existing code style
-  
-  Purchase.findOneAndUpdate(
-    { _id: req.params.purchaseId },
-    { $set: { paymentStatus: true, paymentName: req.session.userName } },
-    { new: true }
-  )
-  .exec(function(error, updatedPurchase) {
-    if (error) {
-      return next(error);
-    } else {
-      console.log('Payment status updated successfully.');
-      res.redirect("back");
-    }
-  });
+  try {
+    const updatedPurchase = await Purchase.findOneAndUpdate(
+      { _id: req.params.purchaseId },
+      { $set: { paymentStatus: true, paymentName: req.session.userName, paymentDate: new Date().getTime() + (3 * 60 * 60 * 1000) } },
+      { new: true }
+    ).exec();
 
-  
-  
+    console.log('Payment status updated successfully.');
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
 });
 
 
@@ -1541,6 +1618,54 @@ router.post('/completeOrder/:orderId', mid.requiresSaleseman, async function(req
     
 
     await Inventory.bulkWrite(writeOperations);
+    
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.post('/completeOrderWithoutInventoryChange/:orderId', mid.requiresSaleseman, async function(req, res, next) {
+  const { orderId } = req.params;
+  try {
+    const orderData = await Order.findOne({ _id: orderId }).exec();
+
+    if (orderData.status == "completed"){      
+      throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مكتمل. ولا يمكن اكماله مرة اخرى');
+    }
+    
+    if (orderData.inventoryQuantities.length == 0){      
+      throw new Error('You can not compelete empty order. لا يمكن اكمال طلب فارغ');
+    }
+
+
+    console.log("kk:" + orderData.inventoryQuantities.length) 
+
+    const updateData = {
+      status: "completed",
+
+      approvedDeletedBy: {
+        name: req.session.userName,
+        status: "completed",
+      },
+
+      
+      
+      totalPrice: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.prices[index]);
+      }, 0) - orderData.discount + orderData.shippingCost).toFixed(3),
+      
+      totalCost: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.inventoryCosts[index]);
+      }, 0)).toFixed(3),
+
+      
+    };
+
+    console.log(updateData);
+
+    await Order.findOneAndUpdate({ _id: orderId }, { $set: updateData });
+
     
     res.redirect("back");
   } catch (error) {
@@ -1699,6 +1824,48 @@ router.post('/returnOrder/:orderId', mid.requiresSaleseman, async function(req, 
     
 
     await Inventory.bulkWrite(writeOperations);
+    
+    res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
+})
+router.post('/returnOrderWithoutInventoryChange/:orderId', mid.requiresSaleseman, async function(req, res, next) {
+  const { orderId } = req.params;
+  try {
+    const orderData = await Order.findOne({ _id: orderId }).exec();
+
+    if (orderData.status == "returned"){      
+      throw new Error('Order is already completed and can not be completed twice. الطلب بالفعل مرجوع. ولا يمكن ارجاعه مرة اخرى');
+    }
+
+    if (orderData.inventoryQuantities.length == 0){      
+      throw new Error('You can not returned empty order. لا يمكن ارجاع طلب فارغ');
+    }
+
+    const updateData = {
+      status: "returned",
+
+      approvedDeletedBy: {
+        name: req.session.userName,
+        status: "completed",
+      },
+      
+      totalCost: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.prices[index]);
+      }, 0) - orderData.discount + orderData.shippingCost).toFixed(3),
+      
+      totalPrice: (orderData.inventoryQuantities.reduce((total, qty, index) => {
+        return total + (qty * orderData.inventoryCosts[index]);
+      }, 0)).toFixed(3),
+
+      
+    };
+
+    console.log(updateData);
+
+    await Order.findOneAndUpdate({ _id: orderId }, { $set: updateData });
+
     
     res.redirect("back");
   } catch (error) {
@@ -2083,20 +2250,19 @@ router.post("/AddCategory", mid.requiresAdmin, function (req, res, next) {
 });
 
 // POST /AddVendor
-router.post("/AddVendor", mid.requiresAdmin, function (req, res, next) {
+router.post("/AddVendor", mid.requiresAdmin, async function (req, res, next) {
   var vendorData = {
     name: req.body.name,
     vendorNo: req.body.vendorNo,
   };
 
-  Vendor.create(vendorData, function (error, theVendor) {
-    if (error) {
-      console.log(error.code);
-      return next(error);
-    } else {
-      res.redirect("vendor");
-    }
-  });
+  try {
+    const theVendor = await Vendor.create(vendorData);
+    res.redirect("vendor");
+  } catch (error) {
+    console.log(error.code);
+    return next(error);
+  }
 });
 // POST /AddBrand
 router.post("/AddBrand", mid.requiresAdmin, function (req, res, next) {
@@ -2150,21 +2316,21 @@ router.post("/AddOrder", mid.requiresSaleseman, function (req, res, next) {
 });
 
 // POST /AddPurchase
-router.post("/AddPurchase", mid.requiresSaleseman, function (req, res, next) {
+router.post("/AddPurchase", mid.requiresSaleseman, async function (req, res, next) {
   var purchaseData = {
     invoice: req.body.invoice,
+    payment_method: req.body.payment_method,
     vendorID: req.body.vendor.split("#")[0],
     vendorName: req.body.vendor.split("#")[1], 
   };
 
-  Purchase.create(purchaseData, function (error, thePurchase) {
-    if (error) {
-      console.log(error.code);
-      return next(error);
-    } else {
-      res.redirect("purchasePage/" + thePurchase._id);
-    }
-  });
+  try {
+    const thePurchase = await Purchase.create(purchaseData);
+    res.redirect("purchasePage/" + thePurchase._id);
+  } catch (error) {
+    console.log(error.code);
+    next(error);
+  }
 });
 
 // GET /CreateTransferRequest
