@@ -58,7 +58,19 @@ block content
               form(action=`/manager/returnOrder/${orderData._id}` method='POST')
                 .d-grid.gap-2
                   button.btn.btn-danger(type='submit') ارجع الطلب
-  
+        if managerNow       
+          .row.justify-content-evenly.mb-4
+            if (orderData.status != "completed")
+              .col-4
+                form(action=`/manager/completeOrderWithoutInventoryChange/${orderData._id}` method='POST')
+                  .d-grid.gap-2
+                    button.btn.btn-success(type='submit') اكمل الطلب بدون تعديل المخزون
+            if (orderData.status != "returned")
+              .col-4
+                form(action=`/manager/returnOrderWithoutInventoryChange/${orderData._id}` method='POST')
+                  .d-grid.gap-2
+                    button.btn.btn-danger(type='submit') ارجع الطلب بدون تعديل المخزون
+    
       
 
       if (orderData.status != "completed" && orderData.status != "returned" )
