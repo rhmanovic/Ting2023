@@ -8,79 +8,83 @@ block content
       .text-center.mb-4
         h1.fs-1.text-center ادارة المخزون
 
+
        
-            
-      ul.fs-2
-        li Product: #{inventoryData[0].productNameA}
-        li
-          a(href=`/manager/productPage/${inventoryData[0].productID}`)
-            span Produt No: #{inventoryData[0].productNo}
+      // if inventoryData.length > 0
+        ul.fs-2
+          li Product: #{inventoryData[0].productNameA}
+          li
+            a(href=`/manager/productPage/${inventoryData[0].productID}`)
+              span Produt No: #{inventoryData[0].productNo}
       .d-flex.flex-wrap
         each brand in brandData
            a(href=`/manager/inventoryForBrand/${brand.name}`)
             .p-2.border.border-dark.mx-1.mb-2= brand.name
 
-      .table-responsive     
-        table.table.table-hover
-          thead
-            tr
-              th #
-              th
-              th الماركة
-              th الاسم
-              th التكلفة
-              th الصنف (عربي)
-              th الصنف (E)
-              th كمية المحل
-              th كمية المخزن
-              th اقل كمية (المحل)
-              th اقل كمية
-              th عداد البيع
-              th عداد الشراء
-              th الكفالة
-              th هاتف المورد
-              th رقم المنتج عند المورد
-              th
-          tbody
-            - var index = 0
-            each item in inventoryData
-              
-                - index += 1
-                tr
-                  td= index
-                  td
-                    a(href=`/manager/editInventory/${item._id}`)
-                      span.badge.text-bg-success.mx-1
-                        i.fa.fa-cog(aria-hidden='true')
-                  td= item.brand
-                  td= item.productNameA
-                  td= item.cost
-                  td= item.nameA
-                  td= item.nameE
-                  td= item.quantityShop
-                  td= item.quantitywarehouse01
-                  td= item.minShop
-                  td= item.min
-                  td= item.sellcount
-                  td= item.procurecount
-                  td= item.warranty
-                  td= item.vendormobile
-                  td= item.VendorItemNo
-                  td
-                    a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop/${item.producturl}`)
-                      .badge.text-bg-success.ms-1
-                        span اطلب من
-                        br
-                        span المخزن
-                  td
-                    a(href=`/manager/transferRequestNew/${item._id}/quantityShop/quantitywarehouse01/${item.producturl}`)
-                      .badge.text-bg-primary.ms-1
-                        span ارسل 
-                        br
-                        span للمخزن
-                  td
-                    a(href=`/manager/xxxxx/${item._id}`)
-                      .badge.text-bg-success.ms-1
-                        span اطلب من
-                        br
-                        span المورد
+      if inventoryData.length > 0
+        .table-responsive     
+          table.table.table-hover
+            thead
+              tr
+                th #
+                th
+                th الماركة
+                th الاسم
+                th التكلفة
+                th الصنف (عربي)
+                th الصنف (E)
+                th كمية المحل
+                th كمية المخزن
+                th اقل كمية (المحل)
+                th اقل كمية
+                th عداد البيع
+                th عداد الشراء
+                th الكفالة
+                th هاتف المورد
+                th رقم المنتج عند المورد
+                th
+            tbody
+              - var index = 0
+              each item in inventoryData
+                
+                  - index += 1
+                  tr
+                    td= index
+                    td
+                      a(href=`/manager/editInventory/${item._id}`)
+                        span.badge.text-bg-success.mx-1
+                          i.fa.fa-cog(aria-hidden='true')
+                    td= item.brand
+                    td= item.productNameA
+                    td= item.cost
+                    td= item.nameA
+                    td= item.nameE
+                    td= item.quantityShop
+                    td= item.quantitywarehouse01
+                    td= item.minShop
+                    td= item.min
+                    td= item.sellcount
+                    td= item.procurecount
+                    td= item.warranty
+                    td= item.vendormobile
+                    td= item.VendorItemNo
+                    td
+                      a(href=`/manager/transferRequestNew/${item._id}/quantitywarehouse01/quantityShop/${item.producturl}`)
+                        .badge.text-bg-success.ms-1
+                          span اطلب من
+                          br
+                          span المخزن
+                    td
+                      a(href=`/manager/transferRequestNew/${item._id}/quantityShop/quantitywarehouse01/${item.producturl}`)
+                        .badge.text-bg-primary.ms-1
+                          span ارسل 
+                          br
+                          span للمخزن
+                    td
+                      a(href=`/manager/xxxxx/${item._id}`)
+                        .badge.text-bg-success.ms-1
+                          span اطلب من
+                          br
+                          span المورد
+      else
+        h1 No Products
