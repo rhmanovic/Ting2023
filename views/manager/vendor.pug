@@ -32,7 +32,9 @@ block content
             each vendor,index in vendorData
               tr
                 th(scope='row')= vendor.vendorNo
-                td= `${vendor.name}`
+                td
+                  a(href=`/manager/vendorPage/${vendor._id}`)
+                    div= `${vendor.name}`
                 //- td= `${category._id}`
                 td
                     a(href=`deletVendor/${vendor._id}`)
