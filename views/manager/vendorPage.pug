@@ -1,0 +1,56 @@
+extends layout
+
+block content
+
+  .main.container
+    h1 Vendor Details Page
+
+    .row
+      h3 Vendor Information
+        if vendorData
+          .col.col-lg-2
+          
+            table.table.table-sm 
+              tbody
+                tr
+                  th ID
+                  th :
+                  td= `${vendorData._id}`
+                  td
+                tr
+                  th Number
+                  th :
+                  td= `${vendorData.vendorNo}`
+                  td 
+                    a(href=`../editAny/Vendor/${vendorData._id}/vendorNo//${vendorData.vendorNo?vendorData.vendorNo:"NaN"}/${typeof vendorData.vendorNo}/vendorPage`)
+                      span.badge.text-bg-success Edit
+                tr
+                  th Name
+                  th :
+                  td= `${vendorData.name}`
+                  td 
+                    a(href=`../editAny/Vendor/${vendorData._id}/name//${vendorData.name?vendorData.name:"NaN"}/${typeof vendorData.name}/vendorPage`)
+                      span.badge.text-bg-success Edit
+                tr
+                  th Mobile
+                  th :
+                  td= `${vendorData.mobile}`
+                  td 
+                    a(href=`../editAny/Vendor/${vendorData._id}/mobile//${vendorData.mobile?vendorData.mobile:"NaN"}/${typeof vendorData.mobile}/vendorPage`)
+                      span.badge.text-bg-success Edit
+                tr
+                  th Brands
+                  th :
+                  if vendorData.vendorBrands[0]
+                    th
+                      ul
+                        each brand, index in vendorData.vendorBrands
+                          li= brand
+                  else
+                    th -
+                  td 
+                    a(href=`../formEditVendorbrands/${vendorData._id}`)
+                      span.badge.text-bg-success
+                        i.fa.fa-cog.p-1(aria-hidden='true')
+
+    pre= JSON.stringify(vendorData, null, 2)
