@@ -130,7 +130,7 @@ block content
           tr.table-secondary
             td(colspan='6') 
             td الاجمالي
-            td= grandTotal.toFixed(3)
+            td= (grandTotal-orderData.discount+rderData.shippingCost).toFixed(3)
   
 
     ul
