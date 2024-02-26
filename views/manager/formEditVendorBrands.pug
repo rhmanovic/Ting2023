@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  .container
+    h1 Edit the Vendor (#{vendorData.name})
+
+    - var indexGlobal = 0
+    h2= `Vendor Brand: ${indexGlobal}`
+    if vendorData.vendorBrands
+      each brand, index in vendorData.vendorBrands
+        p brand: #{brand}, index: #{index}
+        - indexGlobal = index + 1
+        - action = `/manager/formEditVendorBrands/${vendorData._id}/${index}`
+        form(method='POST' action=action)
+          select.form-control(name='value')
+              each brand, index in brandData
+                option(value=brand.name)= brand.name
+          button.btn.btn-primary(type='submit') Update
+      
+
+    
+
+    - action = `/manager/formEditVendorBrands/${vendorData._id}/${indexGlobal}`
+      form(method='POST' action=action)
+        .form-group
+          label(for='brand') Select Brand, index: #{indexGlobal}
+          select.form-control(name='value')
+            each brand, index in brandData
+              option(value=brand.name)= brand.name
+        button.btn.btn-primary(type='submit') Update
