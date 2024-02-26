@@ -3,13 +3,20 @@ extends layout
 block content
 
   .main.container
-    h1.text-center المشتريات
 
+    h1.text-center
+      a(href="/manager/purchase").text-center المشتريات
+
+    
+    .d-flex.flex-wrap
+      each vendor in vendorData
+         a(href=`/manager/purchaseForVendor/${vendor.name}`)
+          .p-2.border.border-dark.mx-1.mb-2= vendor.name
 
     form(method='POST' action='/manager/AddPurchase')
       .row
         .col
-          input.form-control(type='text', name='invoice', placeholder='رقم فاتورة المورد' required)
+          input.form-control(type='text', name='invoice', placeholder='رقم فاتورة المورد' )
         .col
           select.form-control.form-select(name='vendor', placeholder='المورد', required)
             option(value='', disabled, selected) -- اختر المورد --
@@ -50,10 +57,7 @@ block content
               else
                 td
               
-              if purchase.mobile
-                td= `${purchase.mobile}`
-              else
-                td
+              td= purchase.payment_method
                 
                 
                 
