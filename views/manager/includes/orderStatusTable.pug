@@ -137,6 +137,16 @@
             | صورة الفاتورة
           .collapse#collapseInventoryForm3
             .card-body.p-0
-              img(src=`${orderData.img}` alt='Invoice Image' style='max-width: 100%; height: auto;')
+              .d-flex.justify-content-center.align-items-center
+                img(src=`${orderData.img}` alt='Invoice Image' style='max-width: 90%; height: auto;')
+                button.btn.btn-secondary.ms-2(onclick='rotateImage()') Rotate 90°
+              script.
+                function rotateImage() {
+                  const img = document.querySelector('.card-body img');
+                  let angle = img.getAttribute('data-angle') || 0;
+                  angle = (parseInt(angle) + 90) % 360;
+                  img.style.transform = `rotate(${angle}deg)`;
+                  img.setAttribute('data-angle', angle);
+                }
         
   
