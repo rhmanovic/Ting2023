@@ -4,12 +4,15 @@
       h2 اضف منتج
 
     .card-body
-      .form-group.mb-2
-        label(for='quantity') الكمية:
-        input.form-control(type='number' name='quantity' required)
-      .form-group.mb-4
-        label(for='price') السعر:
-        input.form-control(type='number' name='price' step='0.001' required)
+      .row
+        .col-md-6.mb-2
+          .form-group
+            label(for='quantity') الكمية:
+            input.form-control(type='number' name='quantity' required)
+        .col-md-6.mb-4
+          .form-group
+            label(for='price') السعر:
+            input.form-control(type='number' name='price' step='0.001' required)
     
       input#myInput(type='text' onkeyup='myFunction()' placeholder='ابحث ...' title='Type in a name').mb-2
       
