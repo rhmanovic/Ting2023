@@ -54,7 +54,11 @@
             tr
               th رقم الفاتورة
               th :
-              td= purchaseData.invoice
+              td #{purchaseData.invoice}
+              td
+                a(href=`../editAny/Purchase/${purchaseData._id}/invoice/${purchaseData.invoice}/string/purchasePage`) 
+                  span.badge.text-bg-success.mx-1
+                    i.fa.fa-cog(aria-hidden='true')
             tr
               th حالة الاستلام
               th :
