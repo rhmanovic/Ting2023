@@ -1192,9 +1192,11 @@ router.post(
         if (req.file) {
           const filename = req.file.filename;
           const filePath = path.join(__dirname, '../../public/img/upload', filename);
+          const outputFormat = path.extname(filename).toLowerCase().match(/\.png|\.gif$/) ? path.extname(filename).toLowerCase().slice(1) : 'jpeg';
           sharp(filePath)
+            .rotate() // Ensure the image is not rotated
             .resize(500)
-            .jpeg({ quality: 80 })
+            .toFormat(outputFormat, { quality: 90 })
             .toBuffer()
             .then(data => fs.writeFileSync(filePath, data))
             .then(() => {
