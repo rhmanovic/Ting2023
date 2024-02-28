@@ -1,4 +1,95 @@
-purchaseData.img
+.row 
+  .col.col-lg-4
+      table.table.table-sm 
+          tbody
+            tr
+              th صورة الفاتورة
+              th :
+              if purchaseData.img
+                td 
+                  a(href=`${purchaseData.img}`) رابط الصورة
+              else
+                td -
+              td 
+                a(href=`../uploadImage/Purchase/${purchaseData._id}/purchasePage/img`)
+                  span.badge.text-bg-success
+                    i.fa.fa-upload.p-1(aria-hidden='true')
+            tr
+              th وصل الدفع
+              th :
+              if purchaseData.receiptimg
+                td 
+                  a(href=`${purchaseData.receiptimg}`) رابط الصورة
+              else
+                td -
+              td 
+                a(href=`../uploadImage/Purchase/${purchaseData._id}/purchasePage/receiptimg`)
+                  span.badge.text-bg-success
+                    i.fa.fa-upload.p-1(aria-hidden='true')
+            tr
+              th
+                p وصل كي-نت
+                p (في حال الكاش صور الفاتورة الاصلية مع الكتابة على الفاتورة)   
+              th :
+              if purchaseData.knetimg
+                td 
+                  a(href=`${purchaseData.knetimg}`) رابط الصورة
+              else
+                td -
+              td 
+                a(href=`../uploadImage/Purchase/${purchaseData._id}/purchasePage/knetimg`)
+                  span.badge.text-bg-success
+                    i.fa.fa-upload.p-1(aria-hidden='true')
+            
+            tr
+              th طريقة الدفع
+              th :
+              td= purchaseData.payment_method
+              
+            tr
+              th رقم طلب الشراء
+              th :
+              td= purchaseData.purchaseNo
+            
+            tr
+              th رقم الفاتورة
+              th :
+              td #{purchaseData.invoice}
+              td
+                a(href=`../editAny/Purchase/${purchaseData._id}/invoice/${purchaseData.invoice}/string/purchasePage`) 
+                  span.badge.text-bg-success.mx-1
+                    i.fa.fa-cog(aria-hidden='true')
+            tr
+              th حالة الاستلام
+              th :
+              if (purchaseData.receivingStatus == "received")
+                td تم الاستلام بتاريخ #{purchaseData.receivingDate.toLocaleDateString("en-GB")} (#{purchaseData.receivingName})
+              if (purchaseData.receivingStatus == "returned")
+                td تم الارجاع بتاريخ #{purchaseData.receivingDate.toLocaleDateString("en-GB")} (#{purchaseData.receivingName})
+              if (purchaseData.receivingStatus == "processing")
+                td جار المعالجة 
+              
+            
+            tr
+              th حالة الدفع
+              th :
+              if purchaseData.paymentStatus
+                td تم الدفع بتاريخ #{purchaseData.paymentDate.toLocaleDateString("en-GB")} (#{purchaseData.paymentName})
+              else
+                td لم يتم الدفع
+            
+            tr
+              th تاريخ انشاء الطلب
+              th :
+              td= `${purchaseData.time.toLocaleDateString("en-GB")}`
+            tr
+              th المورد
+              th :
+              td= `${purchaseData.vendorName}`
+
+
+
+      if purchaseData.img
         .card.mb-4
           .card-header.collapsed(data-bs-toggle='collapse' data-bs-target='#collapseInventoryForm3' aria-expanded='false' aria-controls='collapseInventoryForm2')
             i.fas.fa-angle-down.mx-1
@@ -7,12 +98,3 @@ purchaseData.img
             .card-body.p-0
               .d-flex.justify-content-center.align-items-center
                 img(src=`${purchaseData.img}` alt='Invoice Image' style='max-width: 90%; height: auto;')
-                button.btn.btn-secondary.ms-2(onclick='rotateImage()') Rotate 90°
-              script.
-                function rotateImage() {
-                  const img = document.querySelector('.card-body img');
-                  let angle = img.getAttribute('data-angle') || 0;
-                  angle = (parseInt(angle) + 90) % 360;
-                  img.style.transform = `rotate(${angle}deg)`;
-                  img.setAttribute('data-angle', angle);
-                }
