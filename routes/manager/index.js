@@ -1195,27 +1195,31 @@ router.post(
           const filename = req.file.filename;
           const filePath = path.join(__dirname, '../../public/img/upload', filename);
           const outputFormat = path.extname(filename).toLowerCase().match(/\.png|\.gif$/) ? path.extname(filename).toLowerCase().slice(1) : 'jpeg';
-          sharp(filePath)
-            .rotate() // Ensure the image is not rotated
-            .resize(500)
-            .toFormat(outputFormat, { quality: 100 })
-            .toBuffer()
-            .then(data => fs.writeFileSync(filePath, data))
-            .then(() => {
-              const fileLink = `https://${host}/img/upload/` + filename;
-              console.log("filename");
-              console.log(filename);
-              console.log(fileLink);
-              addLinkImgLingToAny2(
-                data.collection,
-                data.id,
-                data.returnTo,
-                data.field,
-                filename,
-                res,
-              );
-            })
-            .catch(err => console.error(err));
+          fs.stat(filePath, (err, stats) => {
+            if (err) return console.error(err);
+            if (stats.size >= 500000) {
+              sharp(filePath)
+                .rotate() // Ensure the image is not rotated
+                .toFormat(outputFormat, { quality: 80 })
+                .toBuffer()
+                .then(data => fs.writeFileSync(filePath, data))
+                .then(() => {
+                  const fileLink = `https://${host}/img/upload/` + filename;
+                  console.log("filename");
+                  console.log(filename);
+                  console.log(fileLink);
+                  addLinkImgLingToAny2(
+                    data.collection,
+                    data.id,
+                    data.returnTo,
+                    data.field,
+                    filename,
+                    res,
+                  );
+                })
+                .catch(err => console.error(err));
+            }
+          });
         } else {
           res.send(`Error: No file selected`);
         }
