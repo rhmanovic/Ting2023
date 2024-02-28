@@ -1104,6 +1104,8 @@ router.get(
         var x = Category;
       } else if (data.collection == "Inventory") {
         var x = Inventory;
+      } else if (data.collection == "Purchase") {
+        var x = Purchase;
       }
 
       if (data.field == "brand") {
@@ -1196,7 +1198,7 @@ router.post(
           sharp(filePath)
             .rotate() // Ensure the image is not rotated
             .resize(500)
-            .toFormat(outputFormat, { quality: 90 })
+            .toFormat(outputFormat, { quality: 100 })
             .toBuffer()
             .then(data => fs.writeFileSync(filePath, data))
             .then(() => {
@@ -1430,6 +1432,8 @@ router.post("/editAny", mid.requiresSaleseman, function (req, res, next) {
     var x = User;
   } else if (data.collection == "Inventory") {
     var x = Inventory;
+  } else if (data.collection == "Purchase") {
+    var x = Purchase;
   }
 
   if (data.field == "category") {
