@@ -160,6 +160,22 @@ router.post('/updateOrderLine/:field/:orderId/:index', mid.requiresSaleseman, as
   }
 });
 
+router.post('/updatePurchaseLine/:field/:purchaseId/:index', mid.requiresSaleseman, async function(req, res, next) {
+  const { field, purchaseId, index } = req.params;
+  const { value } = req.body;
+
+  try {
+    const update = { $set: {} };
+    update.$set[`${field}.${index}`] = parseFloat(value);
+
+    await Purchase.findByIdAndUpdate(purchaseId, update);
+
+    res.redirect(`/manager/purchasePage/${purchaseId}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 router.post("/SiteImages", mid.requiresAdmin, function (req, res, next) {
   const { toedit } = req.query;
@@ -1506,6 +1522,8 @@ router.post("/editOrder", mid.requiresSaleseman, function (req, res, next) {
     return res.redirect("back");
   });
 });
+
+
 
 router.get("/city", mid.requiresSaleseman, function (req, res, next) {
   City.find({}).exec(function (error, cityData) {
