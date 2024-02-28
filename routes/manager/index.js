@@ -1197,7 +1197,20 @@ router.post(
           const outputFormat = path.extname(filename).toLowerCase().match(/\.png|\.gif$/) ? path.extname(filename).toLowerCase().slice(1) : 'jpeg';
           fs.stat(filePath, (err, stats) => {
             if (err) return console.error(err);
-            if (stats.size >= 500000) {
+            if (stats.size < 500000) {
+              const fileLink = `https://${host}/img/upload/` + filename;
+              console.log("filename");
+              console.log(filename);
+              console.log(fileLink);
+              addLinkImgLingToAny2(
+                data.collection,
+                data.id,
+                data.returnTo,
+                data.field,
+                filename,
+                res,
+              );
+            } else {
               sharp(filePath)
                 .rotate() // Ensure the image is not rotated
                 .toFormat(outputFormat, { quality: 80 })
