@@ -20,3 +20,7 @@ const jsQR = require('jsqr');
 const sharp = require('sharp');
 
 var nodemailer = require("nodemailer");
+
+
+
+module.exports = router;
