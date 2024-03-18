@@ -31,6 +31,16 @@ block content
           button.btn.btn-primary(type='submit') طلب شراء جديد
 
     
+    - let totalAmount = purchaseData.reduce((acc, purchase) => acc + parseFloat(purchase.totalPrice), 0)
+    - let unpaidAmount = purchaseData.filter(purchase => !purchase.paymentStatus).reduce((acc, purchase) => acc + parseFloat(purchase.totalPrice), 0)
+    .row.justify-content-end
+      .col-auto
+        .alert.alert-info.text-end مجموع الاجمالي: #{totalAmount}
+      .col-auto
+        .alert.alert-warning.text-end مجموع غير المدفوع: #{unpaidAmount}
+      .col-auto
+        .alert.alert-success.text-end مجموع المدفوع: #{totalAmount-unpaidAmount}
+    
     .table-responsive
       table.table.table-bordered
         thead
