@@ -25,10 +25,6 @@ var nodemailer = require("nodemailer");
 
 
 
-// Schedule a task to run every day at 2 PM GMT+3
-const schedule = require('node-schedule');
-
-
 
 // Route to get Catalogue Barcode
 router.get('/CatalogueBarcode', mid.requiresSaleseman, async function(req, res, next) {
