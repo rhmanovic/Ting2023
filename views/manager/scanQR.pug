@@ -1,0 +1,129 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title QR Code Scanner
+    script(src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js")
+    style.
+      /* CSS styles for the barcode scanning interface */
+      #videoContainer {
+          position: relative;
+          width: 100%;
+          max-width: 400px;
+      }
+
+      #videoElement {
+          width: 100%;
+          height: auto;
+      }
+
+      #result {
+          margin-top: 20px;
+          padding: 10px;
+          width: 100%;
+          border: 1px solid #ccc;
+      }
+
+      #detectionArea {
+          position: absolute;
+          border: 2px solid red;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 50%; /* Adjust the width of the detection area */
+          aspect-ratio: 1 / 1;
+          pointer-events: none; /* Ensure the detection area doesn't intercept clicks */
+          z-index: 1; /* Ensure the detection area is above the video */
+      }
+  body
+    #videoContainer
+      video#videoElement(autoplay, playsinline)
+      input#result(type="text", placeholder="Scanned QR Code")
+      div#detectionArea
+    button#scanButton Scan QR Code
+
+    // Paragraph to display the size of the QR code area
+    p#qrCodeSize
+    // Paragraph to display the size of the detection area
+    p#detectionAreaSize
+    // Paragraph to display the ratio of QR code area to detection area
+    p#ratio
+
+  script.
+    // Function to initialize the camera access and QR code scanning process
+    function startScanner() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(function(stream) {
+                // Display the camera stream in the video element
+                const videoElement = document.getElementById('videoElement');
+                videoElement.srcObject = stream;
+
+                // Initialize the QR code scanner
+                const scanner = setInterval(function() {
+                    // Capture a frame from the video stream
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = videoElement.videoWidth;
+                    canvas.height = videoElement.videoHeight;
+                    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                    // Decode the QR code from the captured frame
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                    // If a QR code is detected within the detection area, display the result in the input field
+                    if (code && isInDetectionArea(code.location)) {
+                        console.log("Detected QR code:", code.data);
+                        console.log("QR code area:", calculateQRCodeArea(code.location));
+                        console.log("Detection area:", calculateDetectionArea());
+                        const qrCodeArea = calculateQRCodeArea(code.location);
+                        const detectionArea = calculateDetectionArea();
+                        document.getElementById('qrCodeSize').innerText = "QR Code Area: " + qrCodeArea;
+                        document.getElementById('detectionAreaSize').innerText = "Detection Area: " + detectionArea;
+                        document.getElementById('ratio').innerText = "Ratio (QR Code Area / Detection Area): " + (qrCodeArea / detectionArea).toFixed(2);
+                        const ratio = qrCodeArea / detectionArea;
+                        document.getElementById('ratio').innerText = "Ratio (QR Code Area / Detection Area): " + ratio.toFixed(2);
+                        if (ratio > 0.45) {
+                          document.getElementById('result').value = code.data;
+                          clearInterval(scanner); // Stop the scanning process
+                          stream.getTracks().forEach(track => track.stop()); // Stop the camera stream
+                        }
+                    }
+                }, 100);
+            })
+            .catch(function(error) {
+                console.error('Error accessing camera:', error);
+            });
+    }
+
+    // Function to calculate the detection area
+    function calculateDetectionArea() {
+        const detectionArea = document.getElementById('detectionArea').getBoundingClientRect();
+        return detectionArea.width * detectionArea.height;
+    }
+
+    // Function to check if a point is within the detection area
+    function isInDetectionArea(location) {
+        const detectionArea = document.getElementById('detectionArea').getBoundingClientRect();
+        const minX = detectionArea.left;
+        const minY = detectionArea.top;
+        const maxX = minX + detectionArea.width;
+        const maxY = minY + detectionArea.height;
+        const point = location.topLeftCorner;
+        return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
+    }
+
+    // Function to calculate the area of the QR code bounding box
+    function calculateQRCodeArea(location) {
+        const width = location.bottomRightCorner.x - location.topLeftCorner.x;
+        const height = location.bottomRightCorner.y - location.topLeftCorner.y;
+        return width * height;
+    }
+
+    // Event listener for the scan button
+    document.getElementById('scanButton').addEventListener('click', function() {
+        startScanner();
+    });
+
+
