@@ -132,7 +132,7 @@ var PurchaseSchema = new mongoose.Schema({
 
   invoice: {
     type: String,
-    default: ""
+    default: "-"
   },
 
   // city: String,
