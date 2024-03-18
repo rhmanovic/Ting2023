@@ -1,0 +1,14 @@
+if theInventory.brand.includes("Wonderful") || theInventory.brand.includes("Sparkling")
+  p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold(style='background: #5BC0EB;') #{theInventory.brand} 
+else if theInventory.brand.includes("HiFi")
+  p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold(style='background: #FA4C4C;') #{theInventory.brand}
+else if theInventory.brand.includes("Ouqi") || theInventory.brand.includes("FR") || theInventory.brand.includes("Tazen")
+  p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold(style='background: #FEB98B;') #{theInventory.brand}
+else if theInventory.brand.includes("Kray") || theInventory.brand.includes("Cense") || theInventory.brand.includes("Star")
+  p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold(style='background: #65FE93;') #{theInventory.brand}
+else if theInventory.brand.includes("ITC") || theInventory.brand.includes("Volta")
+  p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold(style='background: #C7C700;') #{theInventory.brand}
+else if theInventory.brand.includes("Modi") || theInventory.brand.includes("MAX") || theInventory.brand.includes("Vmax") || theInventory.brand.includes("modi")
+   p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold(style='background: #FF57BB;') #{theInventory.brand}
+else
+   p.text-center.card-text.pt-2.pb-2.mb-0.font-weight-bold #{theInventory.brand}
