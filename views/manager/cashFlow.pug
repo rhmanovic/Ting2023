@@ -1,0 +1,109 @@
+extends layout
+
+block content
+  .main.container
+    h1 Cash Flow
+    
+    
+    include includes/cashFlowsBoxes.pug
+
+    
+    
+    
+
+
+    
+    if cashFlows.length > 0
+      table.table.table-striped
+        thead
+          tr
+            th Date
+            th Amount
+            th Type
+            th Payment Method
+            th Order Number
+            th Description
+        tbody
+          - let lastDate = ''
+          each cash in cashFlows
+            - if (lastDate !== '' && lastDate !== cash.date.toLocaleDateString("en-GB"))
+              tr
+                td(colspan='6').p-0
+                  table.table.table-secondary.m-0
+                    tbody
+                      - let totalCash = 0
+                      - let totalKnet = 0
+                      - let totalVisa = 0
+                      - let totalLink = 0
+                      - let totalIncome = 0
+                      - let totalExpense = 0
+                      each cash in cashFlows
+                        - if (cash.date.toLocaleDateString("en-GB") === lastDate)
+                          - if (cash.paymentMethod === 'cash')
+                            - totalCash += cash.amount
+                          - if (cash.paymentMethod === 'knet')
+                            - totalKnet += cash.amount
+                          - if (cash.paymentMethod === 'visa')
+                            - totalVisa += cash.amount
+                          - if (cash.paymentMethod === 'link')
+                            - totalLink += cash.amount
+
+                          - if (cash.type === 'income')
+                            - totalIncome += cash.amount
+                          - if (cash.type === 'expense')
+                            - totalExpense += cash.amount
+                      tr
+                        td.text-success Income: #{totalIncome.toFixed(3)}
+                        td.text-danger Expense: #{totalExpense.toFixed(3)}
+                        td Cash: #{totalCash.toFixed(3)}
+                        td KNET: #{totalKnet.toFixed(3)}
+                        td Visa: #{totalVisa.toFixed(3)}
+                        td Link: #{totalLink.toFixed(3)}
+              tr(style='background-color: white')
+                td(colspan='6')
+            tr(class=cash.type === 'expense' ? 'table-danger' : cash.type === 'income' ? 'table-success' : '')
+              td #{cash.date.toLocaleDateString("en-GB")}
+              td #{cash.amount}
+              td #{cash.type}
+              td
+                case cash.paymentMethod
+                  when 'cash'
+                    span.badge.bg-danger #{cash.paymentMethod}
+                  when 'knet'
+                    span.badge.bg-success #{cash.paymentMethod}
+                  when 'visa'
+                    span.badge.bg-success #{cash.paymentMethod}
+                  when 'link'
+                    span.badge.bg-primary #{cash.paymentMethod}
+              
+              td #{cash.orderNo ? cash.orderNo : '-'}
+              td #{cash.description}
+            - lastDate = cash.date.toLocaleDateString("en-GB")
+    else
+      p No cash flows to display.
+
+    
+    form(action='/manager/addCashFlow' method='post')
+      .form-group
+        label(for='date') Date
+        - var Date = new Date()
+        input#date.form-control(type='date' name='date' value=Date.toISOString().split('T')[0] required)
+      .form-group
+        label(for='amount') Amount
+        input#amount.form-control(type='number' step='0.01' name='amount' required)
+      .form-group
+        label(for='type') Type
+        select#type.form-control(name='type' required)
+          option(value='income') Income
+          option(value='expense') Expense
+      .form-group
+        label(for='paymentMethod') Payment Method
+        select#paymentMethod.form-control(name='paymentMethod' required)
+          option(value='cash') Cash
+          option(value='visa') Visa
+          option(value='knet') KNET
+          option(value='link') Link
+      .form-group
+        label(for='description') Description
+        textarea#description.form-control(name='description' rows='3' required)
+      button.btn.btn-primary(type='submit') Submit
