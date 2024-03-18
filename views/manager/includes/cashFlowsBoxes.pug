@@ -1,0 +1,21 @@
+if cashFlows.length > 0
+  .row
+    - var totalIncomeAll = cashFlows.filter(cash => cash.type === 'income').reduce((acc, cash) => acc + cash.amount, 0);
+    - var totalExpenseAll = cashFlows.filter(cash => cash.type === 'expense').reduce((acc, cash) => acc + cash.amount, 0);
+    .col-6.col-lg-4.px-2
+      .card.mb-3.bg-primary.text-white
+        .card-header.text-center
+          h2 Total: #{totalIncomeAll - totalExpenseAll}
+        .card-body.text-center
+          h4 Income: #{totalIncomeAll}
+          h4 Expense: #{totalExpenseAll}
+    each method in ['Cash', 'KNET', 'Visa', 'Link']
+      - var totalIncome = cashFlows.filter(cash => cash.type === 'income' && cash.paymentMethod.toLowerCase() === method.toLowerCase()).reduce((acc, cash) => acc + cash.amount, 0);
+      - var totalExpense = cashFlows.filter(cash => cash.type === 'expense' && cash.paymentMethod.toLowerCase() === method.toLowerCase()).reduce((acc, cash) => acc + cash.amount, 0);
+      .col-6.col-lg-4.px-2
+        .card.mb-3
+          .card-header.text-center
+            h2 #{method}: #{(totalIncome - totalExpense).toFixed(3)}
+          .card-body.text-center
+            h4 Total Income: #{totalIncome.toFixed(3)}
+            h4 Total Expense: #{totalExpense.toFixed(3)}
