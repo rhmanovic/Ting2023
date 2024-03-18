@@ -15,12 +15,6 @@ var mid = require("../../middleware");
 const keys = require("../../config/keys");
 const fs = require("fs");
 
-const sharp = require('sharp');
-
-var nodemailer = require("nodemailer");
-
-
-
 
 
 // Schedule a task to run every day at 2 PM GMT+3
