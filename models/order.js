@@ -29,6 +29,29 @@ var OrderSchema = new mongoose.Schema({
     }
   },
 
+  payment : {
+    payment_method: {
+      type: String,
+      
+      enum: ['cash', 'visa', 'knet', 'link']
+    },
+    payment_status:{
+      Total_paid: {
+        type: Number,
+        default: 0
+      },
+      Total_due: {
+        type: Number,
+        default: 0
+      },
+      status: {
+        type: String,
+        enum: ['unpaid', 'partial', 'paid'],
+        default: 'unpaid'
+      }
+    }
+  },
+
   changeStatusBy: [{
     name: {
       type: String,
@@ -104,9 +127,17 @@ var OrderSchema = new mongoose.Schema({
 
 
   
+  paid: {
+    type: Boolean,
+    default: false
+  },
   orderNo: Number,
   img: String,
-  payment_method: String,
+  payment_method: {
+    type: String,
+    
+    enum: ['cash', 'visa', 'knet', 'link']
+  },
   KentStatus: String,
   KentStatusBackEnd: String,
   paymentLog: Object,
@@ -137,7 +168,7 @@ var OrderSchema = new mongoose.Schema({
   },
   
   totalPrice: {
-    type: String,
+    type: Number,
     default: 0
   },
   totalCost: {
