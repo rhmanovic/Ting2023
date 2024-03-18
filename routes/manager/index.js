@@ -17,10 +17,6 @@ const fs = require("fs");
 
 
 
-// Schedule a task to run every day at 2 PM GMT+3
-const schedule = require('node-schedule');
-
-
 router.get('/formEditVendorBrands/:vendorId', mid.requiresAdmin, async function(req, res, next) {
   const { vendorId } = req.params;
 
