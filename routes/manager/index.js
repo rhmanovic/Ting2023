@@ -8,232 +8,16 @@ var Brand = require("../../models/brand");
 var Warehouse = require("../../models/warehouse");
 var Order = require("../../models/order");
 var Purchase = require("../../models/purchase");
-const CashFlow = require("../../models/cash");
 var TransferRequest = require("../../models/transferRequest");
 var User = require("../../models/user");
 var City = require("../../models/city");
 var mid = require("../../middleware");
 const keys = require("../../config/keys");
 const fs = require("fs");
-const jsQR = require('jsqr');
 
 const sharp = require('sharp');
 
 var nodemailer = require("nodemailer");
-
-
-
-
-
-// Schedule a task to run every day at 2 PM GMT+3
-const schedule = require('node-schedule');
-
-
-
-// Route to get Catalogue Barcode
-router.get('/CatalogueBarcode', mid.requiresSaleseman, async function(req, res, next) {
-  try {
-    const products = await Product.find({}).exec();
-    const inventory = await Inventory.find({}).exec();
-    const categories = await Category.find().sort({ categoryNo: 1 }).exec();
-
-    res.render('manager/CatalogueBarcode', {
-      title: 'Catalogue Barcode',
-      products: products,
-      inventory: inventory,
-      categories: categories,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-
-// Route to scan QR code
-router.get('/scanQR', mid.requiresSaleseman, function(req, res, next) {
-  res.render('manager/scanQR', {
-    title: 'Scan QR Code'
-  });
-});
-
-
-
-
-
-
-
-
-router.get('/inventoryBarcode', mid.requiresSaleseman, async function(req, res, next) {
- 
-
-  try {
-    const inventoryData = await Inventory.find({}).exec();
-    if (!inventoryData) {
-      throw new Error('Inventory not found.');
-    }
-    res.render('manager/Barcode', {
-      title: 'Barcode',
-      inventoryData: inventoryData
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Define route to handle form submission
-router.post('/fetchInventory', async (req, res) => {
-  const { barcodeId } = req.body;
-
-  try {
-    const inventoryItem = await Inventory.findById(barcodeId).exec();
-
-    if (!inventoryItem) {
-      return res.status(404).send('Inventory item not found');
-    }
-    return res.send(inventoryItem); // Send JSON response with inventory item details
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send('Error fetching inventory item: ' + error.message);
-  }
-});
-
-
-router.post('/postDataBarcode', (req, res) => {
-  // Extract data from the request body
-  const { tableData, discount, deliveryFee, mobile} = req.body;
-
-  // Log the received data
-  console.log('Received data:', { tableData, discount, deliveryFee, mobile});
-
-  
-  // Extract productNameAs from tableData
-  const productNameAs = tableData.map(item => item.productName);
-  const productNameEs = tableData.map(item => item.productNameE);
-  const inventoryQuantities = tableData.map(item => item.quantity);
-  const prices = tableData.map(item => item.price);
-  const brands = tableData.map(item => item.brand);
-  const inventoryIDs = tableData.map(item => item.inventoryID); // Extract inventoryIDs
-  const inventoryCosts = tableData.map(item => item.inventoryCosts); // Extract inventory costs
-  const warranties = tableData.map(item => item.warranty); // Extract warranties
-  const nameAs = tableData.map(item => item.nameAs); // Extract warranties
-  const nameEs = tableData.map(item => item.nameEs); // Extract warranties
-
-  
-  const shippingCost = deliveryFee;
-  
-
-  // Correctly structure the orderData object
-  const orderData = { productNameAs, productNameEs, inventoryQuantities, brands, inventoryIDs, inventoryCosts, warranties, nameAs, nameEs, prices, discount, shippingCost, mobile };
-  console.log("orderData:", orderData);
-
-  // Create a new order in the database using the structured orderData
-  const newOrder = new Order(orderData);
-
-  newOrder.save()
-    .then(order => {
-      console.log('Order created successfully:', order);
-      
-      // res.redirect('/manager/orderPage/' + order._id);
-      res.status(201).send({ message: 'Order created successfully', orderId: order._id });
-    })
-    .catch(err => {
-      console.error('Error creating order:', err);
-      res.status(500).send({ message: 'Error creating order' });
-    });
-
-});
-
-
-
-
-router.post('/markOrderPaid/:orderId', async function(req, res, next) {
-  const { orderId } = req.params;
-  try {
-    // Mark the order as paid
-    
-
-    // Extract necessary data from the request body
-    const { date, amount, type, paymentMethod, description, orderNo } = req.body;
-
-    // Create a new CashFlow entry
-    const newCashFlow = new CashFlow({
-      date,
-      amount,
-      type,
-      paymentMethod,
-      description,
-      orderNo
-    });
-
-    await newCashFlow.save();
-
-    const order = await Order.findById(orderId);
-
-    console.log("order.totalPrice:" + order.totalPrice);
-    console.log("amount:" + Number(amount));
-
-    var status = ""
-    var Total_due = 0
-    if (Number(order.totalPrice) === Number(amount)) {
-      status = "paid";
-      Total_due = 0
-    } else {
-      status = "partial";
-      Total_due = (Number(order.totalPrice) - Number(amount))
-    }
-    
-
-    await Order.findByIdAndUpdate(orderId, {
-      $set: {
-        'payment.payment_status': {
-          Total_paid: amount,
-          status: status,
-          Total_due: Total_due
-        }
-      }
-    });
-    
-    res.status(200).send('Order marked as paid and CashFlow entry added successfully.');
-  } catch (error) {
-    next(error);
-  }
-});
-
-
-
-// POST route to add a new CashFlow entry
-router.post('/addCashFlow', async function(req, res, next) {
-  const { date, amount, type, paymentMethod, description } = req.body;
-
-  try {
-    const newCashFlow = new CashFlow({
-      date,
-      amount,
-      type,
-      paymentMethod,
-      description
-    });
-
-    await newCashFlow.save();
-    res.status(200).send('CashFlow entry added successfully.');
-  } catch (error) {
-    next(error);
-  }
-});
-
-// GET route to display CashFlow entries
-router.get('/cashFlow', mid.requiresSaleseman, async function(req, res, next) {
-  try {
-    const cashFlows = await CashFlow.find({}).sort({ date: -1 }).exec();
-    return res.render('manager/cashFlow', {
-      title: 'Cash Flow',
-      cashFlows: cashFlows
-    });
-  } catch (error) {
-    return next(error);
-  }
-});
-
 
 router.get('/formEditVendorBrands/:vendorId', mid.requiresAdmin, async function(req, res, next) {
   const { vendorId } = req.params;
@@ -472,12 +256,16 @@ router.get(
   function (req, res, next) {
     const { categoryId } = req.params;
 
-    Category.findOne({ _id: categoryId }).then(categoryData => {
-      return res.render("manager/categoryPage", {
-        title: "categoryPage",
-        categoryData: categoryData,
-      });
-    }).catch(error => next(error));
+    Category.findOne({ _id: categoryId }).exec(function (error, categoryData) {
+      if (error) {
+        return next(error);
+      } else {
+        return res.render("manager/categoryPage", {
+          title: "categoryPage",
+          categoryData: categoryData,
+        });
+      }
+    });
   },
 );
 
@@ -622,16 +410,19 @@ router.get('/inventoryForBrand/:brandName', mid.requiresSaleseman, async functio
   }
 });
 
-router.get("/category", mid.requiresSaleseman, async function (req, res, next) {
-  try {
-    const categoryData = await Category.find({}).sort({ categoryNo: 1 }).exec();
-    return res.render("manager/category", {
-      title: "Category",
-      categoryData: categoryData,
+router.get("/category", mid.requiresSaleseman, function (req, res, next) {
+  Category.find({})
+    .sort({ categoryNo: 1 })
+    .exec(function (error, categoryData) {
+      if (error) {
+        return next(error);
+      } else {
+        return res.render("manager/category", {
+          title: "Category",
+          categoryData: categoryData,
+        });
+      }
     });
-  } catch (error) {
-    return next(error);
-  }
 });
 
 router.get("/transferRequest", mid.requiresSaleseman, (req, res, next) => {
@@ -2383,11 +2174,13 @@ router.post("/AddInventory", mid.requiresAdmin, function (req, res, next) {
   console.log("sendBack");
   console.log(inventoryData.sendBack);
 
-  Inventory.create(inventoryData).then(theInventory => {
-    res.redirect("back");
-  }).catch(error => {
-    console.log(error.code);
-    return next(error);
+  Inventory.create(inventoryData, function (error, theInventory) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect("back");
+    }
   });
 });
 
@@ -2425,12 +2218,13 @@ router.post("/editProduct/:ProductID", mid.requiresAdmin, async function (req, r
 
 
 
-  try {
-    const updatedProduct = await Product.findByIdAndUpdate(ProductID, productData, { new: true }).exec();
-    res.redirect('/manager/productPage/' + updatedProduct._id);
-  } catch (error) {
-    return next(error);
-  }
+  Product.findByIdAndUpdate(ProductID, productData, { new: true }, function (error, updatedProduct) {
+    if (error) {
+      return next(error);
+    } else {
+      res.redirect('/manager/productPage/' + updatedProduct._id);
+    }
+  });
 
 
 
@@ -2467,12 +2261,13 @@ router.post("/AddProduct", mid.requiresAdmin, async function (req, res, next) {
 
 
   
-  try {
-    const newProduct = await Product.create(productData);
-    res.redirect('/manager/productPage/' + newProduct._id);
-  } catch (error) {
-    return next(error);
-  }
+  Product.create(productData, function (error, newProduct) {
+    if (error) {
+      return next(error);
+    } else {
+      res.redirect('/manager/productPage/' + newProduct._id);
+    }
+  });
 
 
 
@@ -2485,11 +2280,13 @@ router.post("/AddCategory", mid.requiresAdmin, function (req, res, next) {
     name: req.body.name,
   };
 
-  Category.create(categoryData).then(theCategory => {
-    res.redirect("category");
-  }).catch(error => {
-    console.log(error.code);
-    return next(error);
+  Category.create(categoryData, function (error, theCategory) {
+    if (error) {
+      console.log(error.code);
+      return next(error);
+    } else {
+      res.redirect("category");
+    }
   });
 });
 
