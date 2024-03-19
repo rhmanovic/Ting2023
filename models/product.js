@@ -88,6 +88,10 @@ var ProductSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  sr: {
+    type: Number,
+    default: 0,
+  },
   cost: {
     type: Number,
     default: 0,
