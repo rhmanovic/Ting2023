@@ -43,8 +43,9 @@ html(lang="ar" dir="rtl")
                       
                         
                       .d-flex.flex-wrap
-                        .p-2.bd-highlight
-                          img.img-fluid(src=productx.img[0], style='width: 200px; height: 200px;')
+                        a(href=`../manager/productPage/${productx._id}`)
+                          .p-2.bd-highlight
+                            img.img-fluid(src=productx.img[0], style='width: 200px; height: 200px;')
                         each theInventory in inventory
                           if theInventory.productID == productx._id
                             .p-2.bd-highlight
