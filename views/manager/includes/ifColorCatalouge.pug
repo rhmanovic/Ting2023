@@ -1,0 +1,24 @@
+if theInventory.nameA.includes("3500")
+  .div(style='background: yellow;')
+    p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
+    .qr-code-wrapper
+      img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
+
+else if theInventory.nameA.includes("4000")
+  .div(style='background: #FEF3BD;')
+    p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
+    .qr-code-wrapper
+      img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
+
+else if theInventory.nameA.includes("6000")
+  .div(style='background: white;')
+    p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
+    .qr-code-wrapper
+      img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
+
+else
+  .div(style='background: #C1C1C1;')
+    p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
+    .qr-code-wrapper
+      img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
+
