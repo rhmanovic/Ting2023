@@ -22,7 +22,7 @@ var mid = require('../middleware');
 // Route to get Catalogue Barcode
 router.get('/CatalogueBarcode', async function(req, res, next) {
   try {
-    const products = await Product.find({}).exec();
+    const products = await Product.find({}).sort({ sr: 1 }).exec();
     const inventory = await Inventory.find({}).exec();
     const categories = await Category.find().sort({ categoryNo: 1 }).exec();
 
