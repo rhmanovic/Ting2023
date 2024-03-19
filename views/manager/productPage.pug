@@ -18,6 +18,13 @@ block content
           td= `${productData._id}`
           td 
         tr
+          th Sr.
+          td= `${productData.sr}`
+          td 
+            a(href=`../editAny/Product/${productData._id}/sr//${productData.sr?productData.sr:"NaN"}/${typeof productData.sr}/productPage`)
+              span.badge.text-bg-success
+                i.fa.fa-cog.p-1(aria-hidden='true')
+        tr
           th Number
           td= `${productData.productNo}`
           td 
