@@ -6,13 +6,14 @@ html(lang="ar" dir="rtl")
     title QR Code Generator
     link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
     script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+
     style.
       @page {
         size: A4;
         margin: 1cm;
       }
       .card {
-        
+  
         page-break-inside: avoid;
       }
       .category {
@@ -20,59 +21,33 @@ html(lang="ar" dir="rtl")
       }
 
   body
-    h1.text-center.my-4 QR Code Generator
+    
     each category in categories
-      .category
-        if category.parent == '/'
-          h1.categoryname.text-white.bg-primary.text-center= category.name
-  
-          each subCategory in categories
-            if subCategory.parent == '/' + category.URLname
-              h3.text-center.text-primary.border.border-primary.py-2 #{subCategory.name}
+      
+      if category.parent == '/'
+        h1.category.categoryname.text-white.bg-primary.text-center= category.name
+      
+      if category.parent == '/'
+        
+        each subCategory in categories
+          if subCategory.parent == '/' + category.URLname
+            h3.text-center.text-danger.border.border-danger.py-2 #{subCategory.name}
+            .d-flex.flex-wrap
               each productx in products
                 
                 if (productx.category.includes(subCategory.URLname))
-                  .col.rr
-                    div.card.mb-3
-                      div.card-header.text-right
+                  .p-2.bd-highlight
+                    .card
+                      .card-header.text-right
                         h5 #{productx.name} (#{productx.productNo})
-                      div.card-body
-                        .row
-                          .col-2
-                            img.img-fluid(src=productx.img[0])
-                          .col
-                            .row
-                              each theInventory in inventory
-                                if theInventory.productID == productx._id
-                                  if theInventory.nameA.includes("3500")
-                                    .col-2.mb-4.p-0
-                                      include ./includes/qrcode.pug
-                                        .container(style='background: yellow;')
-                                          p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
-                                          .qr-code-wrapper
-                                            img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
-    
-                                  else if theInventory.nameA.includes("4000")
-                                    .col-2.mb-4.p-0
-                                      include ./includes/qrcode.pug
-                                        .container(style='background: #FEF3BD;')
-                                          p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
-                                          .qr-code-wrapper
-                                            img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
-    
-                                  else if theInventory.nameA.includes("6000")
-                                    .col-2.mb-4.p-0
-                                      include ./includes/qrcode.pug
-                                        .container(style='background: white;')
-                                          p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
-                                          .qr-code-wrapper
-                                            img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
-    
-                                  else
-                                    .col-2.mb-4.p-0
-                                      include ./includes/qrcode.pug
-                                        .container(style='background: #C1C1C1;')
-                                          p.text-center.card-text.pt-2.mt-0 #{theInventory.nameA}
-                                          .qr-code-wrapper
-                                            img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${theInventory._id}&format=jpg&size=200x200`)
-    
+                      
+                        
+                      .d-flex.flex-wrap
+                        .p-2.bd-highlight
+                          img.img-fluid(src=productx.img[0], style='width: 200px; height: 200px;')
+                        each theInventory in inventory
+                          if theInventory.productID == productx._id
+                            .p-2.bd-highlight
+                            
+                              include ./includes/qrcode.pug
+                              include ./includes/ifColorCatalouge.pug
