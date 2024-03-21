@@ -1,0 +1,29 @@
+if ( orderData.status == "processing")
+  .alert.alert-dark.col-6
+    | طلب جديد
+else if ( orderData.status == "canceled")
+  .alert.alert-warning.col-6
+    | طلب ملغي
+else if ( orderData.status == "returned")
+  .alert.alert-danger.col-6
+    | طلب مرجوع
+else if ( orderData.status == "completed")
+  .alert.alert-primary.col-6
+    | طلب مكتمل
+
+h1 طلب رقم: #{orderData.orderNo}
+
+.row
+  .col.px-0
+    if nextOrder
+      a.btn.btn-outline-primary(href=`/manager/orderPage/${nextOrder._id}`).mx-2 التالي
+    else
+      a.btn.btn-outline-light().mx-2 الطلب التالي
+  .col.px-0
+    a.btn.btn-outline-secondary(href=`/manager/order/2`).mx-2 الطلبات
+  .col.px-0
+    form(method='POST' action='/manager/AddOrder')
+      button.btn.btn-outline-danger(type='submit').mx-2 جديد
+  .col.px-0
+    if prevOrder
+      a.btn.btn-outline-primary(href=`/manager/orderPage/${prevOrder._id}`).mx-2 السابق
