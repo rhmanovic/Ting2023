@@ -22,7 +22,7 @@ const profileRoutes = require('./routes/profile-routes');
 
 var app = express();
 
-// set view engine
+// set view enginee
 app.set('view engine', 'pug');
 
 // Bootstrap
