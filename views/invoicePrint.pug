@@ -73,7 +73,7 @@ block content
         
         
       .col.ltr
-        img(src='/img/upload/myFile-1706093299954.png', alt='ITC', data-purpose='ITC-brand-logo', height='100')
+        img(src=`/img/upload/${SiteImages.logo}`, alt='ITC', data-purpose='ITC-brand-logo', height='100')
         p.mt-1= theLanguage.company
     
     .table-responsive
@@ -130,7 +130,7 @@ block content
           tr.table-secondary
             td(colspan='6') 
             td الاجمالي
-            td= (grandTotal-orderData.discount+rderData.shippingCost).toFixed(3)
+            td= (grandTotal-orderData.discount+orderData.shippingCost).toFixed(3)
   
 
     ul
