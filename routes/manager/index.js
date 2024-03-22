@@ -35,7 +35,7 @@ router.get('/CatalogueBarcode', mid.requiresSaleseman, async function(req, res, 
     const inventory = await Inventory.find({}).exec();
     const categories = await Category.find().sort({ categoryNo: 1 }).exec();
 
-    res.render('manager/CatalogueBarcode', {
+    res.render('manager/CatalogueBarcode2', {
       title: 'Catalogue Barcode',
       products: products,
       inventory: inventory,
@@ -78,9 +78,30 @@ router.get('/inventoryBarcode', mid.requiresSaleseman, async function(req, res, 
   }
 });
 
+
+router.get('/inventoryBarcode2', mid.requiresSaleseman, async function(req, res, next) {
+
+
+  try {
+    const inventoryData = await Inventory.find({}).exec();
+    if (!inventoryData) {
+      throw new Error('Inventory not found.');
+    }
+    res.render('manager/Barcode2', {
+      title: 'Barcode',
+      inventoryData: inventoryData
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Define route to handle form submission
 router.post('/fetchInventory', async (req, res) => {
   const { barcodeId } = req.body;
+
+  
+  console.log('Barcode ID received:', barcodeId);
 
   try {
     const inventoryItem = await Inventory.findById(barcodeId).exec();
@@ -94,6 +115,25 @@ router.post('/fetchInventory', async (req, res) => {
     return res.status(500).send('Error fetching inventory item: ' + error.message);
   }
 });
+
+
+// Define route to handle form submission
+router.post('/fetchProduct', async (req, res) => {
+  const { barcodeId } = req.body;
+
+  try {
+    const inventoryItem = await Inventory.find({ productID: barcodeId }).exec();
+
+    if (!inventoryItem) {
+      return res.status(404).send('Inventory item not found');
+    }
+    return res.send(inventoryItem); // Send JSON response with inventory item details
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Error fetching inventory item: ' + error.message);
+  }
+});
+
 
 
 router.post('/postDataBarcode', (req, res) => {
