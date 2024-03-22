@@ -55,8 +55,12 @@ nav.navbar-expand-lg.bgnav.text-white
         a(aria-current='page' href='/logout')= theLanguage.logout
     .p-2.bd-highlight.border-bottom
       a(aria-current='page' href='/contact')= theLanguage.contactus
+
+    
   
-   
+  if managerNow || theSalesemanNow
+    .p-2.bd-highlight.border-bottom
+      button.btn.btn-primary(aria-current='page' href='/manager/inventoryBarcode2' target='_blank')  QR Code
 
    
 
