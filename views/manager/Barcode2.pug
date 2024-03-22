@@ -91,19 +91,16 @@ html(lang="en")
 
     .row.mt-3.mb-3.justify-content-center
       .col-auto
-        input#mobile1(type="text", name="mobile", class="form-control", placeholder="Enter mobile number")
+        input#mobile1(type="text", name="mobile", class="form-control", placeholder="رقم الهاتف")
     .row.mt-3.mb-3.justify-content-center
+      
       .col-auto
-        button#logDataBtn.btn.btn-info.btn-lg Log Table Data
-      .col-auto
-        button#postDataBtn.btn.btn-primary.btn-lg Post Data
+        button#postDataBtn.btn.btn-primary.btn-lg انشئ الفاتورة
 
 
 
     
-    .row.mt-3.mb-3.justify-content-center
-      .col-auto
-        button#openModalBtn.btn.btn-success.btn-lg(type='button', data-bs-toggle='modal', data-bs-target='#productModal') Open Modal
+    
 
     .modal.fade#productModal(tabindex='-1', role='dialog', aria-labelledby='productModalLabel', aria-hidden='true', show='true')
       .modal-dialog.modal-dialog-centered
