@@ -19,6 +19,9 @@ const fs = require('fs');
 const SiteData = JSON.parse(fs.readFileSync('data/data.json', 'utf8'));
 var mid = require('../middleware'); 
 
+
+
+
 // Route to get Catalogue Barcode
 router.get('/CatalogueBarcode', async function(req, res, next) {
   try {
@@ -26,7 +29,7 @@ router.get('/CatalogueBarcode', async function(req, res, next) {
     const inventory = await Inventory.find({}).exec();
     const categories = await Category.find().sort({ categoryNo: 1 }).exec();
 
-    res.render('manager/CatalogueBarcode', {
+    res.render('manager/CatalogueBarcode2', {
       title: 'Catalogue Barcode',
       products: products,
       inventory: inventory,
