@@ -61,6 +61,12 @@ $(document).ready(function() {
        
         $('#productModal').modal('show');
         $('#inventoryTable tbody').append(tableRow);
+
+
+        
+        // Clear the modal data before appending new data
+        $('#modalData').empty();
+        
         // Append modal data dynamically
         // Change the text of the paragraph within the modal
         $('#modalData').append(modalData);
