@@ -29,7 +29,7 @@ $(document).ready(function() {
                         const detectionArea = calculateDetectionArea();
                         const ratio = qrCodeArea / detectionArea;
 
-                        if (ratio > 0.80) {
+                        if (0.1 > ratio > 0.80) {
                             document.getElementById('barcodeId').value = code.data;
                             clearInterval(scanner); // Stop the scanning process
                             stream.getTracks().forEach(track => track.stop()); // Stop the camera stream
