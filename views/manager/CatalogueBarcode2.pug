@@ -1,0 +1,52 @@
+doctype html
+html(lang="ar" dir="rtl")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title QR Code Generator
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+    script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+
+    style.
+      @page {
+        size: A4;
+        margin: 1cm;
+      }
+      .card {
+  
+        page-break-inside: avoid;
+      }
+      .category {
+        page-break-before: always;
+      }
+
+  body
+    .container
+    each category in categories
+      
+      if category.parent == '/'
+        h1.category.categoryname.text-white.bg-primary.text-center.mt-5= category.name
+      
+      if category.parent == '/'
+        
+        each subCategory in categories
+          if subCategory.parent == '/' + category.URLname
+            h3.text-center.text-danger.border.border-danger.py-2.mt-3 #{subCategory.name}
+            .d-flex.flex-wrap
+              each productx in products
+                
+                if (productx.category.includes(subCategory.URLname))
+                  .p-2.bd-highlight
+                    .card
+                      .card-header.text-right
+                        h5 #{productx.name} (#{productx.productNo})
+                      
+                        
+                      .d-flex.flex-wrap
+                        a(href=`../manager/productPage/${productx._id}`)
+                          .p-2.bd-highlight
+                            img.img-fluid(src=productx.img[0], style='width: 200px; height: 200px;')
+                      
+                        .p-2.bd-highlight
+                          .qr-code-wrapper
+                            img.pb-4.img-fluid(src=`https://api.qrserver.com/v1/create-qr-code/?data=${productx._id}&format=jpg&size=200x200`)
