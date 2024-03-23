@@ -86,4 +86,9 @@ $(document).ready(function() {
     $('#qrModal').on('hidden.bs.modal', function () {
         stopCamera(); // Stop the camera when the modal is completely hidden
     });
+
+    $('#loadingPageModal').modal('show'); // Show the modal
+  
+
+
 });
