@@ -2,77 +2,83 @@ extends layout
 
 block content
   .main.container
-    h1 Transfer Request Page
+    p= requestData
+    p= requestData.requestNo
+    h1 Transfer Request (#{requestData.requestNo}) 
 
+    
+    .transfer-info(style='display: flex; align-items: center;')
+      .row
+        .from
+          p
+            span(style='color: #007bff; font-weight: bold;') From:
+            br
+            span(style='color: #007bff; font-weight: bold;') #{requestData.approvalDetails.sender.place}
+          .circle(style='background-color: #007bff; width: 50px; height: 50px; border-radius: 50%; display: inline-block;').mb-4
+            i.fa.fa-warehouse(style='color: white; font-size: 24px; padding: 13px;')
+      
+        
+          if requestData.approvalDetails.sender.approval
+            a(href=`/manager/changeSenderApproval/${requestData._id}` style='color: #007bff; text-decoration: none;')
+              span.badge(style='background-color: #007bff;') Approved
+              br
+              span= requestData.approvalDetails.sender.username
+          else
+            a(href=`/manager/changeSenderApproval/${requestData._id}` style='color: #dc3545; text-decoration: none;')
+              span.badge(style='background-color: #dc3545;') Not Approved
 
-    .row
+      arrow
+        i.fa.fa-long-arrow-alt-right(style='font-size: 30px;')
+        
+      .row
+        .to
+          p
+            span(style='color: #28a745; font-weight: bold;') To:
+            br
+            span(style='color: #28a745; font-weight: bold;') #{requestData.approvalDetails.receiver.place}
+          .circle(style='background-color: #28a745; width: 50px; height: 50px; border-radius: 50%; display: inline-block;').mb-4
+            i.fa.fa-store(style='color: white; font-size: 24px; padding: 13px;')
 
-        table.table
-          thead
+          if requestData.approvalDetails.receiver.approval
+            a(href=`/manager/changeReceiverApproval/${requestData._id}` style='color: #007bff; text-decoration: none;')
+              span.badge(style='background-color: #007bff;') Approved
+          else
+            a(href=`/manager/changeReceiverApproval/${requestData._id}` style='color: #dc3545; text-decoration: none;')
+              span.badge(style='background-color: #dc3545;') Not Approved
+
+      .arrow(style='margin: 0 20px;')
+        i.fa.fa-long-arrow-alt-right(style='font-size: 30px;')
+
+      
+      .approval-status
+        if requestData.approvalDetails.Finalpproval
+          .circle(style='background-color: #28a745; width: 50px; height: 50px; border-radius: 50%; display: inline-block; margin-bottom: 5px;')
+            i.fa.fa-check(style='color: white; font-size: 24px; padding: 13px;')
+          p(style='color: #28a745; font-weight: bold;') Final Approval: Approved
+        else
+          
+          p(style='color: #dc3545; font-weight: bold;') Final Approval: Not Approved
+          .circle(style='background-color: #dc3545; width: 50px; height: 50px; border-radius: 50%; display: inline-block; margin-bottom: 5px;')
+            i.fa.fa-times(style='color: white; font-size: 24px; padding: 13px;')
+      
+    .row.mt-4
+
+      table.table
+        thead
+          tr
+            th(scope='col') اسم المنتج
+            th(scope='col') Product Name
+            th(scope='col') Brands
+            th(scope='col') Inventory Quantities
+            
+        tbody
+          each val, index in requestData.productNameAs
             tr
-              th(scope='col') Request No
-              th(scope='col') Product No
-              th(scope='col') Product Name
-              th(scope='col') from
-              th(scope='col') To
-              th(scope='col') Quantity
-              //- th(scope='col') ID
-              th(scope='col') Status
-              
-              th(scope='col') senderApprove
-              th(scope='col') receiverApprove
-              //- th(scope='col') ID
-              th(scope='col') 
-          tbody
-            each request,index in requestData
-              tr
-                th(scope='row')= request.requestNo
-                td= request.productNo
-                td= request.productName
-                td= request.fromName
-                td= request.toName
-                td= request.quantity
-                td= request.status
-                td
-                  if (request.senderApprove == false)
-                    div NO
-                      a(href=`/manager/transferSenderApprove/${request._id}/${request.fromName}`)
-                        .badge.text-bg-success.mx-1
-                          | OK
-                  else if (request.senderApprove == true)
-                    div YES
-
-                td
-                  if (request.receiverApprove == false)
-                    div NO
-                      a(href=`/manager/transferReceiverApprove/${request._id}/${request.toName}/${request.fromName}/${request.productID}/${request.quantity}`)
-                        .badge.text-bg-success.mx-1
-                          | OK
-                  else if (request.receiverApprove == true)
-                    div YES
-
-                 
-
-
-
-
-
-                td
-                  if (request.managerApprove == "no")
-                    div= request.managerApprove
-                      a(href=`/manager/transferManagerApprove/${request._id}`)
-                          .badge.text-bg-success.mx-1
-                            | OK
-                  else if (request.managerApprove == "yes")
-                    div= request.managerApprove
-                td
-                  if (request.status == "processing" && request.managerApprove == "yes")
-                    a(href=`/manager/deletRequest/${request._id}`)
-                        .badge.text-bg-danger.ms-1
-                            i.bi.bi-check-square.m-2
-                //- td= request
-
-                    
-
-                
-
+              td
+                p= val + " "
+                p= requestData.nameAs[index]
+              td
+                p= requestData.productNameEs[index] + " "
+                p= requestData.nameEs[index]
+              td= requestData.brands[index]
+              td= requestData.inventoryQuantities[index]
