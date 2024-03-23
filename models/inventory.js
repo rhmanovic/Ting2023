@@ -1,7 +1,6 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcryptjs');
-var InventorySchema = new mongoose.Schema({
-    
+const mongoose = require('mongoose');
+
+const InventorySchema = new mongoose.Schema({
     productID: {
       type: String,
       default: "",
@@ -12,7 +11,6 @@ var InventorySchema = new mongoose.Schema({
       default: "",
       text: true,
     },
-  
     producturl: {
       type: String,
       default: "",
@@ -82,12 +80,22 @@ var InventorySchema = new mongoose.Schema({
       type: String,
       default: "",
     },
-    
     warranty: {
       type: String,
       default: "-",
     },
+    quantityTransferLog: [{
+      date: { type: Date, default: () => new Date(new Date().getTime() + (3 * 60 * 60 * 1000)) },
+      quantitywarehouse01Before: Number,
+      quantitywarehouse01After: Number,
+      quantityShopBefore: Number,
+      quantityShopAfter: Number,
+      transferRequestId: String, // Assuming transferRequestId is a field in your schema
+      user: String // Assuming transferRequestId is a field in your schema
+    }]
 });
 
-var Inventory = mongoose.model('inventory', InventorySchema);
+
+const Inventory = mongoose.model('Inventory', InventorySchema);
+
 module.exports = Inventory;
