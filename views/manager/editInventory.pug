@@ -116,3 +116,35 @@ block content
           input(type='hidden' name='inventoryID' value=inventoryData._id)
           .d-grid.gap-2
             button.btn.btn-primary.mt-2(type='submit') ارسل
+
+
+      // Display quantityTransferLog
+      if inventoryData.quantityTransferLog.length > 0
+        .card.text-dark.bg-light.mb-3.rtl(style='max-width: 32rem;')
+          .card-header.text-center.fs-1 تاريخ التحول في الكمية
+          .card-body
+            ul
+              table.table
+                thead
+                  tr
+                    th(scope='col') تاريخ
+                    th(scope='col') كمية المحل قبل التغيير
+                    th(scope='col') كمية المحل بعد التغيير
+                    th(scope='col') كمية المخزن قبل التغيير
+                    th(scope='col') كمية المخزن بعد التغيير
+                    th(scope='col') رقم طلب التحويل
+                    th(scope='col') المستخدم
+                tbody
+                  each logEntry in inventoryData.quantityTransferLog
+                    tr
+                      td= logEntry.date.toLocaleDateString('en-GB')
+                      td= logEntry.quantityShopBefore
+                      td= logEntry.quantityShopAfter
+                      td= logEntry.quantitywarehouse01Before
+                      td= logEntry.quantitywarehouse01After
+                      td= logEntry.transferRequestId
+                      td= logEntry.user
+
+      else
+        p No quantity transfer logs available
+      p= inventoryData
