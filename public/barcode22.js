@@ -48,12 +48,12 @@ $(document).ready(function() {
         const uniqueId = Date.now(); // Generate a unique ID based on the current timestamp
         const tableRow = $(``);
         const modalData = `<h1>${productNameA}</h1><table class=\"table\">${Object.entries(response).map(([key, value]) =>
-          `<tr style=\"background-color: ${value.nameA.includes('3500') ? 'yellow' : value.nameA.includes('4000') ? '#FEF3BD' : 'none'};\"><td>${value.brand}</td><td>${value.nameA}</td><td>
+          `<tr style=\"background-color: ${value.nameA.includes('3500') ? 'yellow' : value.nameA.includes('4000') ? '#FEF3BD' : 'none'};\"><td>${value.brand}</td><td>${value.nameA}</td><td>${value.quantitywarehouse01}</td><td>
           
           
-            <form class="modalForm">
-              <input type="hidden" name="productId" value="${value._id}">
-              <button type="submit" class="btn btn-secondary">Submit</button>
+            <form class=\"modalForm\">
+              <input type=\"hidden\" name=\"productId\" value=\"${value._id}\">
+              <button type=\"submit\" class=\"btn btn-secondary\">Submit</button>
             </form>
           </td></tr>`
         ).join('')}</table>`;
@@ -116,10 +116,11 @@ $(document).ready(function() {
           const uniqueId = Date.now(); // Generate a unique ID based on the current timestamp
           const tableRow = $(`<tr id="tr${uniqueId}">
             <td><span>${productNameA}</span><br><span>${nameA}</span></td>
+            <td><span>${response.brand}</span></td>
             <td><input type="number" value="${quantity}" class="form-control quantity-input"></td>
-            <td><input type="number" value="${price}" class="form-control price-input" name="price"></td>
+            
             <td>
-              <p class="total">${total.toFixed(2)}</p>
+              
               <button class="btn btn-danger delete-row" data-id="${uniqueId}">Delete</button>
             </td>
             <td style="display:none;"><input type="hidden" name="inventoryID" value="${inventoryID}"></td>
@@ -130,6 +131,8 @@ $(document).ready(function() {
             <td style="display:none;"><input type="hidden" name="inventoryCosts" value="${response.cost}"></td>
             <td style="display:none;"><input type="hidden" name="warranty" value="${response.warranty}"></td>
             <td style="display:none;"><input type="hidden" name="brand" value="${response.brand}"></td>
+            <td style="display:none;"><input type="hidden" name="brand" value="${response.brand}"></td>
+            <td style="display:none;"><input type="number" value="${price}" class="form-control price-input" name="price"></td>
 
           </tr>`);
 
@@ -277,6 +280,58 @@ $(document).ready(function() {
 
   });
 
+  $('#postDataBtnTransfer').click(function() {
+    let postData = {
+      tableData: [],
+      sendFrom: $(`#sendFrom`).val() || 0
+    };
+
+
+    // Iterate through each row of the table and collect the data
+    $('#inventoryTable tbody tr').each(function() {
+      const inventoryID = $(this).find('input[name="inventoryID"]').val(); // Retrieve inventoryID
+      const productName = $(this).find('input[name="productNameAs"]').val();
+      const nameAs = $(this).find('input[name="nameAs"]').val();
+      const nameEs = $(this).find('input[name="nameEs"]').val();
+      const productNameE = $(this).find('input[name="productNameE"]').val();
+      
+      
+      const brand = $(this).find('input[name="brand"]').val();
+      const quantity = parseFloat($(this).find('.quantity-input').val());
+      
+      
+
+      postData.tableData.push({ inventoryID, productName, productNameE, brand, quantity, nameAs, nameEs });
+    });
+
+
+
+
+    // Send the collected data to the server
+    $.ajax({
+      type: 'POST',
+      url: '/manager/postDataBtnTransfer', // Update this URL with your actual endpoint
+      data: JSON.stringify(postData),
+      contentType: 'application/json',
+      success: function(response) {
+        console.log('Data successfully posted:', response);
+        // Handle success
+
+        window.location.href = '/manager/transferRequest';
+      },
+      error: function(err) {
+        console.error('Error posting data:', err);
+        // Handle error
+      }
+    });
+
+
+  });
+
+
+
+
+  
   // Event listener for dynamically added delete buttons
   $(document).on('click', '.delete-row', function() {
     const rowId = $(this).data('id');
