@@ -69,24 +69,88 @@ var TransferRequestSchema = new mongoose.Schema({
         type: String,
         default: "-"
     },
-    approvedBy: {
-        type: String,
-        default: "-"
-    },
-    shopApprove: {
-        type: Boolean,
-        default: false
-    },
-    managerApprove : {
-        type: Boolean,
-        default: false
-    },
+    
     time : { type : Date, default: () => new Date(new Date().getTime() + (3 * 60 * 60 * 1000)) },
     
-    approveDate: {
-        type: Date,
-        default: null
+    
+    
+    productNameAs: {
+      type: [String],
+      default: []
     },
+    productNameEs: {
+      type: [String],
+      default: []
+    },
+    inventoryQuantities: {
+      type: [Number],
+      default: []
+    },
+    brands: {
+      type: [String],
+      default: []
+    },
+    inventoryIDs: {
+      type: [String],
+      default: []
+    },
+    nameAs: {
+      type: [String],
+      default: []
+    },
+    nameEs: {
+      type: [String],
+      default: []
+    },
+    sendFrom: {
+      type: String,
+      default: ""
+    },
+
+  
+    approvalDetails: {
+      sender: {
+        approval: {
+          type: Boolean,
+          default: false
+        },
+        username: {
+          type: String,
+          default: ""
+        },
+        place: {
+          type: String,
+          default: ""
+        },
+        date: {
+          type: Date,
+          default: null
+        }
+      },
+      receiver: {
+        approval: {
+          type: Boolean,
+          default: false
+        },
+        username: {
+          type: String,
+          default: ""
+        },
+        place: {
+          type: String,
+          default: ""
+        },
+        date: {
+          type: Date,
+          default: null
+        }
+      },
+      Finalpproval: {
+        type: Boolean,
+        default: false
+      },
+    }
+  
 });
  
 var TransferRequest = mongoose.model('transferRequest', TransferRequestSchema);
