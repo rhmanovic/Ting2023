@@ -2,62 +2,47 @@ extends layout
 
 block content
   .main.container
+
+    
+
     h1 طلبات التحويل
     .table-responsive
       table.table
         thead
           tr.table-secondary
-            th(scope='col') رقم المنتج
-            th(scope='col') اسم المنتج
-            th(scope='col') الصنف
-            th(scope='col') الماركة
-            th(scope='col') الكمية
-            th(scope='col') من
-            th(scope='col') الى
-            th(scope='col') موافقة الاستلام
-            th(scope='col') تاريخ الموافقة
-            th(scope='col') اسم الطالب
+            th(scope='col') رقم التحويل
+            th(scope='col') المصدر
             th(scope='col') تاريخ الطلب
+            th(scope='col') موافقة المصدر
+            th(scope='col') موافقة المستلم
+            
         tbody
           each request,index in requestData
+            - var source = request.sendFrom === 'quantitywarehouse01' ? "Warehouse" : "Shop";
+            - var receiver = request.sendFrom === 'quantitywarehouse01' ? "Shop" : "Warehouse";
+              
             tr
               td(scope='row')
-                span= request.productNo
-                br
+                a(href=`manager/transferRequestPage/${request._id}`)= request.requestNo
                 
-              
-                a(href=`/product/${request.url}`)
-                  .badge.text-bg-info.mx-1 اذهب للمنتج 
-              td= request.productNameA
-              td= request.nameA
-              td= request.brand
-              td= request.quantity
-              td
-                if (request.from == "quantitywarehouse01")
-                  span المخزن
-                else if (request.from == "quantityShop")
-                  span المحل
-              td
-                if (request.to === "quantitywarehouse01")
-                  span المخزن
-                else if (request.to === "quantityShop")
-                  span المحل
-              
-              
-              if !request.shopApprove
-                td
-                  a(href=`/manager/approveTransfer/${request._id}`)
-                    .badge.text-bg-secondary.mx-1 اعتماد الاستلام
+              if request.sendFrom == 'quantityShop'
+                td.bg-danger.text-white(style='font-weight: bold') Shop
+              else if request.sendFrom == 'quantitywarehouse01'
+                td.bg-success.text-white(style='font-weight: bold') Warehouse
               else
-                td
-                  span تم اعتماد الطلب
-                  br
-                  span من #{request.approvedBy}
-              
-              if request.shopApprove
-                td= request.approveDate.toLocaleDateString('en-GB')
-              else
-                td -
+                td= request.sendFrom
 
-              td= request.requestBy
-              td= request.time.toLocaleDateString('en-GB')
+              td= new Date(request.time).toLocaleDateString('en-GB')
+
+              td
+                span= request.approvalDetails.sender.place + " "
+                if request.approvalDetails.sender.approval
+                  span= "(Yes)"
+                else
+                  span.badge.bg-danger= "(No)"
+              td
+                span= request.approvalDetails.receiver.place + " "
+                if request.approvalDetails.receiver.approval
+                  span= "(Yes)"
+                else
+                  span.badge.bg-danger= "(No)"
