@@ -40,6 +40,8 @@ nav.navbar-expand-lg.bgnav.text-white
         a(aria-current='page' href='/manager') الادارة
       .p-2.bd-highlight.border-bottom
         a(aria-current='page' href='/manager/inventoryBarcode2' target='_blank')  QR Code
+      .p-2.bd-highlight.border-bottom
+        a(aria-current='page' href='/manager/inventoryBarcodeTrnasfer' target='_blank')  Trnasfer QR Code
 
       .p-2.bd-highlight.border-bottom
         a(aria-current='page' href='/emptyCart')= theLanguage.emptyCart
@@ -58,10 +60,9 @@ nav.navbar-expand-lg.bgnav.text-white
 
     
   
-  if managerNow || theSalesemanNow
-    .p-2.bd-highlight.border-bottom
-      a(aria-current='page' href='/manager/inventoryBarcode2' target='_blank')
-        .btn.btn-primary  QR Code
+ 
+        
+    
 
    
 
@@ -109,3 +110,4 @@ nav.navbar-expand-lg.bgnav.text-white
           a(href=`/SiteImages`).px-4 Site Images
           a(href=`/CatalogueBarcode`).px-4 Catalogue QR rcode
           a(href=`/manager/inventoryBarcode2`).px-4 QR code
+          a(href=`/manager/inventoryBarcodeTrnasfer`).px-4 Trnasfer QR Code
