@@ -92,7 +92,7 @@ $(document).ready(function() {
 
   $(document).on('submit', '.modalForm', function(e) {
     e.preventDefault();
-    console.log('Modal form submitted');
+    console.log('Modal form submitted here');
 
     console.log('Included input:', $(this).serialize());
 
