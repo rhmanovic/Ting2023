@@ -214,7 +214,7 @@ router.get('/transferRequestPage/:requestId', mid.requiresSaleseman, async (req,
     if (!requestData) {
       throw new Error('Transfer Request not found.');
     }
-    res.render('manager/transferRequest', {
+    res.render('manager/transferRequestPage', {
       title: 'Transfer Request Details',
       requestData: requestData // Ensure requestData is an array for the template
     });
