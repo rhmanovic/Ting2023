@@ -25,7 +25,50 @@ var nodemailer = require("nodemailer");
 
 
 
+router.post('/postDataBarcode', (req, res) => {
+  // Extract data from the request body
+  const { tableData, discount, deliveryFee, mobile} = req.body;
 
+  // Log the received data
+  console.log('Received data:', { tableData, discount, deliveryFee, mobile});
+
+
+  // Extract productNameAs from tableData
+  const productNameAs = tableData.map(item => item.productName);
+  const productNameEs = tableData.map(item => item.productNameE);
+  const inventoryQuantities = tableData.map(item => item.quantity);
+  const prices = tableData.map(item => item.price);
+  const brands = tableData.map(item => item.brand);
+  const inventoryIDs = tableData.map(item => item.inventoryID); // Extract inventoryIDs
+  const inventoryCosts = tableData.map(item => item.inventoryCosts); // Extract inventory costs
+  const warranties = tableData.map(item => item.warranty); // Extract warranties
+  const nameAs = tableData.map(item => item.nameAs); // Extract warranties
+  const nameEs = tableData.map(item => item.nameEs); // Extract warranties
+
+
+  const shippingCost = deliveryFee;
+
+
+  // Correctly structure the orderData object
+  const orderData = { productNameAs, productNameEs, inventoryQuantities, brands, inventoryIDs, inventoryCosts, warranties, nameAs, nameEs, prices, discount, shippingCost, mobile };
+  console.log("orderData:", orderData);
+
+  // Create a new order in the database using the structured orderData
+  const newOrder = new Order(orderData);
+
+  newOrder.save()
+    .then(order => {
+      console.log('Order created successfully:', order);
+
+      // res.redirect('/manager/orderPage/' + order._id);
+      res.status(201).send({ message: 'Order created successfully', orderId: order._id });
+    })
+    .catch(err => {
+      console.error('Error creating order:', err);
+      res.status(500).send({ message: 'Error creating order' });
+    });
+
+});
 
 
 // Route to get Catalogue Barcode
