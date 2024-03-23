@@ -80,21 +80,39 @@ router.get('/inventoryBarcode', mid.requiresSaleseman, async function(req, res, 
 
 
 router.get('/inventoryBarcode2', mid.requiresSaleseman, async function(req, res, next) {
-
-
   try {
     const inventoryData = await Inventory.find({}).exec();
     if (!inventoryData) {
       throw new Error('Inventory not found.');
     }
     res.render('manager/Barcode2', {
-      title: 'Barcode',
+      title: 'Invoice Barcode',
       inventoryData: inventoryData
     });
   } catch (error) {
     next(error);
   }
 });
+
+
+router.get('/inventoryBarcodeTrnasfer', mid.requiresSaleseman, async function(req, res, next) {
+  try {
+    const inventoryData = await Inventory.find({}).exec();
+    if (!inventoryData) {
+      throw new Error('Inventory not found.');
+    }
+    res.render('manager/BarcodeTrnasfer', {
+      title: 'Trnasfer Barcode',
+      inventoryData: inventoryData
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
+
 
 // Define route to handle form submission
 router.post('/fetchInventory', async (req, res) => {
@@ -136,51 +154,174 @@ router.post('/fetchProduct', async (req, res) => {
 
 
 
-router.post('/postDataBarcode', (req, res) => {
+router.post('/postDataBtnTransfer', (req, res) => {
   // Extract data from the request body
-  const { tableData, discount, deliveryFee, mobile} = req.body;
+  const { tableData, sendFrom} = req.body;
 
   // Log the received data
-  console.log('Received data:', { tableData, discount, deliveryFee, mobile});
+  console.log('Received data:', { tableData, sendFrom});
 
   
   // Extract productNameAs from tableData
+  const inventoryIDs = tableData.map(item => item.inventoryID);
+  const brands = tableData.map(item => item.brand);
+  
   const productNameAs = tableData.map(item => item.productName);
   const productNameEs = tableData.map(item => item.productNameE);
-  const inventoryQuantities = tableData.map(item => item.quantity);
-  const prices = tableData.map(item => item.price);
-  const brands = tableData.map(item => item.brand);
-  const inventoryIDs = tableData.map(item => item.inventoryID); // Extract inventoryIDs
-  const inventoryCosts = tableData.map(item => item.inventoryCosts); // Extract inventory costs
-  const warranties = tableData.map(item => item.warranty); // Extract warranties
   const nameAs = tableData.map(item => item.nameAs); // Extract warranties
   const nameEs = tableData.map(item => item.nameEs); // Extract warranties
 
-  
-  const shippingCost = deliveryFee;
-  
+  const inventoryQuantities = tableData.map(item => item.quantity);
+
+  if ( sendFrom == "quantitywarehouse01") {
+    var senderplace = "warehouse";
+    var receiverplace = "shop";
+  } else if ( sendFrom == "quantityShop") {
+    var senderplace = "shop";
+    var receiverplace = "warehouse";
+  }
 
   // Correctly structure the orderData object
-  const orderData = { productNameAs, productNameEs, inventoryQuantities, brands, inventoryIDs, inventoryCosts, warranties, nameAs, nameEs, prices, discount, shippingCost, mobile };
-  console.log("orderData:", orderData);
+  const transferData = { productNameAs, productNameEs, inventoryQuantities, brands, inventoryIDs, nameAs, nameEs, sendFrom, approvalDetails: { sender: {  place: senderplace }, receiver: {  place: receiverplace } } };
+  
+  console.log("Transfer Data:", transferData);
 
-  // Create a new order in the database using the structured orderData
-  const newOrder = new Order(orderData);
+  // Create a new order in the database using the structured transferData
+  const newTransferRequest = new TransferRequest(transferData);
 
-  newOrder.save()
-    .then(order => {
-      console.log('Order created successfully:', order);
+  newTransferRequest.save()
+    .then(request => {
+      console.log('request created successfully:', request);
       
       // res.redirect('/manager/orderPage/' + order._id);
-      res.status(201).send({ message: 'Order created successfully', orderId: order._id });
+      res.status(201).send({ message: 'request created successfully', requestId: request._id });
     })
     .catch(err => {
-      console.error('Error creating order:', err);
-      res.status(500).send({ message: 'Error creating order' });
+      console.error('Error creating request:', err);
+      res.status(500).send({ message: 'Error creating request' });
     });
 
 });
 
+// GET route for a specific Transfer Request by ID
+router.get('/transferRequestPage/:requestId', mid.requiresSaleseman, async (req, res, next) => {
+  const { requestId } = req.params;
+  try {
+    const requestData = await TransferRequest.findById(requestId).exec();
+
+    
+    
+    if (!requestData) {
+      throw new Error('Transfer Request not found.');
+    }
+    res.render('manager/transferRequest', {
+      title: 'Transfer Request Details',
+      requestData: requestData // Ensure requestData is an array for the template
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET route to change sender approval status
+router.get('/changeSenderApproval/:requestId', mid.requiresSaleseman, async (req, res, next) => {
+  const { requestId } = req.params;
+  try {
+    const requestData = await TransferRequest.findById(requestId).exec();
+
+    
+    if (requestData.approvalDetails.sender.approval) {
+      throw new Error('sender approval has already been granted. تم منح الموافقة للمرسل بالفعل.');
+    }
+
+    
+    if (!requestData) {
+      throw new Error('Transfer Request not found.');
+    }
+    const user = await User.findById(req.session.userId).exec();
+    if (user.managerOf !== requestData.approvalDetails.sender.place) {
+      throw new Error(`You are not authorized to approve ${requestData.approvalDetails.sender.place} - ليس لديك الإذن للموافقة على ${requestData.approvalDetails.sender.place}`);
+    }
+    const updatedApproval = !requestData.approvalDetails.sender.approval;
+    await TransferRequest.findByIdAndUpdate(requestId, {
+      $set: { 'approvalDetails.sender.approval': updatedApproval, 'approvalDetails.sender.username': req.session.userName }
+    });
+    res.redirect('/manager/transferRequestPage/' + requestId);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get('/changeReceiverApproval/:requestId', mid.requiresSaleseman, async (req, res, next) => {
+  const { requestId } = req.params;
+  try {
+
+
+    
+    const requestData = await TransferRequest.findById(requestId).exec();
+
+    
+    if (requestData.approvalDetails.receiver.approval) {
+      throw new Error('Receiver approval has already been granted. تم منح الموافقة للمستلم بالفعل.');
+    }
+    
+    if (!requestData) {
+      throw new Error('Transfer Request not found.');
+    }
+    if (!requestData.approvalDetails.sender.approval) {
+      throw new Error('Sender approval is required before you approve receiving - يتطلب موافقة المرسل قبل الموافقة على الاستلام.');
+    }
+    const user = await User.findById(req.session.userId).exec();
+    if (user.managerOf !== requestData.approvalDetails.receiver.place) {
+      throw new Error(`You are not authorized to approve ${requestData.approvalDetails.receiver.place} - ليس لديك الإذن للموافقة على ${requestData.approvalDetails.receiver.place}`);
+    }
+
+    const updatedApproval = !requestData.approvalDetails.receiver.approval;
+    await TransferRequest.findByIdAndUpdate(requestId, {
+      $set: {
+        'approvalDetails.receiver.approval': updatedApproval,
+        'approvalDetails.receiver.username': req.session.userName,
+        'approvalDetails.Finalpproval': true
+      }
+    });
+
+    // Update the inventory, log asynchronously, and change the status of Finalpproval
+    const inventoryUpdates = requestData.inventoryIDs.map(async (id) => {
+      const inventoryItem = await Inventory.findById(id);
+      const quantityUpdate = requestData.approvalDetails.sender.place === 'warehouse' ? { 'quantitywarehouse01': -1, 'quantityShop': 1 } : { 'quantityShop': -1, 'quantitywarehouse01': 1 };
+      await Inventory.findByIdAndUpdate(id, { $inc: quantityUpdate });
+      const updatedInventoryItem = await Inventory.findById(id);
+      return {
+        date: new Date(),
+        quantitywarehouse01Before: inventoryItem.quantitywarehouse01,
+        quantitywarehouse01After: updatedInventoryItem.quantitywarehouse01,
+        quantityShopBefore: inventoryItem.quantityShop,
+        quantityShopAfter: updatedInventoryItem.quantityShop,
+        transferRequestId: requestData.requestNo,
+        user: req.session.userName
+      };
+    });
+    
+    await Promise.all(inventoryUpdates).then(async (logs) => {
+      // Extract inventory IDs from requestData
+      const inventoryIds = requestData.inventoryIDs;
+      // Loop through each inventory item
+      for (let i = 0; i < inventoryIds.length; i++) {
+        const inventoryId = inventoryIds[i];
+        // Find the inventory item and push the log
+        await Inventory.findByIdAndUpdate(
+          inventoryId,
+          { $push: { quantityTransferLog: logs[i] } }
+        );
+      }
+    });
+
+    res.redirect('/manager/transferRequestPage/' + requestId);
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 
@@ -672,16 +813,16 @@ router.get("/category", mid.requiresSaleseman, async function (req, res, next) {
   }
 });
 
-router.get("/transferRequest", mid.requiresSaleseman, (req, res, next) => {
-  TransferRequest.find({}).sort({ _id: -1 }).exec((error, requestData) => {
-    if (error) {
-      return next(error);
-    }
+router.get("/transferRequest", mid.requiresSaleseman, async (req, res, next) => {
+  try {
+    const requestData = await TransferRequest.find({}).sort({ _id: -1 }).exec();
     res.render("manager/transferRequest", {
       title: "Transfer Request",
       requestData: requestData
     });
-  });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get('/approveTransfer/:transferId', mid.requiresSaleseman, function(req, res, next) {
@@ -1300,14 +1441,10 @@ router.get(
 );
 
 
-router.post("/editInventory", mid.requiresSaleseman, async function (req, res, next) {
 
-  
-  
+router.post("/editInventory", mid.requiresSaleseman, async function (req, res, next) {
   const inventoryID = req.body.inventoryID;
   const updatedData = {
-    
-    
     productNameA: req.body.productNameA,
     productNameE: req.body.productNameE,
     cost: req.body.cost,
@@ -1324,23 +1461,48 @@ router.post("/editInventory", mid.requiresSaleseman, async function (req, res, n
     minShop: req.body.minShop,
     producturl: req.body.producturl,
     VendorItemNo: req.body.VendorItemNo,
-    warranty: req.body.warranty,
+    warranty: req.body.warranty,  
+  };    
 
-   
-  };
+  try {
+    // Retrieve the current inventory document
+    const inventory = await Inventory.findById(inventoryID);
 
-    
-    try {
-      await Inventory.findByIdAndUpdate(
-        inventoryID,
-        updatedData,
-        { new: true }
-      );
-      return res.redirect("back");
-    } catch (error) {
-      next(error);
-    }
+    // Save the current quantity before update
+    const quantitywarehouse01Before = inventory.quantitywarehouse01;
+    const quantityShopBefore = inventory.quantityShop;
+
+    // Update the inventory data
+    const updatedInventory = await Inventory.findByIdAndUpdate(
+      inventoryID,
+      updatedData,
+      { new: true }
+    );
+
+    // Save the updated quantities after the update
+    const quantitywarehouse01After = updatedInventory.quantitywarehouse01;
+    const quantityShopAfter = updatedInventory.quantityShop;
+
+    // Update the log with transferRequestId as an empty string
+    inventory.quantityTransferLog.push({
+      quantitywarehouse01Before,
+      quantitywarehouse01After,
+      quantityShopBefore,
+      quantityShopAfter,
+      transferRequestId: "", // Empty string for transferRequestId
+      user: req.session.userName
+    });
+
+    // Save the updated inventory document with the new log
+    await inventory.save();
+
+    return res.redirect("back");
+  } catch (error) {
+    next(error);
+  }
 });
+
+
 router.get(
   "/editAny/:collection/:id/:field/:value/:type/:returnTo",
   mid.requiresSaleseman,
