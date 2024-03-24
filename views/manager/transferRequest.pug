@@ -15,34 +15,65 @@ block content
             th(scope='col') تاريخ الطلب
             th(scope='col') موافقة المصدر
             th(scope='col') موافقة المستلم
-            
+        
+        
         tbody
           each request,index in requestData
             - var source = request.sendFrom === 'quantitywarehouse01' ? "Warehouse" : "Shop";
             - var receiver = request.sendFrom === 'quantitywarehouse01' ? "Shop" : "Warehouse";
-              
-            tr
-              td(scope='row')
-                a(href=`manager/transferRequestPage/${request._id}`)= request.requestNo
+
+            
+            if request.approvalDetails.Finalpproval
+              tr.bg-info
                 
-              if request.sendFrom == 'quantityShop'
-                td.bg-danger.text-white(style='font-weight: bold') Shop
-              else if request.sendFrom == 'quantitywarehouse01'
-                td.bg-success.text-white(style='font-weight: bold') Warehouse
-              else
-                td= request.sendFrom
-
-              td= new Date(request.time).toLocaleDateString('en-GB')
-
-              td
-                span= request.approvalDetails.sender.place + " "
-                if request.approvalDetails.sender.approval
-                  span= "(Yes)"
+                td(scope='row')
+                  a(href=`/manager/transferRequestPage/${request._id}`)= request.requestNo
+                  
+                if request.sendFrom == 'quantityShop'
+                  td.bg-danger.text-white(style='font-weight: bold') Shop
+                else if request.sendFrom == 'quantitywarehouse01'
+                  td.bg-success.text-white(style='font-weight: bold') Warehouse
                 else
-                  span.badge.bg-danger= "(No)"
-              td
-                span= request.approvalDetails.receiver.place + " "
-                if request.approvalDetails.receiver.approval
-                  span= "(Yes)"
+                  td= request.sendFrom
+
+                td= new Date(request.time).toLocaleDateString('en-GB')
+
+                td
+                  span= request.approvalDetails.sender.place + " "
+                  if request.approvalDetails.sender.approval
+                    span= "(Yes)"
+                  else
+                    span.badge.bg-danger= "(No)"
+                td
+                  span= request.approvalDetails.receiver.place + " "
+                  if request.approvalDetails.receiver.approval
+                    span= "(Yes)"
+                  else
+                    span.badge.bg-danger= "(No)"
+            else
+              tr
+                
+                td(scope='row')
+                  a(href=`/manager/transferRequestPage/${request._id}`)= request.requestNo
+                  
+                if request.sendFrom == 'quantityShop'
+                  td.bg-danger.text-white(style='font-weight: bold') Shop
+                else if request.sendFrom == 'quantitywarehouse01'
+                  td.bg-success.text-white(style='font-weight: bold') Warehouse
                 else
-                  span.badge.bg-danger= "(No)"
+                  td= request.sendFrom
+
+                td= new Date(request.time).toLocaleDateString('en-GB')
+
+                td
+                  span= request.approvalDetails.sender.place + " "
+                  if request.approvalDetails.sender.approval
+                    span= "(Yes)"
+                  else
+                    span.badge.bg-danger= "(No)"
+                td
+                  span= request.approvalDetails.receiver.place + " "
+                  if request.approvalDetails.receiver.approval
+                    span= "(Yes)"
+                  else
+                    span.badge.bg-danger= "(No)"
