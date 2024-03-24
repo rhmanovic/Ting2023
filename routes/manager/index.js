@@ -330,9 +330,9 @@ router.get('/changeReceiverApproval/:requestId', mid.requiresSaleseman, async (r
     });
 
     // Update the inventory, log asynchronously, and change the status of Finalpproval
-    const inventoryUpdates = requestData.inventoryIDs.map(async (id) => {
+    const inventoryUpdates = requestData.inventoryIDs.map(async (id, index) => {
       const inventoryItem = await Inventory.findById(id);
-      const quantityUpdate = requestData.approvalDetails.sender.place === 'warehouse' ? { 'quantitywarehouse01': -1, 'quantityShop': 1 } : { 'quantityShop': -1, 'quantitywarehouse01': 1 };
+      const quantityUpdate = requestData.approvalDetails.sender.place === 'warehouse' ? { 'quantitywarehouse01': -requestData.inventoryQuantities[index], 'quantityShop': requestData.inventoryQuantities[index] } : { 'quantityShop': -requestData.inventoryQuantities[index], 'quantitywarehouse01': requestData.inventoryQuantities[index] };
       await Inventory.findByIdAndUpdate(id, { $inc: quantityUpdate });
       const updatedInventoryItem = await Inventory.findById(id);
       return {
