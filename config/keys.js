@@ -1,27 +1,62 @@
-// add this file to .gitignore
+extends layout
 
-module.exports = {
-  google: {
-    clientID: '390879348958-aafkfja9l2inu4lkhus668gunp9kosos.apps.googleusercontent.com',
-    clientSecret: 'oVmsdLuFMI16dBL0ivNOMyf2'
-  },
-  mongodb: {
-    // dbURI: 'mongodb+srv://user02:Aa66787785@cluster0-hmsvk.gcp.mongodb.net/tingStore?retryWrites=true'
-    // dbURI: 'mongodb+srv://itcstore:Aa55559294@cluster0.k0kof.gcp.mongodb.net/?retryWrites=true&w=majority' // ITC
-    // dbURI: 'mongodb+srv://user2023:123789@cluster0.k0kof.gcp.mongodb.net/?retryWrites=true&w=majority'
-    dbURI: 'mongodb+srv://user2023:qEcyyl1kHEO3last@cluster0.k0kof.gcp.mongodb.net/Ting?retryWrites=true&w=majority' // Ting
-  },
-  admin: {
-    Id: 'eng.dugaim@gmail.com'
-  },
-  session: {
-    cookieKey: 'abdulrahmanawesomeiguess'
-  },
-  internal: {
-    host: 'https://itcstore.net',
-    EmailsForOrders: "eng.dugaim@gmail.com, itc-amjad@outlook.com"
-  },
-  tapPayment: {    
-    authorization: "Bearer sk_live_F7zrQZfAd816O0DTpoean9YM"
-  }
-};
+block content
+  .main.container
+    h1 Categories Page
+
+
+    .row
+        h3 Posts Data
+
+       
+
+        table.table
+          thead
+            tr
+              th(scope='col') price
+              th(scope='col') discountPrice
+              th(scope='col') img
+              th(scope='col') ItemNo
+              th(scope='col') warranty
+              th(scope='col') name
+              th(scope='col') disc
+              
+          tbody
+            each product,index in productData
+              tr
+                if product.img[0]
+                  - var cx = product.img[0]
+                  
+                  td= product.price.toFixed(3)+" K.D"
+                  td= product.discountPrice.toFixed(3)+" K.D"
+                  td
+                    a(href=`${product.img[0]}`)
+                      span= "/Users/abdulrahmanaldhuferi/Desktop/ITC/posts/img/" + cx.split("/")[3]
+                  td= product.productNo
+                  if product.warranty > 0
+                    td= "الكفالة: " + product.warranty + " سنة"
+                  else
+                    td -
+                  td
+                    span= product.name
+                  td
+                    span= product.name
+                    br
+                    if product.discounted
+                      span= "قبل الخصم: " + product.price.toFixed(3) + " د.ك"
+                      br
+                      span= "بعد الخصم: " + product.discountPrice.toFixed(3) + " د.ك"
+                    else
+                      span= "السعر: " + product.price.toFixed(3) + " د.ك"
+                    br
+                    br
+                    span= product.nameE
+                    br
+                    br
+                    span= "رقم البحث في المتجر: " + product.productNo
+                    br
+                    span= "او حياك خدمه العملاء رسائل الواتساب"
+
+                 
+
+               
