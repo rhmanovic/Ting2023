@@ -43,11 +43,11 @@ block content
                     span= product.name
                     br
                     if product.discounted
-                      span= "قبل الخصم: " + product.price + " د.ك"
+                      span= "قبل الخصم: " + product.price.toFixed(3) + " د.ك"
                       br
-                      span= "بعد الخصم: " + product.discountPrice + " د.ك"
+                      span= "بعد الخصم: " + product.discountPrice.toFixed(3) + " د.ك"
                     else
-                      span= "السعر: " + product.price + " د.ك"
+                      span= "السعر: " + product.price.toFixed(3) + " د.ك"
                     br
                     br
                     span= product.nameE
