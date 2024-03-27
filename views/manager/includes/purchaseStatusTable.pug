@@ -45,6 +45,10 @@
               th طريقة الدفع
               th :
               td= purchaseData.payment_method
+              td
+                a(href=`../editAny/Purchase/${purchaseData._id}/payment_method/${purchaseData.payment_method}/string/purchasePage`) 
+                  span.badge.text-bg-success.mx-1
+                    i.fa.fa-cog(aria-hidden='true')
               
             tr
               th رقم طلب الشراء
