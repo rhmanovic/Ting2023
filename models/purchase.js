@@ -136,7 +136,11 @@ var PurchaseSchema = new mongoose.Schema({
   },
 
   // city: String,
-  note: String,
+  
+  note: {
+    type: String,
+    default: ""
+  },
   status: {
     type: String,
     default: "processing"
