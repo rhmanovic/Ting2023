@@ -139,7 +139,7 @@ var PurchaseSchema = new mongoose.Schema({
   
   note: {
     type: String,
-    default: ""
+    default: "-"
   },
   status: {
     type: String,
