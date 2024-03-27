@@ -90,6 +90,14 @@
               th المورد
               th :
               td= `${purchaseData.vendorName}`
+            tr
+              th ملاحظة
+              th :
+              td= `${purchaseData.note}`
+              td
+                a(href=`../editAny/Purchase/${purchaseData._id}/note/${purchaseData.note}/string/purchasePage`) 
+                  span.badge.text-bg-success.mx-1
+                    i.fa.fa-cog(aria-hidden='true')
 
 
 
