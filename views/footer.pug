@@ -1,15 +1,15 @@
 
-//.float1
+.float1
   .row
     .col-2
-      a#whatsappLink2(href='https://wa.me/96599501036' style="z-index: 5;")
+      a#whatsappLink2(href=`https://wa.me/965${theData.mobile}` style="z-index: 5;")
   
         .float
       
           i.fa-brands.fa-whatsapp.display-1.my-float
     
     //.col-2.px-1
-      a#whatsappLink(href='https://wa.me/96599501036' style="z-index: 5;")
+      a#whatsappLink(href=`https://wa.me/965${theData.mobile}` style="z-index: 5;")
         h1.badge.rounded-pill.mt-4(style="font-size:1rem; background-color:#25D366;") كلمنا واتساب
 
 
@@ -25,7 +25,7 @@ footer.mt-auto.bd-highlight.bgnav.text-white.align-self-baselin
     .p-2.text-center
       p
         strong
-          span(style='font-size:19px;') Important Links
+          span(style=`font-size:19px;`) Important Links
       a(href=`/return-and-refund`)
         p.mb-0 Return and Refund Policy
       a(href=`/privacy`)
@@ -36,7 +36,7 @@ footer.mt-auto.bd-highlight.bgnav.text-white.align-self-baselin
     .p-2.text-center
       p
         strong
-          span(style='font-size:19px;') روابط مهمة
+          span(style=`font-size:19px;`) روابط مهمة
       a(href=`/return-and-refund`)
         p.mb-0 سياسة الإرجاع والاسترداد
       a(href=`/privacy`)
@@ -47,9 +47,9 @@ footer.mt-auto.bd-highlight.bgnav.text-white.align-self-baselin
     .p-2.text-center
       p
         strong
-          span(style='font-size:19px;') تواصل معنا / contact US
+          span(style=`font-size:19px;`) تواصل معنا / contact US
       
-      p.mb-0 Tel/whatsapp: 90903115
+      p.mb-0 Tel/whatsapp: #{theData.mobile}
       p.mb-0 email: ITCstorekw@gmail.com
       p.mb-0 خدمة العملاء متاحة من 10 صباحاً إلى 10 مساءً 
       p.mb-0 Customers service form 10 am to 10 pm
