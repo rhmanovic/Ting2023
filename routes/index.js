@@ -236,7 +236,7 @@ router.get("/search", async function (req, res, next) {
     const productSearch = await Product.aggregate([
       {
         $search: {
-          index: "TheITCSearch",
+          index: SiteData.SearchIndex,
           text: {
             query: text,
             path: {
