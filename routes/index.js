@@ -183,14 +183,14 @@ router.post("/Disc", function (req, res, next) {
 router.get("/mutlaaWelcome", function (req, res, next) {
   return res.render("mutlaa2", { title: "ITC Discount" });
 });
-router.get("/sheet", function (req, res, next) {
-  Product.find({ googleSheet: true }).exec(function (error, productData) {
-    if (error) {
-      return next(error);
-    } else {
-      return res.render("sheet", { title: "sheet", productData: productData });
-    }
-  });
+
+router.get("/sheet", async function (req, res, next) {
+  try {
+    const productData = await Product.find({ googleSheet: true }).exec();
+    return res.render("sheet", { title: "sheet", productData: productData });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 router.get("/orderReceived", async function (req, res, next) {
