@@ -93,6 +93,7 @@ router.get("/send", function (req, res) {
   color: ${color},
   KentStatus: ${KentStatus},
   source: ${req.session.source}`,
+  
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -416,8 +417,13 @@ router.get("/category/:category", function (req, res, next) {
 });
 
 router.get("/product/:url", async function (req, res, next) {
-  const { url, ShowModal, source, Q } = req.params;
-
+  const { url } = req.params;
+  const ShowModal = req.query.ShowModal;
+  const source = req.query.source;
+  const Q = req.query.Q;
+  
+  
+  
   if (source) {
     req.session.source = source;
     await req.session.save();
@@ -640,18 +646,14 @@ router.get("/cart", function (req, res, next) {
   }
 
   function createOrder_SafeOrederIdToSession_thenRout() {
-    Order.create(orderData, function (error, theOrder) {
-      if (error) {
-        return next(error);
-      } else {
-        req.session.orderID = theOrder.id;
-        req.session.save(function (err) {
-          // session saved
-          // res.redirect('/')
-          findProductsThenRoute();
-        });
-      }
-    });
+    Order.create(orderData).then(theOrder => {
+      req.session.orderID = theOrder.id;
+      req.session.save(function (err) {
+        // session saved
+        // res.redirect('/');
+        findProductsThenRoute();
+      });
+    }).catch(error => next(error));
   }
 
   function findProductsThenRoute() {
@@ -663,24 +665,23 @@ router.get("/cart", function (req, res, next) {
       });
     }
 
-    Product.find({ _id: { $in: cartIDs } }).exec(function (error, productData) {
-      City.findOne({ _id: "63ad38dee77cc01557b258e4" }).exec(
-        function (error, citytData) {
-          if (error) {
-            return next(error);
-          } else {
-            // return res.render('product', { title: 'Product]', productData: productData, ShowModal:ShowModal, Q:Q });
-            return res.render(renderCart, {
-              title: "Cart",
-              cartData: productData,
-              cartData2: cartData,
-              citytData: citytData,
-              shipping: SiteData.ship,
-              minimumOrder: SiteData.minOrder
-            });
-          }
-        },
-      );
+    Product.find({ _id: { $in: cartIDs } }).then(function (productData) {
+      City.findOne({ _id: "63ad38dee77cc01557b258e4" }).then(
+        function (citytData) {
+          return res.render(renderCart, {
+            title: "Cart",
+            cartData: productData,
+            cartData2: cartData,
+            citytData: citytData,
+            shipping: SiteData.ship,
+            minimumOrder: SiteData.minOrder
+          });
+        }
+      ).catch(function (error) {
+        return next(error);
+      });
+    }).catch(function (error) {
+      return next(error);
     });
   }
 });
@@ -838,7 +839,7 @@ router.post("/AddOrder", function (req, res1, next) {
   Product.find(
     { _id: { $in: cartIDs } },
     { name: 1, price: 1, discountPrice: 1, discounted: 1, warehouseNo: 1, warranty: 1 },
-  ).exec(function (error, productData) {
+  ).then(function (productData) {
     productData.forEach(function (product, index) {
       IDs[index] = product._id;
       Names[index] = product.name;
@@ -867,11 +868,9 @@ router.post("/AddOrder", function (req, res1, next) {
       totalPayed += Quantities[index] * Prices[index];
     });
 
-    //console.log(" totalPayed: " + totalPayed)
-
     setOrder();
 
-    function setOrder() {
+    async function setOrder() {
       arr_update_dict = { $set: {} };
       arr_update_dict["$set"]["productIDs"] = IDs;
       arr_update_dict["$set"]["payment_method"] = orderData.payment_method;
@@ -906,7 +905,7 @@ router.post("/AddOrder", function (req, res1, next) {
         );
       }
 
-      Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(
+      await Order.findOneAndUpdate({ _id: orderID }, arr_update_dict).then(
         function () {
           // res.redirect('/send')
           if (orderData.payment_method == "knet") {
@@ -918,16 +917,12 @@ router.post("/AddOrder", function (req, res1, next) {
       );
     }
 
-    function payforThis() {
+    async function payforThis() {
       var myWbsite = keys.internal.host;
       var postURL = myWbsite + "/getPay";
-      //console.log("myWbsite: " + myWbsite)
-      //console.log("keys: " + keys.tapPayment.authorization)
+
       var shippingCost = Number(orderData.shippingCost);
       var amount = totalPayed + shippingCost;
-      var request = require("request");
-      console.log("postURL: " + postURL);
-      //console.log("keys.tapPayment.authorization: " + keys.tapPayment.authorization)
 
       var http = require("https");
       var options = {
@@ -941,14 +936,14 @@ router.post("/AddOrder", function (req, res1, next) {
         },
       };
 
-      var req = http.request(options, function (res) {
+      var req = http.request(options, async function (res) {
         var chunks = [];
 
         res.on("data", function (chunk) {
           chunks.push(chunk);
         });
 
-        res.on("end", function () {
+        res.on("end", async function () {
           var body = Buffer.concat(chunks);
           console.log("body.toString(): " + body.toString());
           var profile = JSON.parse(body);
