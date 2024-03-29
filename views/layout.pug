@@ -40,11 +40,11 @@ head
   <link rel="preload" as="font" href="/fonts/Alexandria-Regular.ttf" type="font/ttf" crossorigin="anonymous">
   link(rel='icon' href='/img/upload/icon-t.jpg')
 
-  if productData
-    meta(property='og:image' content=productData.img[0])
-    meta(property='og:title' content=productData.name)
-    meta(property='og:description' content=`السعر: ${(productData.price).toFixed(3)} K.D`)
-
+  if productData && title != "sheet"
+    meta(property='og:image', content=productData.img[0])
+    meta(property='og:title', content=productData.name)
+    meta(property='og:description', content=`السعر: ${(productData.price).toFixed(3)} K.D`)
+    
 
 
   title= theLanguage.title
