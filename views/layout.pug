@@ -8,15 +8,7 @@ head
   else if choosedLangaue === "en"
     - websiteLangaue = "en"
 
-  //- Google tag (gtag.js)
-  script(async src="https://www.googletagmanager.com/gtag/js?id=AW-16516349652")
-  script.
-    |   window.dataLayer = window.dataLayer || [];
-    |   function gtag(){dataLayer.push(arguments);}
-    |   gtag('js', new Date());
-    |   gtag('config', 'AW-16516349652');
-
-
+  
 
   
   if websiteLangaue === 'ar'
@@ -87,6 +79,15 @@ head
 
   
   
+  //- Other head content goes here
+  //- Google tag (gtag.js)
+  script(async src="https://www.googletagmanager.com/gtag/js?id=AW-16516349652")
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-16516349652')
+
   
 
   
