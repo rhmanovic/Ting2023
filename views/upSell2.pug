@@ -16,7 +16,7 @@ block content
           - totalPrice += product.upsell
           .row.border-bottom
             .col-4
-              img.img-fluid(src=product.img alt='....') 
+              img.img-fluid(src=product.img[1] alt='....') 
             .col-8
               h4.m-3.fw-bold.mx-0= product.Name
               //.m-3.fw-bold.mx-0= `${product.Price} K.D`
@@ -33,26 +33,20 @@ block content
             .d-grid.gap-2
               // button.btn.btn-primary(type='button') اضف 50 حبة زيادة بـ 8.900 د.ك
     
-              a.d-grid.gap-2(href=`../upSellAdd/${cartData[0].productNo}/${cartData[0].nextUpSell}`)
+              a.d-grid.gap-2(href=`/upSellAdd/${cartData[0].productNo}/next`)
                 button.btn.btn-danger.btn-lg(type='button')= `زيد من نفس العرض بـ ${cartData[0].nextUpSell} د.ك`
     
       form#addorder(method='POST' action='/upSellApprove')
 
-        if colortype == 1 || colortype == 2
-          .container
-            hr.mx-2.mt-3
-            .col
-              h4.mx-3.mt-2 اختر اللون المطلوب :
-              .form-check.mx-1.fs-5
-                input.mx-1(type='radio' name='color' value='wh')
-                label(for='html') ابيض
-                br
-                input.mx-1(type='radio' name='color' value='ww')
-                label(for='css') اصفر
-                br
-                if colortype == 1
-                  input.mx-1(type='radio' name='color' value='4k')
-                  label(for='javascript') وورم(اوف وايت)
+        
+        .container
+          hr.mx-2.mt-3
+          .col
+            h4.mx-3.mt-2 اختر اللون المطلوب :
+            .form-check.mx-1.fs-5
+              select.form-select.col-3(name='color' type='string')
+                each letter in colortype.split("-")
+                  option(value=letter)= letter
               
           hr.mx-2.mb-4.mt-3
 
