@@ -20,7 +20,220 @@ const SiteData = JSON.parse(fs.readFileSync('data/data.json', 'utf8'));
 var mid = require('../middleware'); 
 
 
+// /upSellAdd/:productNo
+router.get("/upSellAdd/:productNo/:status", async function (req, res, next) {
+  const { productNo } = req.params;
+  const { status } = req.params;
 
+  var productExistInCart = false;
+  const host = req.headers.host;
+  var hostNew = "";
+
+  try {
+    const productData = await Product.findOne({ productNo: productNo });
+
+
+    if (host == "localhost:3000") {
+      hostNew = "itcstore.net";
+    } else {
+      hostNew = host;
+    }
+
+    var newProduct = {
+      ID: productData._id,
+      Name: productData.name,
+      img: productData.img,
+      Quantity: 1,
+      Price: productData.price,
+      Cost: productData.cost,
+      upsell: productData.discountPrice,
+      nextUpSell: productData.upsell,
+      isUpSell: true,
+      productNo: productNo,
+      parentNo: parseFloat(productData.parentNo),
+      warranty: parseFloat(productData.warranty),
+      colortype: productData.variation,
+    };
+
+    if (status == "new") {
+      req.session.cartData0 = [];
+    } else if (status == "next") {
+      newProduct.upsell = newProduct.nextUpSell;
+    }
+
+
+    var old = req.session.cartData0;
+
+    cartData = req.session.cartData0;
+
+    old.push(newProduct);
+    req.session.cartData0 = old;
+    req.session.cartData0 = old;
+    req.session.cartCount = req.session.cartData0.length;
+
+    req.session.save();
+   return res.render("upSell2", { title: "Product", cartData: cartData });
+
+    
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get("/upsellCategory/:productNo/:source", async function (req, res, next) {
+  const { productNo } = req.params;
+  const { source } = req.params;
+  const { ShowModal } = req.query;
+  const { Q } = req.query;
+
+  req.session.source = source;
+  req.session.save();
+
+  try {
+    const productData = await Product.findOne({ productNo: productNo }).exec();
+    if (productData.upsell == 0) {
+      res.redirect("/emptyCart");
+    }
+
+    const productSub = await Product.find({ SuperProductID: productData._id }).exec();
+
+    req.session.save();
+    return res.render("upsellCategory", {
+      title: "Product",
+      productData: productData,
+      ShowModal: ShowModal,
+      Q: Q,
+      productSub: productSub,
+      currentURL: req
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get("/upSell/:productNo/:source", async function (req, res, next) {
+  const { productNo } = req.params;
+  const { source } = req.params;
+  const { ShowModal } = req.query;
+  const { Q } = req.query;
+
+  req.session.source = source;
+  req.session.save();
+
+  try {
+    const productData = await Product.findOne({ productNo: productNo }).exec();
+
+    Product.find({ SuperProductID: productData._id, variant: true }).exec()
+      .then((productSub) => {
+        return res.render("upSell", {
+          title: "Product",
+          productData: productData,
+          ShowModal: ShowModal,
+          Q: Q,
+          productSub: productSub,
+          currentURL: req,
+        });
+      })
+      .catch((error) => {
+        return next(error);
+      });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get("/upSellCart", async function (req, res, next) {
+  if (!req.session.cartData0) {
+    req.session.cartData0 = [];
+    var old = req.session.cartData0;
+    return res.redirect("/");
+  } else {
+    var old = req.session.cartData0;
+  }
+
+  cartData = old;
+
+  return res.render("upSell2", { title: "Product", cartData: cartData });
+});
+
+
+router.post("/upSellApprove", async function (req, res, next) {
+  var cartData = req.session.cartData0;
+
+  var IDs = []; 
+  var Names = []; 
+  var Prices = []; 
+  var Quantities = []; 
+  var Warrantys = []; 
+  var Costs = []; 
+  var Warranties = []; 
+  var cartIDs = [];
+
+  cartData.forEach(function (product, index, array) {
+    Names.push(product.Name);
+    cartIDs.push(product.ID);
+    Prices.push(product.upsell);
+    Costs.push(product.cost);
+    Quantities.push(product.Quantity);
+    Warrantys.push(product.warranty);
+    // Warranties.push(product.warranty);
+  });
+
+  var orderData = {
+    mobile: req.body.mobile,
+    note: req.body.color,
+    address: req.body.address,
+    customerName: req.body.customerName,
+    shippingCost: 0,
+    price: Prices,
+    cost: Costs,
+    productIDs: cartIDs,
+    quantity: Quantities,
+    warranty: Warrantys,
+    warehouse: "qurain",
+    productNames: Names,
+  };
+
+  FindOrderAndUpdate();
+
+  async function FindOrderAndUpdate() {
+    arr_update_dict = { $set: {} };
+    // arr_update_dict["$set"]["cost"] = Costs;
+    arr_update_dict["$set"]["price"] = Prices;
+    arr_update_dict["$set"]["cost"] = Costs;
+    arr_update_dict["$set"]["productNames"] = Names;
+    arr_update_dict["$set"]["productIDs"] = cartIDs;
+    arr_update_dict["$set"]["quantity"] = Quantities;
+    arr_update_dict["$set"]["warranty"] = Warrantys;
+    // arr_update_dict["$set"]["warranty"] = Warranties;
+
+    arr_update_dict["$set"]["warehouse"] = "qurain";
+    arr_update_dict["$set"]["mobile"] = orderData.mobile;
+    arr_update_dict["$set"]["address"] = orderData.address;
+    // arr_update_dict["$set"]["invoice"] = orderData.invoice;
+    // arr_update_dict["$set"]["discount"] = orderData.discount;
+    arr_update_dict["$set"]["customerName"] = orderData.customerName;
+    arr_update_dict["$set"]["shippingCost"] = orderData.shippingCost;
+    // arr_update_dict["$set"]["userID"] = orderData.userID;
+    // arr_update_dict["$set"]["email"] = orderData.email;
+    // arr_update_dict["$set"]["ID_CITY"] = orderData.ID_CITY;
+    // arr_update_dict["$set"]["city"] = orderData.city;
+
+    const theOrder = await Order.create(orderData);
+    return res.redirect(
+      url.format({
+        pathname: "manager/send",
+        query: {
+          user: "customer",
+          orderID: theOrder._id.toString(),
+          mobile: orderData.mobile,
+          color: orderData.note,
+          massege: "تم استلام طلب جديد upsell",
+        },
+      })
+    );
+  }
+});
 
 // Route to get Catalogue Barcode
 router.get('/CatalogueBarcode', async function(req, res, next) {
