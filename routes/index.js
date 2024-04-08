@@ -59,6 +59,8 @@ router.get("/upSellAdd/:productNo/:status", async function (req, res, next) {
       req.session.cartData0 = [];
     } else if (status == "next") {
       newProduct.upsell = newProduct.nextUpSell;
+    } else {
+      return res.render("upSell2", { title: "Product", cartData: cartData });
     }
 
 
@@ -72,7 +74,7 @@ router.get("/upSellAdd/:productNo/:status", async function (req, res, next) {
     req.session.cartCount = req.session.cartData0.length;
 
     req.session.save();
-   return res.render("upSell2", { title: "Product", cartData: cartData });
+    res.redirect(`/upSellAdd/${newProduct.productNo}/x`);
 
     
   } catch (error) {
