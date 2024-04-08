@@ -82,6 +82,13 @@ block content
             a(href=`../editAny/Product/${productData._id}/discountPrice//${productData.discountPrice}/${typeof productData.discountPrice}/productPage`)
               span.badge.text-bg-success
                 i.fa.fa-cog.p-1(aria-hidden='true')
+        tr
+          th Upsell
+          td= `${productData.upsell}`
+          td 
+            a(href=`../editAny/Product/${productData._id}/upsell//${productData.upsell}/${typeof productData.upsell}/productPage`)
+              span.badge.text-bg-success
+                i.fa.fa-cog.p-1(aria-hidden='true')
 
 
         tr      
