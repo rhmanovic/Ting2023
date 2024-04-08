@@ -6,11 +6,11 @@ block content
     nav.navbar.navbar-dark.bg-dark
       .container-fluid
         span.navbar-brand= ` ${productData.discountPrice.toFixed(3)} K.D`
-        a(href=`/upSellAdd/${productData.productNo}/111`)
+        a(href=`/upSellAdd/${productData.productNo}/new`)
           button.btn.btn-danger.btn-lg(type='button') اشتر الأن
 
 
-  img.img-fluid(src=productData.img alt='...')
+  img.img-fluid(src=productData.img[0] alt='...')
 
   h4.m-3.fw-bold= productData.name
 
@@ -39,7 +39,7 @@ block content
     .row
       .col
         i.fa-solid.fa-truck-fast 
-        | توصيل خلال 24 ساعة
+        | توصيل مجاني خلال 24 ساعة
       .col
         i.fa-solid.fa-money-bill
         | الدفع عند الاستلام
